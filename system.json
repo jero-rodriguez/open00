@@ -1,0 +1,129 @@
+{
+  "id": "vsd",
+  "title": "Against the Darkmaster (VsD)",
+  "description": "A Foundry VTT v14 system implementation of Against the Darkmaster (VsD) tabletop RPG.",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14",
+    "maximum": "14"
+  },
+  "authors": [
+    {
+      "name": "Jero Rodriguez",
+      "url": "https://github.com/jerorodriguez"
+    }
+  ],
+  "esmodules": ["module/vsd.js"],
+  "styles": ["styles/vsd.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "es",
+      "name": "Español",
+      "path": "lang/es.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": []
+      },
+      "npc": {
+        "htmlFields": ["specialAbilities"]
+      }
+    },
+    "Item": {
+      "weapon": {
+        "htmlFields": []
+      },
+      "armor": {
+        "htmlFields": []
+      },
+      "spell": {
+        "htmlFields": ["description"]
+      },
+      "equipment": {
+        "htmlFields": []
+      },
+      "kin": {
+        "htmlFields": []
+      },
+      "culture": {
+        "htmlFields": ["worldviewNotes"]
+      },
+      "vocation": {
+        "htmlFields": []
+      },
+      "trait": {
+        "htmlFields": ["description"]
+      }
+    }
+  },
+  "packs": [
+    {
+      "name": "weapons",
+      "label": "VsD Weapons",
+      "path": "packs/weapons",
+      "type": "Item",
+      "system": "vsd"
+    },
+    {
+      "name": "armor",
+      "label": "VsD Armor",
+      "path": "packs/armor",
+      "type": "Item",
+      "system": "vsd"
+    },
+    {
+      "name": "spells",
+      "label": "VsD Spells",
+      "path": "packs/spells",
+      "type": "Item",
+      "system": "vsd"
+    },
+    {
+      "name": "equipment",
+      "label": "VsD Equipment",
+      "path": "packs/equipment",
+      "type": "Item",
+      "system": "vsd"
+    },
+    {
+      "name": "kins",
+      "label": "VsD Kins",
+      "path": "packs/kins",
+      "type": "Item",
+      "system": "vsd"
+    },
+    {
+      "name": "cultures",
+      "label": "VsD Cultures",
+      "path": "packs/cultures",
+      "type": "Item",
+      "system": "vsd"
+    },
+    {
+      "name": "vocations",
+      "label": "VsD Vocations",
+      "path": "packs/vocations",
+      "type": "Item",
+      "system": "vsd"
+    },
+    {
+      "name": "traits",
+      "label": "VsD Traits",
+      "path": "packs/traits",
+      "type": "Item",
+      "system": "vsd"
+    }
+  ],
+  "socket": false,
+  "manifest": "",
+  "download": "",
+  "url": ""
+}
