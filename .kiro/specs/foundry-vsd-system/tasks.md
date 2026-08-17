@@ -23,13 +23,13 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Create `.releaserc` or `release-please-config.json` for conventional commit SemVer
     - _Requirements: 20.3, 20.4, 20.5, 20.7_
 
-- [ ] 2. Implement pure engine: Rank Bonus Calculator
-  - [ ] 2.1 Implement `src/engine/rank-bonus.ts`
+- [x] 2. Implement pure engine: Rank Bonus Calculator
+  - [x] 2.1 Implement `src/engine/rank-bonus.ts`
     - Export `computeRankBonus(rank: number): number` implementing the piecewise formula
     - Rank 0 → 0; ranks 1–10 → rank × 5; ranks 11–20 → 50 + (rank − 10) × 2; ranks 21+ → 70 + (rank − 20) × 1
     - _Requirements: 1.6, 21.3_
 
-  - [ ]* 2.2 Write property test for Rank Bonus (Property 1)
+  - [x] 2.2 Write property test for Rank Bonus (Property 1)
     - **Property 1: Rank Bonus Piecewise Formula**
     - **Validates: Requirements 1.6**
     - Create `tests/engine/rank-bonus.property.test.ts`
