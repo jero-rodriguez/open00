@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/jero-rodriguez/open00/compare/v1.0.0...v1.1.0) (2026-08-17)
+
+
+### Features
+
+* Implement pure engine: Rank Bonus Calculator ([ad599ad](https://github.com/jero-rodriguez/open00/commit/ad599add8bae1350424c595fc21e1152e804e850))
+
 ## 1.0.0 (2026-08-17)
 
 
