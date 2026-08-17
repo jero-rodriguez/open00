@@ -1,0 +1,22 @@
+{
+  "name": "vsd-foundry-system",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Against the Darkmaster (VsD) system for Foundry VTT v14",
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "fast-check": "^4.1.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-static-copy": "^3.0.0",
+    "vitest": "^3.2.1"
+  },
+  "license": "MIT"
+}
