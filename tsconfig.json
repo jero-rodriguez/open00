@@ -12,14 +12,20 @@
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "src",
-    "baseUrl": ".",
     "paths": {
-      "@engine/*": ["src/engine/*"],
-      "@models/*": ["src/models/*"],
-      "@sheets/*": ["src/sheets/*"],
-      "@data/*": ["src/data/*"]
+      "@engine/*": ["./src/engine/*"],
+      "@models/*": ["./src/models/*"],
+      "@sheets/*": ["./src/sheets/*"],
+      "@data/*": ["./src/data/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/types/**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "include": [
+    "src/**/*.ts",
+    "src/types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests"
+  ]
 }
