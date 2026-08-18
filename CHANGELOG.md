@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/jero-rodriguez/open00/compare/v1.8.0...v1.9.0) (2026-08-18)
+
+
+### Features
+
+* Implement Item TypeDataModels ([bee8e73](https://github.com/jero-rodriguez/open00/commit/bee8e73d193efd4bfc3aaaa55aa78abe52c01c83))
+
 ## [1.8.0](https://github.com/jero-rodriguez/open00/compare/v1.7.0...v1.8.0) (2026-08-18)
 
 
