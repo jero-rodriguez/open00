@@ -62,26 +62,26 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Create `tests/engine/dice-engine.property.test.ts`
     - Test roll computation correctness for deterministic sources and format round-trip consistency
 
-- [ ] 5. Implement pure engine: Spell Casting and Encumbrance
-  - [ ] 5.1 Implement `src/engine/spell-casting.ts`
+- [x] 5. Implement pure engine: Spell Casting and Encumbrance
+  - [x] 5.1 Implement `src/engine/spell-casting.ts`
     - Export `detectMagicalResonance(d100Value: number): boolean` — true when tens digit equals units digit
     - Export `computeSpellTotal(skillBonus: number, rollResult: number, casterLevel: number): number`
     - _Requirements: 6.1, 6.2, 6.7, 21.3_
 
-  - [ ]* 5.2 Write property tests for Spell Casting (Properties 5 and 6)
+  - [x] 5.2 Write property tests for Spell Casting (Properties 5 and 6)
     - **Property 5: Magical Resonance Detection**
     - **Validates: Requirements 6.2, 6.7**
     - **Property 6: Spell Casting Total Formula**
     - **Validates: Requirements 6.1**
     - Create `tests/engine/spell-casting.property.test.ts`
 
-  - [ ] 5.3 Implement `src/engine/encumbrance.ts`
+  - [x] 5.3 Implement `src/engine/encumbrance.ts`
     - Export `determineEncumbranceLevel(totalPoints: number, brawn: number): EncumbranceLevel`
     - Export `getEncumbrancePenalties(level: EncumbranceLevel): EncumbrancePenalties`
     - Export `computeTotalEncumbrance(items: {encumbrance: number, quantity: number}[]): number`
     - _Requirements: 16.1, 16.2, 16.3, 16.4, 16.6_
 
-  - [ ]* 5.4 Write property tests for Encumbrance (Properties 7 and 8)
+  - [x] 5.4 Write property tests for Encumbrance (Properties 7 and 8)
     - **Property 7: Encumbrance Level Determination**
     - **Validates: Requirements 16.2, 16.3, 16.6**
     - **Property 8: Encumbrance Total Calculation**
