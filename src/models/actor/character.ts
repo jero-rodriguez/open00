@@ -5,7 +5,7 @@
  * defense, encumbrance level, and wealth.
  */
 
-const { SchemaField, NumberField, StringField } = foundry.data.fields;
+const { SchemaField, NumberField, StringField, ArrayField } = foundry.data.fields;
 
 export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
@@ -65,6 +65,17 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
         total: new NumberField({ integer: true, min: 0, initial: 0 }),
         dp: new NumberField({ integer: true, min: 0, initial: 0 }),
       }),
+
+      // Skills array (Req 1.11, 1.12)
+      skills: new ArrayField(
+        new SchemaField({
+          name: new StringField({ required: true, initial: '' }),
+          category: new StringField({ required: true, initial: '' }),
+          rank: new NumberField({ integer: true, min: 0, max: 30, initial: 0 }),
+          statKey: new StringField({ required: true, initial: '' }),
+          itemModifiers: new NumberField({ integer: true, initial: 0 }),
+        }),
+      ),
     };
   }
 }
