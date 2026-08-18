@@ -170,7 +170,7 @@ interface RollResult {
   isOpenEndedLow: boolean;
 }
 
-/** Compute open-ended d100 roll. Max 10 explosions. */
+/** Compute open-ended d100 roll. No explosion cap. */
 export function computeOpenEndedRoll(source: RollSource): RollResult;
 
 /** Format a RollResult into display components for chat */
@@ -473,10 +473,9 @@ And the result SHALL be monotonically non-decreasing: for any ranks a ≤ b, `co
 - If the first roll is 6–95: return that value as the total
 - If the first roll is ≥ 96: add it to a running total and continue rolling, adding subsequent rolls while they are ≥ 96, stopping when a roll is ≤ 95 (adding the final roll)
 - If the first roll is ≤ 5: keep the initial value, roll again and subtract it; if that subtraction roll is ≥ 96, continue subtracting while subsequent rolls are ≥ 96
-- Never exceed 10 explosion rolls
 - The computed total SHALL equal the sum of all high-explosion rolls plus the final roll (for high), or the initial roll minus the sum of subtraction rolls (for low)
 
-**Validates: Requirements 4.1, 4.2, 4.3, 4.8**
+**Validates: Requirements 4.1, 4.2, 4.3**
 
 ### Property 4: Roll Display Round-Trip
 

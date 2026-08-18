@@ -105,7 +105,6 @@ This document specifies the requirements for a FoundryVTT v14 game system implem
 5. WHEN a roll is executed, THE Dice_Engine SHALL display each individual die result in the FoundryVTT chat message with an upward arrow symbol preceding each high open-ended explosion roll and a downward arrow symbol preceding each low open-ended explosion roll
 6. THE Dice_Engine SHALL ensure that parsing the chat output and extracting the displayed numeric total produces the same value as the computed roll result for any sequence of d100 values (round-trip property)
 7. THE Dice_Engine SHALL format chat messages using FoundryVTT Roll class integration for tooltip display of individual dice
-8. THE Dice_Engine SHALL cap any single open-ended roll sequence at a maximum of 10 consecutive explosion rolls, treating the 10th roll as the final result regardless of its value
 
 ### Requirement 5: Action Resolution Table
 
