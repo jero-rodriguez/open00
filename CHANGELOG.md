@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/jero-rodriguez/open00/compare/v1.10.0...v1.11.0) (2026-08-18)
+
+
+### Features
+
+* Implement Character Sheet (ApplicationV2) — structure and Overview ([308d7bd](https://github.com/jero-rodriguez/open00/commit/308d7bdc7abfa84baaee8624d207c390059a2d37))
+
 ## [1.10.0](https://github.com/jero-rodriguez/open00/compare/v1.9.0...v1.10.0) (2026-08-18)
 
 
