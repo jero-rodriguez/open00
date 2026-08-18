@@ -193,18 +193,17 @@ describe('Combat Phase Functions – Property 13: Condition Duration Decrement',
       fc.property(conditionArray, (conditions) => {
         const result = decrementConditions(conditions);
 
-        // If result is empty, order is trivially preserved
-        if (result.length === 0) {
-          return;
-        }
-
-        // Check that remaining conditions appear in the same relative order
-        let prevIndex = -1;
-        for (const r of result) {
-          const originalIndex = conditions.findIndex((c) => c.name === r.name);
-          expect(originalIndex).toBeGreaterThan(prevIndex);
-          prevIndex = originalIndex;
-        }
+        // Verify: the result is the conditions array with:
+        // 1. Each duration decremented by 1
+        // 2. Any with original duration <= 1 removed
+        // 3. Order preserved from the original array
+        
+        // Build expected result manually
+        const expected = conditions
+          .filter((c) => c.duration > 1)
+          .map((c) => ({ name: c.name, duration: c.duration - 1 }));
+        
+        expect(result).toEqual(expected);
       }),
       { numRuns: 100 },
     );
