@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/jero-rodriguez/open00/compare/v1.3.0...v1.4.0) (2026-08-18)
+
+
+### Features
+
+* Implement pure engine: Encumbrance ([37ec608](https://github.com/jero-rodriguez/open00/commit/37ec60818e00e214558154572aa23d973d87f526))
+* Implement pure engine: Spell Casting ([81dd26a](https://github.com/jero-rodriguez/open00/commit/81dd26a1ed92472087194e2c143b867adee819ff))
+
 ## [1.3.0](https://github.com/jero-rodriguez/open00/compare/v1.2.0...v1.3.0) (2026-08-18)
 
 
