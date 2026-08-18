@@ -47,14 +47,14 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Create `tests/engine/action-resolution.property.test.ts`
     - Test boundary correctness and total coverage for any integer input
 
-- [ ] 4. Implement pure engine: Dice Engine
-  - [ ] 4.1 Implement `src/engine/dice-engine.ts`
+- [x] 4. Implement pure engine: Dice Engine
+  - [x] 4.1 Implement `src/engine/dice-engine.ts`
     - Define `RollSource` type, `RollResult` interface
     - Export `computeOpenEndedRoll(source: RollSource): RollResult` with open-ended high (≥96), open-ended low (≤5), no explosion cap
     - Export `formatRollDisplay(result: RollResult): string` with arrow indicators for explosion rolls
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.7_
 
-  - [ ]* 4.2 Write property tests for Dice Engine (Properties 3 and 4)
+  - [x] 4.2 Write property tests for Dice Engine (Properties 3 and 4)
     - **Property 3: Open-Ended Roll Computation**
     - **Validates: Requirements 4.1, 4.2, 4.3**
     - **Property 4: Roll Display Round-Trip**
