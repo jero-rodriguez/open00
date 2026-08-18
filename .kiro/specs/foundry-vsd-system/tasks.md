@@ -275,14 +275,14 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
 - [ ] 15. Checkpoint - Data models and registration complete
   - Ensure all tests pass via `tsc --noEmit`, ask the user if questions arise.
 
-- [ ] 16. Implement Character Sheet (ApplicationV2) — structure and Overview
-  - [ ] 16.1 Implement `src/sheets/character-sheet.ts` base class with six tabs
+- [x] 16. Implement Character Sheet (ApplicationV2) — structure and Overview
+  - [x] 16.1 Implement `src/sheets/character-sheet.ts` base class with six tabs
     - Extend ApplicationV2 (ActorSheetV2)
     - Create Handlebars templates in `src/templates/actors/` for each tab: Overview, Skills, Combat, Magic, Equipment, Biography
     - Implement tab switching, data binding, and field rendering
     - _Requirements: 8.1, 8.11_
 
-  - [ ] 16.2 Implement Overview tab content
+  - [x] 16.2 Implement Overview tab content
     - Display six stats with computed bonuses
     - Display Passions (Nature/Allegiance/Motivation), Drive Points, Heroic Path
     - _Requirements: 8.2, 8.3_
