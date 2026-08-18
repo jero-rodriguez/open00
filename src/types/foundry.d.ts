@@ -92,3 +92,13 @@ declare namespace foundry {
     }
   }
 }
+
+// FoundryVTT CONFIG global
+declare const CONFIG: {
+  Actor: {
+    dataModels: Record<string, typeof foundry.abstract.TypeDataModel>;
+  };
+  Item: {
+    dataModels: Record<string, typeof foundry.abstract.TypeDataModel>;
+  };
+};
