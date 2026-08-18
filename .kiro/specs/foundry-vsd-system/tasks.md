@@ -187,14 +187,14 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - _Requirements: 1.12, 1.13_
 
 - [ ] 9. Implement NpcDataModel
-  - [ ] 9.1 Create `src/models/actor/npc.ts` — NpcDataModel base fields
+  - [x] 9.1 Create `src/models/actor/npc.ts` — NpcDataModel base fields
     - Define `defineSchema()` with `level` (NumberField, min: 1, initial: 1), `hp.value`, `hp.max` (NumberField), `defense` (NumberField), `initiativeModifier` (NumberField), `movementRate` (NumberField)
     - Add `resistances` as SchemaField: `stamina` (NumberField), `will` (NumberField), `magic` (NumberField)
     - Export the class extending `foundry.abstract.TypeDataModel`
     - Verify with `tsc --noEmit`
     - _Requirements: 2.1, 2.2, 2.3_
 
-  - [ ] 9.2 Add attacks, skills, and abilities arrays to NpcDataModel
+  - [x] 9.2 Add attacks, skills, and abilities arrays to NpcDataModel
     - Add `attacks` as ArrayField (max 10 entries) of SchemaField: `name`, `bonus` (NumberField), `tableId` (StringField), `damage` (NumberField)
     - Add `skillBonuses` as ArrayField (max 30 entries) of SchemaField: `name`, `bonus` (NumberField)
     - Add `specialAbilities` as ArrayField (max 20 entries) of SchemaField: `name`, `description`
