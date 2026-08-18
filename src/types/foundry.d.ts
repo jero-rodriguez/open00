@@ -210,3 +210,40 @@ declare const CONFIG: {
     dataModels: Record<string, typeof foundry.abstract.TypeDataModel>;
   };
 };
+
+// FoundryVTT game global
+declare const game: {
+  i18n: {
+    localize(key: string): string;
+  };
+  user: {
+    name?: string;
+  };
+};
+
+// FoundryVTT Roll class
+declare class Roll {
+  constructor(formula: string);
+  evaluate(): Promise<void>;
+  toMessage(options: {
+    speaker?: { alias?: string };
+    content?: string;
+  }): Promise<unknown>;
+}
+
+// FoundryVTT ChatMessage class
+declare const ChatMessage: {
+  getSpeaker(options?: { alias?: string }): { alias?: string };
+  create(data: {
+    speaker?: { alias?: string };
+    content?: string;
+    type?: number;
+  }): Promise<unknown>;
+};
+
+// FoundryVTT constants
+declare const CONST: {
+  CHAT_MESSAGE_TYPES: {
+    ROLL: number;
+  };
+};
