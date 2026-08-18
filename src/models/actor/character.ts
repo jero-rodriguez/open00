@@ -49,6 +49,22 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
 
       // Wealth level (0-5)
       wealth: new NumberField({ integer: true, min: 0, max: 5, initial: 0 }),
+
+      // Passions: Nature, Allegiance, Motivation (Req 1.7)
+      passions: new SchemaField({
+        nature: new StringField({ initial: '' }),
+        allegiance: new StringField({ initial: '' }),
+        motivation: new StringField({ initial: '' }),
+      }),
+
+      // Heroic Path (Req 1.9)
+      heroicPath: new StringField({ initial: '' }),
+
+      // Experience and Development Points (Req 1.10)
+      experience: new SchemaField({
+        total: new NumberField({ integer: true, min: 0, initial: 0 }),
+        dp: new NumberField({ integer: true, min: 0, initial: 0 }),
+      }),
     };
   }
 }
