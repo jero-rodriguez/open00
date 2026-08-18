@@ -7,7 +7,7 @@
  * Requirements: 2.1, 2.2, 2.3
  */
 
-const { SchemaField, NumberField } = foundry.data.fields;
+const { SchemaField, NumberField, StringField, ArrayField } = foundry.data.fields;
 
 export class NpcDataModel extends foundry.abstract.TypeDataModel {
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
@@ -36,6 +36,35 @@ export class NpcDataModel extends foundry.abstract.TypeDataModel {
         will: new NumberField({ integer: true, min: 0, initial: 0 }),
         magic: new NumberField({ integer: true, min: 0, initial: 0 }),
       }),
+
+      // Attacks (max 10 entries) — Req 2.4
+      attacks: new ArrayField(
+        new SchemaField({
+          name: new StringField({ max: 80, initial: '' }),
+          bonus: new NumberField({ integer: true, initial: 0 }),
+          tableId: new StringField({ initial: '' }),
+          damage: new NumberField({ integer: true, initial: 0 }),
+        }),
+        { max: 10 }
+      ),
+
+      // Skill bonuses (max 30 entries) — Req 2.5
+      skillBonuses: new ArrayField(
+        new SchemaField({
+          name: new StringField({ max: 80, initial: '' }),
+          bonus: new NumberField({ integer: true, initial: 0 }),
+        }),
+        { max: 30 }
+      ),
+
+      // Special abilities (max 20 entries) — Req 2.6
+      specialAbilities: new ArrayField(
+        new SchemaField({
+          name: new StringField({ max: 80, initial: '' }),
+          description: new StringField({ max: 500, initial: '' }),
+        }),
+        { max: 20 }
+      ),
     };
   }
 }

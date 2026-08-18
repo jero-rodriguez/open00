@@ -40,6 +40,7 @@ declare namespace foundry {
         initial?: string;
         blank?: boolean;
         trim?: boolean;
+        max?: number;
         choices?: readonly string[] | Record<string, string>;
       }
 
@@ -49,6 +50,7 @@ declare namespace foundry {
 
       interface ArrayFieldOptions extends DataFieldOptions {
         initial?: unknown[];
+        max?: number;
       }
 
       interface SchemaFieldOptions extends DataFieldOptions {}
