@@ -13,6 +13,9 @@ import { VocationDataModel } from './models/item/vocation.js';
 import { KinTraitDataModel } from './models/item/kin-trait.js';
 import { ItemOfPowerDataModel } from './models/item/item-of-power.js';
 
+// Sheets
+import { VsdCharacterSheet } from './sheets/character-sheet.js';
+
 Hooks.once('init', () => {
   // Register Actor data models
   CONFIG.Actor.dataModels.character = CharacterDataModel;
@@ -28,4 +31,7 @@ Hooks.once('init', () => {
   CONFIG.Item.dataModels.vocation = VocationDataModel;
   CONFIG.Item.dataModels.trait = KinTraitDataModel;
   CONFIG.Item.dataModels.itemOfPower = ItemOfPowerDataModel;
+
+  // Register Actor sheets
+  Actors.registerSheet('vsd', VsdCharacterSheet, { types: ['character'], makeDefault: true });
 });

@@ -93,6 +93,114 @@ declare namespace foundry {
   }
 }
 
+// FoundryVTT ApplicationV2 and Sheet APIs
+declare namespace foundry {
+  namespace applications {
+    namespace api {
+      interface ApplicationPosition {
+        width?: number;
+        height?: number;
+        top?: number;
+        left?: number;
+      }
+
+      interface ApplicationWindowOptions {
+        title?: string;
+        resizable?: boolean;
+        minimizable?: boolean;
+      }
+
+      interface ApplicationConfiguration {
+        id?: string;
+        classes?: string[];
+        tag?: string;
+        position?: ApplicationPosition;
+        window?: ApplicationWindowOptions;
+        actions?: Record<string, (event: Event, target: HTMLElement) => void>;
+      }
+
+      interface ApplicationRenderOptions {
+        force?: boolean;
+        parts?: string[];
+        [key: string]: unknown;
+      }
+
+      interface ApplicationPartDefinition {
+        template: string;
+        scrollable?: string[];
+      }
+
+      class ApplicationV2 {
+        static DEFAULT_OPTIONS: ApplicationConfiguration;
+        static PARTS: Record<string, ApplicationPartDefinition>;
+        get document(): Actor;
+        tabGroups: Record<string, string>;
+        _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
+        _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
+      }
+
+      /** Mixin that adds Handlebars template rendering to ApplicationV2 */
+      function HandlebarsApplicationMixin<T extends new (...args: unknown[]) => ApplicationV2>(
+        base: T
+      ): T;
+    }
+
+    namespace sheets {
+      class ActorSheetV2 extends foundry.applications.api.ApplicationV2 {
+        static DEFAULT_OPTIONS: foundry.applications.api.ApplicationConfiguration;
+        static PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition>;
+        get actor(): Actor;
+        get document(): Actor;
+      }
+    }
+  }
+}
+
+/** FoundryVTT Actor document */
+declare class Actor {
+  name: string;
+  img: string;
+  type: string;
+  system: Record<string, unknown>;
+  items: Collection<Item>;
+  update(data: Record<string, unknown>): Promise<this>;
+}
+
+/** FoundryVTT Item document */
+declare class Item {
+  name: string;
+  img: string;
+  type: string;
+  system: Record<string, unknown>;
+}
+
+/** FoundryVTT Collection */
+declare class Collection<T> implements Iterable<T> {
+  [Symbol.iterator](): Iterator<T>;
+  get size(): number;
+  filter(fn: (item: T) => boolean): T[];
+  map<U>(fn: (item: T) => U): U[];
+  contents: T[];
+}
+
+/** Actors global namespace for sheet registration */
+declare const Actors: {
+  registerSheet(
+    scope: string,
+    sheetClass: typeof foundry.applications.sheets.ActorSheetV2,
+    options?: { types?: string[]; makeDefault?: boolean; label?: string }
+  ): void;
+};
+
+/** Items global namespace for sheet registration */
+declare const Items: {
+  registerSheet(
+    scope: string,
+    sheetClass: unknown,
+    options?: { types?: string[]; makeDefault?: boolean; label?: string }
+  ): void;
+};
+
 // FoundryVTT CONFIG global
 declare const CONFIG: {
   Actor: {
