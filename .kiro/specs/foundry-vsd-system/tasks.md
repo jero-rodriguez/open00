@@ -259,14 +259,14 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Verify with `tsc --noEmit`
     - _Requirements: 3.9, 22.1, 22.4_
 
-- [ ] 14. Wire registration in entry point and system.json
-  - [ ] 14.1 Register Actor data models in `src/vsd-system.ts`
+- [x] 14. Wire registration in entry point and system.json
+  - [x] 14.1 Register Actor data models in `src/vsd-system.ts`
     - Import CharacterDataModel and NpcDataModel
     - Register in `CONFIG.Actor.dataModels` within `Hooks.once('init', ...)`
     - Verify with `tsc --noEmit`
     - _Requirements: 1.13, 2.6, 21.5_
 
-  - [ ] 14.2 Register Item data models in `src/vsd-system.ts`
+  - [x] 14.2 Register Item data models in `src/vsd-system.ts`
     - Import all Item data models (Weapon, Armor, Spell, Equipment, Kin, Culture, Vocation, Trait, ItemOfPower)
     - Register in `CONFIG.Item.dataModels` within `Hooks.once('init', ...)`
     - Verify with `tsc --noEmit`
