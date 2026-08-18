@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.7.0](https://github.com/jero-rodriguez/open00/compare/v1.6.0...v1.7.0) (2026-08-18)
+
+
+### Features
+
+* Add attacks, skills, and abilities arrays to NpcDataModel ([bd9ec61](https://github.com/jero-rodriguez/open00/commit/bd9ec619ab4e0ad40f4e3249f8a70f6dc5f4def7))
+* NpcDataModel implementing the base fields ([bddf85a](https://github.com/jero-rodriguez/open00/commit/bddf85a9544af47d64c5556c4a3b16489999bbf4))
+
 ## [1.6.0](https://github.com/jero-rodriguez/open00/compare/v1.5.0...v1.6.0) (2026-08-18)
 
 
