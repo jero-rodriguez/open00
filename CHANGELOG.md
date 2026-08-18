@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/jero-rodriguez/open00/compare/v1.7.0...v1.8.0) (2026-08-18)
+
+
+### Features
+
+* Implement Item TypeDataModels: Weapon and Armor ([c36c25c](https://github.com/jero-rodriguez/open00/commit/c36c25cd0d9d8d10b7c354d9d1d40566550ef5fe))
+
 ## [1.7.0](https://github.com/jero-rodriguez/open00/compare/v1.6.0...v1.7.0) (2026-08-18)
 
 
