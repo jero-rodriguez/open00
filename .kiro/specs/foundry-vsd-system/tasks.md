@@ -214,46 +214,46 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Verify with `tsc --noEmit`
     - _Requirements: 3.2_
 
-- [ ] 11. Implement Item TypeDataModels: Spell and Equipment
-  - [ ] 11.1 Implement `src/models/item/spell.ts` — SpellDataModel
+- [x] 11. Implement Item TypeDataModels: Spell and Equipment
+  - [x] 11.1 Implement `src/models/item/spell.ts` — SpellDataModel
     - Define `defineSchema()` with `weaveNumber` (NumberField, min: 1, max: 10, initial: 1), `spellLore` (StringField), `description` (HTMLField), `range` (StringField), `duration` (StringField), `areaOfEffect` (StringField), `castingTime` (StringField)
     - Add derived getter `get mpCost() { return this.weaveNumber; }`
     - Verify with `tsc --noEmit`
     - _Requirements: 3.3, 3.11_
 
-  - [ ] 11.2 Implement `src/models/item/equipment.ts` — EquipmentDataModel
+  - [x] 11.2 Implement `src/models/item/equipment.ts` — EquipmentDataModel
     - Define `defineSchema()` with `description` (HTMLField), `quantity` (NumberField, min: 0, max: 999, initial: 1), `weight` (NumberField, min: 0), `encumbranceContribution` (NumberField, min: 0), `wealthRequirement` (NumberField, min: 0, max: 5, initial: 0)
     - Export the class
     - Verify with `tsc --noEmit`
     - _Requirements: 3.4_
 
-- [ ] 12. Implement Item TypeDataModels: Kin, Culture, Vocation
-  - [ ] 12.1 Implement `src/models/item/kin.ts` — KinDataModel
+- [x] 12. Implement Item TypeDataModels: Kin, Culture, Vocation
+  - [x] 12.1 Implement `src/models/item/kin.ts` — KinDataModel
     - Define `defineSchema()` with `statModifiers` (SchemaField with BRN/SWI/FOR/WIT/WSD/BEA as NumberField), `specialAbilities` (ArrayField of StringField), `backgroundPoints` (NumberField, min: 0), `resistances` (SchemaField: stamina/will/magic as NumberField), `baseHpModifier` (NumberField)
     - Export the class
     - Verify with `tsc --noEmit`
     - _Requirements: 3.5_
 
-  - [ ] 12.2 Implement `src/models/item/culture.ts` — CultureDataModel
+  - [x] 12.2 Implement `src/models/item/culture.ts` — CultureDataModel
     - Define `defineSchema()` with `skillRankAllocations` (ArrayField of SchemaField: skillName/ranks), `equipmentOptions` (ArrayField of StringField), `backgroundPoints` (NumberField, min: 0), `languages` (ArrayField of StringField)
     - Export the class
     - Verify with `tsc --noEmit`
     - _Requirements: 3.6_
 
-  - [ ] 12.3 Implement `src/models/item/vocation.ts` — VocationDataModel
+  - [x] 12.3 Implement `src/models/item/vocation.ts` — VocationDataModel
     - Define `defineSchema()` with `keyStats` (ArrayField of StringField, max 3), `favoredSkills` (ArrayField of StringField), `professionalAbilities` (ArrayField of StringField), `dpCostModifiers` (ArrayField of SchemaField: skillCategory/modifier), `baseSpellLores` (ArrayField of StringField)
     - Export the class
     - Verify with `tsc --noEmit`
     - _Requirements: 3.7_
 
-- [ ] 13. Implement Item TypeDataModels: Trait and ItemOfPower
-  - [ ] 13.1 Implement `src/models/item/trait.ts` — TraitDataModel
-    - Define `defineSchema()` with `category` (StringField, choices: ['Physical','Mental','Social','Special']), `description` (HTMLField), `mechanicalEffects` (ArrayField of StringField), `prerequisites` (ArrayField of StringField), `cost` (NumberField, min: 1, max: 10, initial: 1)
+- [x] 13. Implement Item TypeDataModels: Background and ItemOfPower
+  - [x] 13.1 Implement `src/models/item/background.ts` — BackgroundDataModel
+    - Define `defineSchema()` with `description` (HTMLField), `minor` (SchemaField with `narrativeRequirement`, `mechanicalEffects`, `cost`), `major` (SchemaField with `mechanicalEffects`, `cost`)
     - Export the class
     - Verify with `tsc --noEmit`
     - _Requirements: 3.8_
 
-  - [ ] 13.2 Implement `src/models/item/item-of-power.ts` — ItemOfPowerDataModel
+  - [x] 13.2 Implement `src/models/item/item-of-power.ts` — ItemOfPowerDataModel
     - Define `defineSchema()` with `powerDescription` (HTMLField), `affinityLevel` (NumberField, min: 0, max: 5, initial: 0), `attunementRequirements` (StringField), `attunementStatus` (BooleanField, initial: false), `mechanicalBonuses` (ArrayField of SchemaField: type/value)
     - Export the class
     - Verify with `tsc --noEmit`
