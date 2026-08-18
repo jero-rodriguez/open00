@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/jero-rodriguez/open00/compare/v1.1.0...v1.2.0) (2026-08-18)
+
+
+### Features
+
+* Implement pure engine: Action Resolution Table ([58c16e9](https://github.com/jero-rodriguez/open00/commit/58c16e9dccf9893d5b74162e70ba84ab16e14a76))
+
 ## [1.1.0](https://github.com/jero-rodriguez/open00/compare/v1.0.0...v1.1.0) (2026-08-17)
 
 
