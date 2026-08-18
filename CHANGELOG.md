@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/jero-rodriguez/open00/compare/v1.9.0...v1.10.0) (2026-08-18)
+
+
+### Features
+
+* Wire registration in entry point ([2c4bedc](https://github.com/jero-rodriguez/open00/commit/2c4bedc901dbf48e19c41ebeb6d8798236f35428))
+
 ## [1.9.0](https://github.com/jero-rodriguez/open00/compare/v1.8.0...v1.9.0) (2026-08-18)
 
 
