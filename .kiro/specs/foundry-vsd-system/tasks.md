@@ -202,13 +202,13 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - _Requirements: 2.4, 2.5, 2.6_
 
 - [ ] 10. Implement Item TypeDataModels: Weapon and Armor
-  - [ ] 10.1 Implement `src/models/item/weapon.ts` — WeaponDataModel
+  - [x] 10.1 Implement `src/models/item/weapon.ts` — WeaponDataModel
     - Define `defineSchema()` with `attackBonus` (NumberField), `attackTable` (StringField), `damage` (NumberField), `weaponGroup` (StringField), `reach` (StringField), `encumbrance` (NumberField), `fumbleRange` (NumberField, min: 1, max: 5, initial: 1)
     - Export the class
     - Verify with `tsc --noEmit`
     - _Requirements: 3.1_
 
-  - [ ] 10.2 Implement `src/models/item/armor.ts` — ArmorDataModel
+  - [x] 10.2 Implement `src/models/item/armor.ts` — ArmorDataModel
     - Define `defineSchema()` with `category` (StringField, choices: ['NA','LA','MA','HA'], initial: 'NA'), `defensePenalty` (NumberField, max: 0), `maneuverPenalty` (NumberField, max: 0), `encumbrance` (NumberField)
     - Export the class
     - Verify with `tsc --noEmit`
