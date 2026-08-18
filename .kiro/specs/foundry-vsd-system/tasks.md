@@ -156,131 +156,179 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
 - [x] 7. Checkpoint - Pure engine complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Implement TypeDataModels: Actor types
-  - [ ] 8.1 Implement `src/models/actor/character.ts` — CharacterDataModel
-    - Define `defineSchema()` with stats (BRN/SWI/FOR/WIT/WSD/BEA as signed integers -50 to +100), HP, MP, Drive Points, Passions, Heroic Path, Defense, Encumbrance, Wealth, Skills array, Experience/DP
-    - Implement `prepareDerivedData()` computing total skill bonus (stat value + rank bonus + item modifiers)
-    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 1.13_
+- [x] 8. Implement CharacterDataModel schema (stats and vitals)
+  - [x] 8.1 Create `src/models/actor/character.ts` with base schema
+    - Define `defineSchema()` with the 6 stats: BRN, SWI, FOR, WIT, WSD, BEA as `NumberField` (integer, min: -50, max: 100, initial: 0)
+    - Add HP fields: `hp.value` (NumberField, min: 0, initial: 0), `hp.max` (NumberField, min: 0, initial: 0)
+    - Add MP fields: `mp.value` (NumberField, min: 0, initial: 0), `mp.max` (NumberField, min: 0, initial: 0)
+    - Add Drive Points: `drivePoints.value` (NumberField, min: 0, initial: 0), `drivePoints.max` (NumberField, min: 0, initial: 5)
+    - Add Defense (NumberField, initial: 0), Encumbrance level (StringField, initial: 'unencumbered'), Wealth (NumberField, 0-5, initial: 0)
+    - Export the class extending `foundry.abstract.TypeDataModel`
+    - Verify with `tsc --noEmit`
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-  - [ ] 8.2 Implement `src/models/actor/npc.ts` — NpcDataModel
-    - Define `defineSchema()` with level, HP, defense, initiative modifier, movement rate, attacks (up to 10), skill bonuses (up to 30), special abilities (up to 20), resistances (Stamina/Will/Magic)
-    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
+  - [x] 8.2 Add Passions, Heroic Path, and Experience fields to CharacterDataModel
+    - Add Passions schema: `passions` as SchemaField with `nature` (StringField), `allegiance` (StringField), `motivation` (StringField)
+    - Add `heroicPath` (StringField, initial: '')
+    - Add Experience: `experience.total` (NumberField, min: 0, initial: 0), `experience.dp` (NumberField, min: 0, initial: 0)
+    - Verify with `tsc --noEmit`
+    - _Requirements: 1.7, 1.8, 1.9, 1.10_
 
-  - [ ]* 8.3 Write unit tests for Actor data model defaults and validation
-    - Test Character defaults on creation (HP=0, MP=0, DP=0, Defense=0, Unencumbered, Wealth=0)
-    - Test stat clamping to -50/+100 range
-    - Test NPC attack and skill bonus collection limits
-    - _Requirements: 1.3, 2.1_
+  - [x] 8.3 Add Skills array schema to CharacterDataModel
+    - Add `skills` as ArrayField of SchemaField entries with: `name` (StringField), `category` (StringField), `rank` (NumberField, min: 0, max: 30), `statKey` (StringField), `itemModifiers` (NumberField, initial: 0)
+    - Verify with `tsc --noEmit`
+    - _Requirements: 1.11, 1.12_
 
-- [ ] 9. Implement TypeDataModels: Item types
-  - [ ] 9.1 Implement `src/models/item/weapon.ts` — WeaponDataModel
-    - attackBonus, attackTable, damage, weaponGroup, reach, encumbrance, fumbleRange
+  - [x] 8.4 Implement `prepareDerivedData()` in CharacterDataModel
+    - Import `computeRankBonus` from `src/engine/rank-bonus.ts`
+    - For each skill, compute `totalBonus = statValue + computeRankBonus(rank) + itemModifiers`
+    - Store computed totals on a derived `skillTotals` map
+    - Verify with `tsc --noEmit`
+    - _Requirements: 1.12, 1.13_
+
+- [ ] 9. Implement NpcDataModel
+  - [ ] 9.1 Create `src/models/actor/npc.ts` — NpcDataModel base fields
+    - Define `defineSchema()` with `level` (NumberField, min: 1, initial: 1), `hp.value`, `hp.max` (NumberField), `defense` (NumberField), `initiativeModifier` (NumberField), `movementRate` (NumberField)
+    - Add `resistances` as SchemaField: `stamina` (NumberField), `will` (NumberField), `magic` (NumberField)
+    - Export the class extending `foundry.abstract.TypeDataModel`
+    - Verify with `tsc --noEmit`
+    - _Requirements: 2.1, 2.2, 2.3_
+
+  - [ ] 9.2 Add attacks, skills, and abilities arrays to NpcDataModel
+    - Add `attacks` as ArrayField (max 10 entries) of SchemaField: `name`, `bonus` (NumberField), `tableId` (StringField), `damage` (NumberField)
+    - Add `skillBonuses` as ArrayField (max 30 entries) of SchemaField: `name`, `bonus` (NumberField)
+    - Add `specialAbilities` as ArrayField (max 20 entries) of SchemaField: `name`, `description`
+    - Verify with `tsc --noEmit`
+    - _Requirements: 2.4, 2.5, 2.6_
+
+- [ ] 10. Implement Item TypeDataModels: Weapon and Armor
+  - [ ] 10.1 Implement `src/models/item/weapon.ts` — WeaponDataModel
+    - Define `defineSchema()` with `attackBonus` (NumberField), `attackTable` (StringField), `damage` (NumberField), `weaponGroup` (StringField), `reach` (StringField), `encumbrance` (NumberField), `fumbleRange` (NumberField, min: 1, max: 5, initial: 1)
+    - Export the class
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.1_
 
-  - [ ] 9.2 Implement `src/models/item/armor.ts` — ArmorDataModel
-    - category (NA/LA/MA/HA), defensePenalty, maneuverPenalty, encumbrance
+  - [ ] 10.2 Implement `src/models/item/armor.ts` — ArmorDataModel
+    - Define `defineSchema()` with `category` (StringField, choices: ['NA','LA','MA','HA'], initial: 'NA'), `defensePenalty` (NumberField, max: 0), `maneuverPenalty` (NumberField, max: 0), `encumbrance` (NumberField)
+    - Export the class
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.2_
 
-  - [ ] 9.3 Implement `src/models/item/spell.ts` — SpellDataModel
-    - weaveNumber (1-10), spellLore, description, range, duration, areaOfEffect, castingTime; MP cost = weaveNumber
+- [ ] 11. Implement Item TypeDataModels: Spell and Equipment
+  - [ ] 11.1 Implement `src/models/item/spell.ts` — SpellDataModel
+    - Define `defineSchema()` with `weaveNumber` (NumberField, min: 1, max: 10, initial: 1), `spellLore` (StringField), `description` (HTMLField), `range` (StringField), `duration` (StringField), `areaOfEffect` (StringField), `castingTime` (StringField)
+    - Add derived getter `get mpCost() { return this.weaveNumber; }`
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.3, 3.11_
 
-  - [ ] 9.4 Implement `src/models/item/equipment.ts` — EquipmentDataModel
-    - description, quantity (0-999), weight, encumbranceContribution, wealthRequirement (0-5)
+  - [ ] 11.2 Implement `src/models/item/equipment.ts` — EquipmentDataModel
+    - Define `defineSchema()` with `description` (HTMLField), `quantity` (NumberField, min: 0, max: 999, initial: 1), `weight` (NumberField, min: 0), `encumbranceContribution` (NumberField, min: 0), `wealthRequirement` (NumberField, min: 0, max: 5, initial: 0)
+    - Export the class
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.4_
 
-  - [ ] 9.5 Implement `src/models/item/kin.ts` — KinDataModel
-    - statModifiers, specialAbilities, backgroundPoints, resistances, baseHpModifier
+- [ ] 12. Implement Item TypeDataModels: Kin, Culture, Vocation
+  - [ ] 12.1 Implement `src/models/item/kin.ts` — KinDataModel
+    - Define `defineSchema()` with `statModifiers` (SchemaField with BRN/SWI/FOR/WIT/WSD/BEA as NumberField), `specialAbilities` (ArrayField of StringField), `backgroundPoints` (NumberField, min: 0), `resistances` (SchemaField: stamina/will/magic as NumberField), `baseHpModifier` (NumberField)
+    - Export the class
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.5_
 
-  - [ ] 9.6 Implement `src/models/item/culture.ts` — CultureDataModel
-    - skillRankAllocations, equipmentOptions, backgroundPoints, languages
+  - [ ] 12.2 Implement `src/models/item/culture.ts` — CultureDataModel
+    - Define `defineSchema()` with `skillRankAllocations` (ArrayField of SchemaField: skillName/ranks), `equipmentOptions` (ArrayField of StringField), `backgroundPoints` (NumberField, min: 0), `languages` (ArrayField of StringField)
+    - Export the class
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.6_
 
-  - [ ] 9.7 Implement `src/models/item/vocation.ts` — VocationDataModel
-    - keyStats (1-3), favoredSkills, professionalAbilities, dpCostModifiers, baseSpellLores
+  - [ ] 12.3 Implement `src/models/item/vocation.ts` — VocationDataModel
+    - Define `defineSchema()` with `keyStats` (ArrayField of StringField, max 3), `favoredSkills` (ArrayField of StringField), `professionalAbilities` (ArrayField of StringField), `dpCostModifiers` (ArrayField of SchemaField: skillCategory/modifier), `baseSpellLores` (ArrayField of StringField)
+    - Export the class
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.7_
 
-  - [ ] 9.8 Implement `src/models/item/trait.ts` — TraitDataModel
-    - category (Physical/Mental/Social/Special), description, mechanicalEffects, prerequisites, cost (1-10 BP)
+- [ ] 13. Implement Item TypeDataModels: Trait and ItemOfPower
+  - [ ] 13.1 Implement `src/models/item/trait.ts` — TraitDataModel
+    - Define `defineSchema()` with `category` (StringField, choices: ['Physical','Mental','Social','Special']), `description` (HTMLField), `mechanicalEffects` (ArrayField of StringField), `prerequisites` (ArrayField of StringField), `cost` (NumberField, min: 1, max: 10, initial: 1)
+    - Export the class
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.8_
 
-  - [ ] 9.9 Implement `src/models/item/item-of-power.ts` — ItemOfPowerDataModel
-    - powerDescription, affinityLevel (0-5), attunementRequirements, attunementStatus, mechanicalBonuses
+  - [ ] 13.2 Implement `src/models/item/item-of-power.ts` — ItemOfPowerDataModel
+    - Define `defineSchema()` with `powerDescription` (HTMLField), `affinityLevel` (NumberField, min: 0, max: 5, initial: 0), `attunementRequirements` (StringField), `attunementStatus` (BooleanField, initial: false), `mechanicalBonuses` (ArrayField of SchemaField: type/value)
+    - Export the class
+    - Verify with `tsc --noEmit`
     - _Requirements: 3.9, 22.1, 22.4_
 
-  - [ ]* 9.10 Write unit tests for Item data model defaults and validation
-    - Test default values for each item type when fields are invalid (Req 3.12)
-    - Test Spell MP cost equals weave number
-    - Test Armor category enum validation
-    - _Requirements: 3.10, 3.11, 3.12_
+- [ ] 14. Wire registration in entry point and system.json
+  - [ ] 14.1 Register Actor data models in `src/vsd-system.ts`
+    - Import CharacterDataModel and NpcDataModel
+    - Register in `CONFIG.Actor.dataModels` within `Hooks.once('init', ...)`
+    - Verify with `tsc --noEmit`
+    - _Requirements: 1.13, 2.6, 21.5_
 
-- [ ] 10. Wire registration in entry point and system.json
-  - [ ] 10.1 Complete `src/vsd-system.ts` registration
-    - Register all TypeDataModels in `CONFIG.Actor.dataModels` and `CONFIG.Item.dataModels`
-    - Register sheets via `Actors.registerSheet()` and `Items.registerSheet()`
-    - Set up Combat document class override for VsdCombat
-    - Import and wire all models and sheets
-    - _Requirements: 1.13, 2.6, 3.10, 21.5_
+  - [ ] 14.2 Register Item data models in `src/vsd-system.ts`
+    - Import all Item data models (Weapon, Armor, Spell, Equipment, Kin, Culture, Vocation, Trait, ItemOfPower)
+    - Register in `CONFIG.Item.dataModels` within `Hooks.once('init', ...)`
+    - Verify with `tsc --noEmit`
+    - _Requirements: 3.10, 21.5_
 
-- [ ] 11. Checkpoint - Data models and registration complete
-  - Ensure all tests pass, ask the user if questions arise.
+- [ ] 15. Checkpoint - Data models and registration complete
+  - Ensure all tests pass via `tsc --noEmit`, ask the user if questions arise.
 
-- [ ] 12. Implement Character Sheet (ApplicationV2)
-  - [ ] 12.1 Implement `src/sheets/character-sheet.ts` with six tabs
+- [ ] 16. Implement Character Sheet (ApplicationV2) — structure and Overview
+  - [ ] 16.1 Implement `src/sheets/character-sheet.ts` base class with six tabs
     - Extend ApplicationV2 (ActorSheetV2)
     - Create Handlebars templates in `src/templates/actors/` for each tab: Overview, Skills, Combat, Magic, Equipment, Biography
     - Implement tab switching, data binding, and field rendering
     - _Requirements: 8.1, 8.11_
 
-  - [ ] 12.2 Implement Overview tab content
+  - [ ] 16.2 Implement Overview tab content
     - Display six stats with computed bonuses
     - Display Passions (Nature/Allegiance/Motivation), Drive Points, Heroic Path
     - _Requirements: 8.2, 8.3_
 
-  - [ ] 12.3 Implement Skills tab with roll buttons
+- [ ] 17. Implement Character Sheet — Skills tab
+  - [ ] 17.1 Implement Skills tab with roll buttons
     - Display skills grouped by 7 categories with rank, rank bonus, stat bonus, total bonus
     - Skill roll buttons trigger Dice_Engine roll with skill total bonus, display in chat with skill name
     - _Requirements: 8.4, 8.5_
 
-  - [ ] 12.4 Implement Combat, Magic, Equipment, Biography tabs
+- [ ] 18. Implement Character Sheet — Combat, Magic, Equipment, Biography tabs
+  - [ ] 18.1 Implement Combat and Magic tabs
     - Combat: HP, Defense, equipped weapons/armor, active conditions
     - Magic: MP, spells by Spell Lore, casting bonuses
+    - _Requirements: 8.6, 8.7_
+
+  - [ ] 18.2 Implement Equipment and Biography tabs
     - Equipment: carried items, encumbrance level with progress bar, wealth level, Items of Power with affinity display
     - Biography: bio, appearance, Kin, Culture, Vocation, background notes
-    - _Requirements: 8.6, 8.7, 8.8, 8.9, 16.5, 22.3_
+    - _Requirements: 8.8, 8.9, 16.5, 22.3_
 
-  - [ ] 12.5 Implement auto-save on field edit
+  - [ ] 18.3 Implement auto-save on field edit
     - Persist changes on blur/Enter within 500ms debounce
     - On persistence failure, revert displayed value and show notification
     - _Requirements: 8.10, 8.12_
 
-  - [ ]* 12.6 Write unit tests for skill total bonus composition (Property 9)
-    - **Property 9: Total Skill Bonus Composition**
-    - **Validates: Requirements 1.12**
-    - Create `tests/engine/rank-bonus.property.test.ts` (append to existing or separate)
-    - Test stat value + rank bonus + sum of item modifiers
-
-- [ ] 13. Implement NPC Sheet (ApplicationV2)
-  - [ ] 13.1 Implement `src/sheets/npc-sheet.ts` — single-page layout
+- [ ] 19. Implement NPC Sheet (ApplicationV2)
+  - [ ] 19.1 Implement `src/sheets/npc-sheet.ts` — single-page layout
     - Extend ApplicationV2 (ActorSheetV2), no tabs
     - Create Handlebars template in `src/templates/actors/npc-sheet.hbs`
     - Display all NPC fields: level, HP, defense, initiative, movement, attacks, skills, abilities, resistances
     - _Requirements: 9.1, 9.2_
 
-  - [ ] 13.2 Implement NPC attack roll resolution
+  - [ ] 19.2 Implement NPC attack roll resolution
     - Attack click triggers open-ended roll with attack bonus
     - Prompt for target armor category
     - Resolve against attack table, display damage + critical in chat
     - Auto-roll critical table on critical hit
     - _Requirements: 9.3, 9.5_
 
-  - [ ] 13.3 Implement NPC field auto-save
+  - [ ] 19.3 Implement NPC field auto-save
     - Persist changes on field commit
     - _Requirements: 9.4_
 
-- [ ] 14. Implement Item Sheet (ApplicationV2)
-  - [ ] 14.1 Implement `src/sheets/item-sheet.ts` — polymorphic item sheet
+- [ ] 20. Implement Item Sheet (ApplicationV2)
+  - [ ] 20.1 Implement `src/sheets/item-sheet.ts` — polymorphic item sheet
     - Extend ApplicationV2 (ItemSheetV2)
     - Common header (name, description) + type-dispatched body
     - Create Handlebars templates in `src/templates/items/` for each item type
@@ -288,11 +336,11 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Auto-save on field commit
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9_
 
-- [ ] 15. Checkpoint - All sheets implemented
+- [ ] 21. Checkpoint - All sheets implemented
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 16. Implement Combat Tracker
-  - [ ] 16.1 Implement `src/sheets/combat-tracker.ts` — VsdCombatTracker
+- [ ] 22. Implement Combat Tracker
+  - [ ] 22.1 Implement `src/sheets/combat-tracker.ts` — VsdCombatTracker
     - Extend Foundry combat tracker with 9-phase management
     - Display current phase name and round number to all players
     - Implement advance/revert phase buttons
@@ -300,13 +348,13 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Clamp revert at Assessment round 1
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.7, 7.8_
 
-  - [ ] 16.2 Implement combatant action declaration and condition tracking
+  - [ ] 22.2 Implement combatant action declaration and condition tracking
     - Allow GM to assign declared actions to phases per combatant
     - Track conditions with integer duration (1-99), decrement on new round, remove at 0
     - _Requirements: 7.6, 7.9, 7.10_
 
-- [ ] 17. Implement Spell Casting integration
-  - [ ] 17.1 Implement spell casting flow in Character Sheet Magic tab
+- [ ] 23. Implement Spell Casting integration
+  - [ ] 23.1 Implement spell casting flow in Character Sheet Magic tab
     - Cast button computes total: skill bonus + open-ended d100 + (5 × level)
     - Deduct MP equal to weave number before resolution
     - Resolve against Action Resolution Table
@@ -314,44 +362,44 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Prevent cast if MP insufficient, show warning
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6_
 
-- [ ] 18. Implement Drive and Passions system integration
-  - [ ] 18.1 Implement Passion invocation in Character Sheet
+- [ ] 24. Implement Drive and Passions system integration
+  - [ ] 24.1 Implement Passion invocation in Character Sheet
     - Deduct 1 Drive Point on invocation, prompt for Passion selection, add +30 bonus
     - Prevent invocation if zero DP, display message
     - GM can award/remove Drive Points with clamping
     - Milestone completion increases max DP
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7_
 
-- [ ] 19. Implement Character Creation Wizard
-  - [ ] 19.1 Implement `src/sheets/creation-wizard.ts` — 8-step wizard
+- [ ] 25. Implement Character Creation Wizard
+  - [ ] 25.1 Implement `src/sheets/creation-wizard.ts` — 8-step wizard
     - Step structure: Concept, Kin, Culture, Stats, Vocation, Background Options, Skills, Equipment
     - Each step validates before allowing progression
     - Back navigation recalculates dependents, clears invalidated selections
     - _Requirements: 11.1, 11.9, 11.10, 11.11_
 
-  - [ ] 19.2 Implement Kin, Culture, Vocation selection steps
+  - [ ] 25.2 Implement Kin, Culture, Vocation selection steps
     - Kin: apply stat modifiers, abilities, background points
     - Culture: apply skill rank allocations, background points
     - Vocation: apply favored skills, DP cost modifiers, spell lores
     - _Requirements: 11.2, 11.3, 11.5_
 
-  - [ ] 19.3 Implement Stats, Background Options, Skills, Equipment steps
+  - [ ] 25.3 Implement Stats, Background Options, Skills, Equipment steps
     - Stats: point-buy or dice roll, assign to 6 stats, enforce all assigned before progression
     - Background Options: point-buy with combined Kin+Culture budget enforcement
     - Skills: display DP, vocation-modified costs, max rank 3 at level 1
     - Final confirmation: create Actor with all values computed
     - _Requirements: 11.4, 11.6, 11.7, 11.8_
 
-- [ ] 20. Implement Advancement Panel
-  - [ ] 20.1 Implement `src/sheets/advancement-panel.ts`
+- [ ] 26. Implement Advancement Panel
+  - [ ] 26.1 Implement `src/sheets/advancement-panel.ts`
     - Display remaining DP, per-skill costs (vocation-modified), current level, total XP, XP to next level
     - Level-up notification when XP threshold reached
     - DP allocation increases rank by 1, deducts cost; reject if insufficient DP or rank 30
     - Level-up grants HP, recalculates TSR/WSR (+5 per level), grants professional abilities
     - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8_
 
-- [ ] 21. Implement Travel Panel
-  - [ ] 21.1 Implement `src/sheets/travel-panel.ts`
+- [ ] 27. Implement Travel Panel
+  - [ ] 27.1 Implement `src/sheets/travel-panel.ts`
     - Prompt for terrain, weather, distance, pace
     - Compute duration via travel engine
     - Trigger hazard check, display result in chat
@@ -360,33 +408,33 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Indicate exhaustion for Forced March
     - _Requirements: 18.1, 18.2, 18.3, 18.4, 18.5, 18.6, 18.7, 18.8_
 
-- [ ] 22. Checkpoint - All interactive features complete
+- [ ] 28. Checkpoint - All interactive features complete
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 23. Implement Token Integration
-  - [ ] 23.1 Implement token HP bar and condition icons
+- [ ] 29. Implement Token Integration
+  - [ ] 29.1 Implement token HP bar and condition icons
     - HP bar as proportional fill (current/max), visible to owner and GM only
     - Active condition icons using game-icons.net SVGs (up to 10)
     - Severity differentiation via icon tint/border color
     - Real-time updates on HP/condition change for all clients
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6_
 
-- [ ] 24. Implement Localization
-  - [ ] 24.1 Create `src/lang/en.json` and `src/lang/es.json`
+- [ ] 30. Implement Localization
+  - [ ] 30.1 Create `src/lang/en.json` and `src/lang/es.json`
     - All UI labels, sheet fields, system messages, chat output, dialog text
     - Use `VSD.{Section}.{Label}` key pattern
     - Ensure no hardcoded user-visible strings in templates or code
     - Fallback to English for missing keys
     - _Requirements: 19.1, 19.2, 19.3, 19.4, 19.5, 19.6_
 
-- [ ] 25. Implement Static Data and Compendium Packs
-  - [ ] 25.1 Create static JSON data files
+- [ ] 31. Implement Static Data and Compendium Packs
+  - [ ] 31.1 Create static JSON data files
     - `src/data/attack-tables/*.json` — attack table data per weapon type
     - `src/data/critical-tables/*.json` — critical table data
     - `src/data/level-progression.json` — XP thresholds, DP grants, HP per vocation
     - _Requirements: 17.1, 17.4_
 
-  - [ ] 25.2 Create compendium packs
+  - [ ] 31.2 Create compendium packs
     - 13 Kins, 13 Cultures, 7 Vocations
     - Weapons, Armor, Equipment packs
     - Spells organized by Spell Lore
@@ -397,20 +445,20 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Names/descriptions in both English and Spanish
     - _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.8, 13.11, 13.12_
 
-  - [ ] 25.3 Implement compendium drag-and-drop behavior
+  - [ ] 31.3 Implement compendium drag-and-drop behavior
     - Drag compendium item onto Actor creates a copy
     - Kin/Culture/Vocation drag onto Character with existing same-type item shows replacement confirmation
     - _Requirements: 13.9, 13.10_
 
-- [ ] 26. Implement CSS styles
-  - [ ] 26.1 Create `src/styles/vsd-system.css`
+- [ ] 32. Implement CSS styles
+  - [ ] 32.1 Create `src/styles/vsd-system.css`
     - Use FoundryVTT V2 CSS variables and layout patterns
     - Adapt Roll20 VsD sheet organization to Foundry styling
     - Grid layouts for character sheet tabs, NPC compact layout, item sheets
     - Do not override Foundry core styles
     - _Requirements: 8.11_
 
-- [ ] 27. Final checkpoint - Full system integration
+- [ ] 33. Final checkpoint - Full system integration
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
@@ -427,6 +475,7 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
 - All pure engine functions are implemented and tested before Foundry-dependent code
 - TypeScript is used throughout with strict mode enabled
 - The `src/engine/` modules have zero imports from FoundryVTT (Requirement 21.7)
+- **Verification for Foundry-dependent code**: Use `tsc --noEmit` only. Do NOT attempt `npm test` or `vite build` for TypeDataModel or Sheet tasks — they require the Foundry runtime.
 
 ## Task Dependency Graph
 
@@ -439,22 +488,28 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     { "id": 3, "tasks": ["4.1", "4.2"] },
     { "id": 4, "tasks": ["5.1", "5.2", "5.3", "5.4"] },
     { "id": 5, "tasks": ["6.1", "6.2", "6.3", "6.4", "6.5", "6.6", "6.7", "6.8", "6.9", "6.10", "6.11", "6.12"] },
-    { "id": 6, "tasks": ["8.1", "8.2", "8.3"] },
-    { "id": 7, "tasks": ["9.1", "9.2", "9.3", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9", "9.10"] },
-    { "id": 8, "tasks": ["10.1"] },
-    { "id": 9, "tasks": ["26.1"] },
-    { "id": 10, "tasks": ["24.1"] },
-    { "id": 11, "tasks": ["12.1", "12.2", "12.3", "12.4", "12.5", "12.6"] },
-    { "id": 12, "tasks": ["13.1", "13.2", "13.3"] },
-    { "id": 13, "tasks": ["14.1"] },
-    { "id": 14, "tasks": ["16.1", "16.2"] },
-    { "id": 15, "tasks": ["17.1"] },
-    { "id": 16, "tasks": ["18.1"] },
-    { "id": 17, "tasks": ["19.1", "19.2", "19.3"] },
-    { "id": 18, "tasks": ["20.1"] },
-    { "id": 19, "tasks": ["21.1"] },
-    { "id": 20, "tasks": ["23.1"] },
-    { "id": 21, "tasks": ["25.1", "25.2", "25.3"] }
+    { "id": 6, "tasks": ["8.1", "8.2", "8.3", "8.4"] },
+    { "id": 7, "tasks": ["9.1", "9.2"] },
+    { "id": 8, "tasks": ["10.1", "10.2"] },
+    { "id": 9, "tasks": ["11.1", "11.2"] },
+    { "id": 10, "tasks": ["12.1", "12.2", "12.3"] },
+    { "id": 11, "tasks": ["13.1", "13.2"] },
+    { "id": 12, "tasks": ["14.1", "14.2"] },
+    { "id": 13, "tasks": ["16.1", "16.2"] },
+    { "id": 14, "tasks": ["17.1"] },
+    { "id": 15, "tasks": ["18.1", "18.2", "18.3"] },
+    { "id": 16, "tasks": ["19.1", "19.2", "19.3"] },
+    { "id": 17, "tasks": ["20.1"] },
+    { "id": 18, "tasks": ["22.1", "22.2"] },
+    { "id": 19, "tasks": ["23.1"] },
+    { "id": 20, "tasks": ["24.1"] },
+    { "id": 21, "tasks": ["25.1", "25.2", "25.3"] },
+    { "id": 22, "tasks": ["26.1"] },
+    { "id": 23, "tasks": ["27.1"] },
+    { "id": 24, "tasks": ["29.1"] },
+    { "id": 25, "tasks": ["30.1"] },
+    { "id": 26, "tasks": ["31.1", "31.2", "31.3"] },
+    { "id": 27, "tasks": ["32.1"] }
   ]
 }
 ```
