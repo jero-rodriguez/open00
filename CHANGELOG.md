@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/jero-rodriguez/open00/compare/v1.2.0...v1.3.0) (2026-08-18)
+
+
+### Features
+
+* Implement pure engine: Dice Engine ([25b2dad](https://github.com/jero-rodriguez/open00/commit/25b2dad6ad59f13b03cc128d03a0b33715c8e345))
+
 ## [1.2.0](https://github.com/jero-rodriguez/open00/compare/v1.1.0...v1.2.0) (2026-08-18)
 
 
