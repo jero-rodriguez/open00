@@ -88,15 +88,15 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - **Validates: Requirements 16.1**
     - Create `tests/engine/encumbrance.property.test.ts`
 
-- [ ] 6. Implement pure engine: Combat Phases, Drive Points, Attack Tables, Advancement, Affinity, Travel
-  - [ ] 6.1 Implement `src/engine/combat-phases.ts`
+- [x] 6. Implement pure engine: Combat Phases, Drive Points, Attack Tables, Advancement, Affinity, Travel
+  - [x] 6.1 Implement `src/engine/combat-phases.ts`
     - Export phase array constant (9 phases in order)
     - Export `advancePhase(phase: number, round: number): {phase: number, round: number}`
     - Export `revertPhase(phase: number, round: number): {phase: number, round: number}`
     - Export `decrementConditions(conditions: {name: string, duration: number}[]): {name: string, duration: number}[]`
     - _Requirements: 7.1, 7.3, 7.4, 7.7, 7.8, 7.10_
 
-  - [ ]* 6.2 Write property tests for Combat Phases (Properties 11, 12, 13)
+  - [x] 6.2 Write property tests for Combat Phases (Properties 11, 12, 13)
     - **Property 11: Combat Phase Cycling**
     - **Validates: Requirements 7.1, 7.3, 7.4**
     - **Property 12: Phase Advance/Revert Round-Trip**
@@ -105,55 +105,55 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - **Validates: Requirements 7.10**
     - Create `tests/engine/combat-phases.property.test.ts`
 
-  - [ ] 6.3 Implement `src/engine/drive-points.ts`
+  - [x] 6.3 Implement `src/engine/drive-points.ts`
     - Export `modifyDrivePoints(current: number, max: number, delta: number): number` — clamps to [0, max]
     - Export `invokePassion(current: number): {newCurrent: number, bonus: number} | {error: string}`
     - _Requirements: 15.1, 15.2, 15.3, 15.4, 15.7_
 
-  - [ ]* 6.4 Write property test for Drive Points (Property 10)
+  - [x] 6.4 Write property test for Drive Points (Property 10)
     - **Property 10: Drive Points Clamping Invariant**
     - **Validates: Requirements 1.8, 15.4, 15.7**
     - Create `tests/engine/drive-points.property.test.ts`
 
-  - [ ] 6.5 Implement `src/engine/attack-tables.ts`
+  - [x] 6.5 Implement `src/engine/attack-tables.ts`
     - Export `lookupAttackTable(rollTotal, tableId, armorCategory, tables): AttackResult | {error: string}`
     - Define `AttackResult`, `ArmorCategory`, `CriticalSeverity` types
     - _Requirements: 17.1, 17.2, 17.3, 17.6, 17.8_
 
-  - [ ]* 6.6 Write property test for Attack Tables (Property 14)
+  - [x] 6.6 Write property test for Attack Tables (Property 14)
     - **Property 14: Attack Table Lookup**
     - **Validates: Requirements 17.2, 17.6, 17.8**
     - Create `tests/engine/attack-tables.property.test.ts`
 
-  - [ ] 6.7 Implement `src/engine/advancement.ts`
+  - [x] 6.7 Implement `src/engine/advancement.ts`
     - Export `allocateDP(availableDP: number, cost: number, currentRank: number): {newRank: number, remainingDP: number} | {error: string}`
     - Export `checkLevelUp(totalXP: number, currentLevel: number, progressionTable: LevelEntry[]): boolean`
     - _Requirements: 12.1, 12.4, 12.5, 12.8_
 
-  - [ ]* 6.8 Write property test for Advancement (Property 15)
+  - [x] 6.8 Write property test for Advancement (Property 15)
     - **Property 15: DP Accounting Invariant**
     - **Validates: Requirements 11.7, 12.4, 12.5**
     - Create `tests/engine/advancement.property.test.ts`
 
-  - [ ] 6.9 Implement `src/engine/affinity.ts`
+  - [x] 6.9 Implement `src/engine/affinity.ts`
     - Export `getActiveBonuses(affinityLevel: number, isAttuned: boolean, bonuses: {threshold: number, effect: string}[]): {threshold: number, effect: string}[]`
     - _Requirements: 22.1, 22.2, 22.4, 22.5_
 
-  - [ ]* 6.10 Write property test for Affinity (Property 16)
+  - [x] 6.10 Write property test for Affinity (Property 16)
     - **Property 16: Affinity Bonus Activation**
     - **Validates: Requirements 22.2, 22.5**
     - Create `tests/engine/affinity.property.test.ts`
 
-  - [ ] 6.11 Implement `src/engine/travel.ts`
+  - [x] 6.11 Implement `src/engine/travel.ts`
     - Export `computeTravelDuration(distanceMiles: number, pace: TravelPace, terrainModifier: number, partyMovementRate: number): number`
     - _Requirements: 18.1, 18.3_
 
-  - [ ]* 6.12 Write property test for Travel (Property 17)
+  - [x] 6.12 Write property test for Travel (Property 17)
     - **Property 17: Travel Duration Computation**
     - **Validates: Requirements 18.3**
     - Create `tests/engine/travel.property.test.ts`
 
-- [ ] 7. Checkpoint - Pure engine complete
+- [x] 7. Checkpoint - Pure engine complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 8. Implement TypeDataModels: Actor types
