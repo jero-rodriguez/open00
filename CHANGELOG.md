@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0](https://github.com/jero-rodriguez/open00/compare/v1.4.0...v1.5.0) (2026-08-18)
+
+
+### Features
+
+* Implement pure engine: Advancement ([4d8e690](https://github.com/jero-rodriguez/open00/commit/4d8e69010415e3916e628c5343699367b3a8f481))
+* Implement pure engine: Affinity ([ea3c0e5](https://github.com/jero-rodriguez/open00/commit/ea3c0e5cd7848ae9441bdf59d06ff43f0e016eed))
+* Implement pure engine: Attack Tables ([9263f6a](https://github.com/jero-rodriguez/open00/commit/9263f6a4867500041802bdeae594722a3bd9c78f))
+* Implement pure engine: Combat Phases ([d5b4cf2](https://github.com/jero-rodriguez/open00/commit/d5b4cf260c0db864445b371023d60d4e3fae76f7))
+* Implement pure engine: Drive Points ([53069b2](https://github.com/jero-rodriguez/open00/commit/53069b28bb16fe371a0a9bebb5bcbb161849f2ac))
+* Implement pure engine: Travel ([face411](https://github.com/jero-rodriguez/open00/commit/face4116094864157879be23544aaaff57754a13))
+
+
+### Bug Fixes
+
+* solve combat phase test ([f41924e](https://github.com/jero-rodriguez/open00/commit/f41924e1b3c82a64e2d21281b72504c357e47c4c))
+
 ## [1.4.0](https://github.com/jero-rodriguez/open00/compare/v1.3.0...v1.4.0) (2026-08-18)
 
 
