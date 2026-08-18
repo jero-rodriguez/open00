@@ -49,7 +49,7 @@ graph TD
             KIN_M[KinDataModel]
             CULT_M[CultureDataModel]
             VOC_M[VocationDataModel]
-            TRAIT_M[TraitDataModel]
+            BG_M[BackgroundDataModel]
             IOP_M[ItemOfPowerDataModel]
         end
 
