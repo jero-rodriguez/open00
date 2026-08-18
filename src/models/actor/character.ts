@@ -5,9 +5,17 @@
  * defense, encumbrance level, and wealth.
  */
 
+import { computeRankBonus } from '../../engine/rank-bonus.js';
+
 const { SchemaField, NumberField, StringField, ArrayField } = foundry.data.fields;
 
+/** Stat key identifiers matching the schema */
+type StatKey = 'brn' | 'swi' | 'for' | 'wit' | 'wsd' | 'bea';
+
 export class CharacterDataModel extends foundry.abstract.TypeDataModel {
+  /** Derived skill totals computed in prepareDerivedData(). Keyed by skill name. */
+  skillTotals: Map<string, number> = new Map();
+
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
       // Six stats: value IS the bonus (signed integer, -50 to +100)
@@ -77,5 +85,27 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
         }),
       ),
     };
+  }
+
+  /**
+   * Compute derived data for the character.
+   *
+   * Populates `skillTotals` map with totalBonus for each skill:
+   *   totalBonus = statValue + computeRankBonus(rank) + itemModifiers
+   *
+   * Requirements: 1.12, 1.13
+   */
+  override prepareDerivedData(): void {
+    this.skillTotals = new Map();
+
+    const stats = (this as unknown as { stats: Record<StatKey, number> }).stats;
+    const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; itemModifiers: number }> }).skills;
+
+    for (const skill of skills) {
+      const statValue = stats[skill.statKey as StatKey] ?? 0;
+      const rankBonus = computeRankBonus(skill.rank);
+      const totalBonus = statValue + rankBonus + skill.itemModifiers;
+      this.skillTotals.set(skill.name, totalBonus);
+    }
   }
 }
