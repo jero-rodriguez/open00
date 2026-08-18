@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.0](https://github.com/jero-rodriguez/open00/compare/v1.11.0...v1.12.0) (2026-08-18)
+
+
+### Features
+
+* Implement Skills tab with roll buttons ([bf5e717](https://github.com/jero-rodriguez/open00/commit/bf5e717c2c1c6171ead6f5f056cc8059878adb9a))
+
 ## [1.11.0](https://github.com/jero-rodriguez/open00/compare/v1.10.0...v1.11.0) (2026-08-18)
 
 
