@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.6.0](https://github.com/jero-rodriguez/open00/compare/v1.5.0...v1.6.0) (2026-08-18)
+
+
+### Features
+
+* add tasks ([bf00d0a](https://github.com/jero-rodriguez/open00/commit/bf00d0a114c1a24d24221f08901880865946681c))
+* Implement `prepareDerivedData()` in CharacterDataModel ([b3c6bb4](https://github.com/jero-rodriguez/open00/commit/b3c6bb47aeb54179883a35a546e8d18808352c00))
+* Implement CharacterDataModel schema: Add Passions, Heroic Path, and Experience fields ([806a8b8](https://github.com/jero-rodriguez/open00/commit/806a8b881bccfb47093a7438353cba022d47c183))
+* Implement CharacterDataModel schema: Add Skills array schema ([0e34f6a](https://github.com/jero-rodriguez/open00/commit/0e34f6a35d29b5c6b5817ec6a66fc68024044d79))
+* Implement CharacterDataModel schema. HP, MP, Drive, Defense ([9d0fc2a](https://github.com/jero-rodriguez/open00/commit/9d0fc2a88cc32dbd5152cca846ad205b69f39bfc))
+
 ## [1.5.0](https://github.com/jero-rodriguez/open00/compare/v1.4.0...v1.5.0) (2026-08-18)
 
 
