@@ -1,7 +1,8 @@
 /**
  * VsdCharacterSheet — ApplicationV2 sheet for the VsD Player Character actor type.
  *
- * Six tabs: Overview, Skills, Combat, Magic, Equipment, Biography.
+ * Five tabs: Overview (Skills), Combat, Magic, Equipment, Biography.
+ * Layout mirrors the Roll20 Against the Darkmaster sheet structure.
  * Uses HandlebarsApplicationMixin for template rendering.
  *
  * Requirements: 8.1, 8.8, 8.9, 8.10, 8.11, 16.5, 22.3
@@ -50,9 +51,6 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
   static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
     overview: {
       template: 'systems/vsd/templates/actors/character-overview.hbs',
-    },
-    skills: {
-      template: 'systems/vsd/templates/actors/character-skills.hbs',
     },
     combat: {
       template: 'systems/vsd/templates/actors/character-combat.hbs',
@@ -153,27 +151,13 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     const system = this.actor.system as Record<string, unknown>;
 
     switch (partId) {
-      case 'overview':
-        return {
-          ...context,
-          tab: 'overview',
-          stats: system['stats'],
-          hp: system['hp'],
-          mp: system['mp'],
-          drivePoints: system['drivePoints'],
-          passions: system['passions'],
-          heroicPath: system['heroicPath'],
-          defense: system['defense'],
-          encumbrance: system['encumbrance'],
-          wealth: system['wealth'],
-        };
-      case 'skills': {
+      case 'overview': {
         // Get skills and stats from actor system
         const skills = (system['skills'] as SkillData[]) || [];
         const stats = (system['stats'] as Record<string, number>) || {};
 
         // Compute skill details with bonuses (Req 8.4)
-        const skillDetails = skills.map(skill => {
+        const skillDetails = skills.map((skill, index) => {
           const statValue = stats[skill.statKey] || 0;
           const rankBonus = computeRankBonus(skill.rank);
           const statBonus = statValue; // In VsD, stat value IS the bonus
@@ -186,6 +170,7 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
             rankBonus,
             statBonus,
             totalBonus,
+            index,
           };
         });
 
@@ -196,11 +181,27 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
           return acc;
         }, {} as Record<string, typeof skillDetails>);
 
+        // Compute save rolls (Toughness = FOR, Willpower = WSD)
+        const saveRolls = {
+          toughness: stats['for'] || 0,
+          willpower: stats['wsd'] || 0,
+        };
+
         return {
           ...context,
-          tab: 'skills',
+          tab: 'overview',
+          stats: system['stats'],
+          hp: system['hp'],
+          mp: system['mp'],
+          drivePoints: system['drivePoints'],
+          passions: system['passions'],
+          heroicPath: system['heroicPath'],
+          defense: system['defense'],
+          encumbrance: system['encumbrance'],
+          wealth: system['wealth'],
           skillsByCategory,
           categories,
+          saveRolls,
         };
       }
       case 'combat': {
