@@ -189,7 +189,30 @@ declare class Collection<T> implements Iterable<T> {
   contents: T[];
 }
 
-/** Actors global namespace for sheet registration */
+/** FoundryVTT documents and collections */
+declare namespace foundry {
+  namespace documents {
+    namespace collections {
+      const Actors: {
+        registerSheet(
+          scope: string,
+          sheetClass: typeof foundry.applications.sheets.ActorSheetV2,
+          options?: { types?: string[]; makeDefault?: boolean; label?: string }
+        ): void;
+      };
+
+      const Items: {
+        registerSheet(
+          scope: string,
+          sheetClass: unknown,
+          options?: { types?: string[]; makeDefault?: boolean; label?: string }
+        ): void;
+      };
+    }
+  }
+}
+
+/** Actors global namespace for sheet registration (deprecated in v13, use foundry.documents.collections.Actors) */
 declare const Actors: {
   registerSheet(
     scope: string,

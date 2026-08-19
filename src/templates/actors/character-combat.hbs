@@ -32,50 +32,50 @@
   <div class="combat-section weapons-section">
     <h3>{{localize "VSD.Combat.Weapons"}}</h3>
     {{#if weapons}}
-      <div class="weapons-list">
-        {{#each weapons as |weapon|}}
-          <div class="weapon-entry">
-            <div class="weapon-header">
-              <h4 class="weapon-name">{{weapon.name}}</h4>
-              <span class="weapon-type">{{weapon.type}}</span>
-            </div>
-            <div class="weapon-details">
-              {{#if weapon.skillUsed}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.SkillUsed"}}:</span>
-                  <span class="detail-value">{{weapon.skillUsed}}</span>
-                </div>
-              {{/if}}
-              {{#if weapon.hands}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.Hands"}}:</span>
-                  <span class="detail-value">{{weapon.hands}}</span>
-                </div>
-              {{/if}}
-              {{#if weapon.length}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.Length"}}:</span>
-                  <span class="detail-value">{{weapon.length}}</span>
-                </div>
-              {{/if}}
-              {{#if weapon.attackTable}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.AttackTable"}}:</span>
-                  <span class="detail-value">{{weapon.attackTable}}</span>
-                </div>
-              {{/if}}
-              {{#if weapon.primaryCritical}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.Critical"}}:</span>
-                  <span class="detail-value">{{weapon.primaryCritical}}</span>
-                </div>
-              {{/if}}
-            </div>
+    <div class="weapons-list">
+      {{#each weapons as |weapon|}}
+      <div class="weapon-entry">
+        <div class="weapon-header">
+          <h4 class="weapon-name">{{weapon.name}}</h4>
+          <span class="weapon-type">{{weapon.type}}</span>
+        </div>
+        <div class="weapon-details">
+          {{#if weapon.skillUsed}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.SkillUsed"}}:</span>
+            <span class="detail-value">{{weapon.skillUsed}}</span>
           </div>
-        {{/each}}
+          {{/if}}
+          {{#if weapon.hands}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.Hands"}}:</span>
+            <span class="detail-value">{{weapon.hands}}</span>
+          </div>
+          {{/if}}
+          {{#if weapon.length}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.Length"}}:</span>
+            <span class="detail-value">{{weapon.length}}</span>
+          </div>
+          {{/if}}
+          {{#if weapon.attackTable}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.AttackTable"}}:</span>
+            <span class="detail-value">{{weapon.attackTable}}</span>
+          </div>
+          {{/if}}
+          {{#if weapon.primaryCritical}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.Critical"}}:</span>
+            <span class="detail-value">{{weapon.primaryCritical}}</span>
+          </div>
+          {{/if}}
+        </div>
       </div>
+      {{/each}}
+    </div>
     {{else}}
-      <div class="empty-state">{{localize "VSD.Combat.NoWeapons"}}</div>
+    <div class="empty-state">{{localize "VSD.Combat.NoWeapons"}}</div>
     {{/if}}
   </div>
 
@@ -83,44 +83,44 @@
   <div class="combat-section armor-section">
     <h3>{{localize "VSD.Combat.Armor"}}</h3>
     {{#if armor}}
-      <div class="armor-list">
-        {{#each armor as |armorItem|}}
-          <div class="armor-entry">
-            <div class="armor-header">
-              <h4 class="armor-name">{{armorItem.name}}</h4>
-              <span class="armor-type">{{localize (concat "VSD.Combat.ArmorType." armorItem.armorType)}}</span>
-            </div>
-            <div class="armor-details">
-              {{#if armorItem.meleeDefenseBonus}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.MeleeDefenseBonus"}}:</span>
-                  <span class="detail-value">+{{armorItem.meleeDefenseBonus}}</span>
-                </div>
-              {{/if}}
-              {{#if armorItem.missileDefenseBonus}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.MissileDefenseBonus"}}:</span>
-                  <span class="detail-value">+{{armorItem.missileDefenseBonus}}</span>
-                </div>
-              {{/if}}
-              {{#if armorItem.cmbPenalty}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.CMBPenalty"}}:</span>
-                  <span class="detail-value">{{armorItem.cmbPenalty}}</span>
-                </div>
-              {{/if}}
-              {{#if armorItem.moveActionsPenalty}}
-                <div class="detail-row">
-                  <span class="detail-label">{{localize "VSD.Combat.MoveActionsPenalty"}}:</span>
-                  <span class="detail-value">{{armorItem.moveActionsPenalty}}</span>
-                </div>
-              {{/if}}
-            </div>
+    <div class="armor-list">
+      {{#each armor as |armorItem|}}
+      <div class="armor-entry">
+        <div class="armor-header">
+          <h4 class="armor-name">{{armorItem.name}}</h4>
+          <span class="armor-type">{{localize (concat "VSD.Combat.ArmorType." armorItem.armorType)}}</span>
+        </div>
+        <div class="armor-details">
+          {{#if armorItem.meleeDefenseBonus}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.MeleeDefenseBonus"}}:</span>
+            <span class="detail-value">+{{armorItem.meleeDefenseBonus}}</span>
           </div>
-        {{/each}}
+          {{/if}}
+          {{#if armorItem.missileDefenseBonus}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.MissileDefenseBonus"}}:</span>
+            <span class="detail-value">+{{armorItem.missileDefenseBonus}}</span>
+          </div>
+          {{/if}}
+          {{#if armorItem.cmbPenalty}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.CMBPenalty"}}:</span>
+            <span class="detail-value">{{armorItem.cmbPenalty}}</span>
+          </div>
+          {{/if}}
+          {{#if armorItem.moveActionsPenalty}}
+          <div class="detail-row">
+            <span class="detail-label">{{localize "VSD.Combat.MoveActionsPenalty"}}:</span>
+            <span class="detail-value">{{armorItem.moveActionsPenalty}}</span>
+          </div>
+          {{/if}}
+        </div>
       </div>
+      {{/each}}
+    </div>
     {{else}}
-      <div class="empty-state">{{localize "VSD.Combat.NoArmor"}}</div>
+    <div class="empty-state">{{localize "VSD.Combat.NoArmor"}}</div>
     {{/if}}
   </div>
 
@@ -128,18 +128,18 @@
   <div class="combat-section conditions-section">
     <h3>{{localize "VSD.Combat.Conditions"}}</h3>
     {{#if conditions}}
-      <div class="conditions-list">
-        {{#each conditions as |condition|}}
-          <div class="condition-entry">
-            <span class="condition-name">{{condition.name}}</span>
-            {{#if condition.duration}}
-              <span class="condition-duration">({{localize "VSD.Combat.Duration"}}: {{condition.duration}})</span>
-            {{/if}}
-          </div>
-        {{/each}}
+    <div class="conditions-list">
+      {{#each conditions as |condition|}}
+      <div class="condition-entry">
+        <span class="condition-name">{{condition.name}}</span>
+        {{#if condition.duration}}
+        <span class="condition-duration">({{localize "VSD.Combat.Duration"}}: {{condition.duration}})</span>
+        {{/if}}
       </div>
+      {{/each}}
+    </div>
     {{else}}
-      <div class="empty-state">{{localize "VSD.Combat.NoConditions"}}</div>
+    <div class="empty-state">{{localize "VSD.Combat.NoConditions"}}</div>
     {{/if}}
   </div>
 

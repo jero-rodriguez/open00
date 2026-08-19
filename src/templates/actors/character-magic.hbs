@@ -23,62 +23,62 @@
   <div class="magic-section spells-section">
     <h3>{{localize "VSD.Magic.Spells"}}</h3>
     {{#if spellsByLore}}
-      <div class="spells-by-lore">
-        {{#each spellsByLore as |spellLore|}}
-          <div class="spell-lore-group">
-            <h4 class="spell-lore-name">{{spellLore.loreName}}</h4>
-            {{#if spellLore.castingBonus}}
-              <div class="spell-lore-bonus">
-                <span class="casting-bonus-label">{{localize "VSD.Magic.CastingBonus"}}:</span>
-                <span class="casting-bonus-value">+{{spellLore.castingBonus}}</span>
+    <div class="spells-by-lore">
+      {{#each spellsByLore as |spellLore|}}
+      <div class="spell-lore-group">
+        <h4 class="spell-lore-name">{{spellLore.loreName}}</h4>
+        {{#if spellLore.castingBonus}}
+        <div class="spell-lore-bonus">
+          <span class="casting-bonus-label">{{localize "VSD.Magic.CastingBonus"}}:</span>
+          <span class="casting-bonus-value">+{{spellLore.castingBonus}}</span>
+        </div>
+        {{/if}}
+        {{#if spellLore.spells}}
+        <div class="spells-list">
+          {{#each spellLore.spells as |spell|}}
+          <div class="spell-entry">
+            <div class="spell-header">
+              <h5 class="spell-name">{{spell.name}}</h5>
+              <span class="spell-weave">{{localize "VSD.Magic.Weave"}} {{spell.weaveNumber}}</span>
+              <span class="spell-mp-cost">({{localize "VSD.Magic.MPCost"}}: {{spell.mpCost}})</span>
+            </div>
+            <div class="spell-details">
+              {{#if spell.range}}
+              <div class="detail-row">
+                <span class="detail-label">{{localize "VSD.Magic.Range"}}:</span>
+                <span class="detail-value">{{spell.range}}</span>
               </div>
-            {{/if}}
-            {{#if spellLore.spells}}
-              <div class="spells-list">
-                {{#each spellLore.spells as |spell|}}
-                  <div class="spell-entry">
-                    <div class="spell-header">
-                      <h5 class="spell-name">{{spell.name}}</h5>
-                      <span class="spell-weave">{{localize "VSD.Magic.Weave"}} {{spell.weaveNumber}}</span>
-                      <span class="spell-mp-cost">({{localize "VSD.Magic.MPCost"}}: {{spell.mpCost}})</span>
-                    </div>
-                    <div class="spell-details">
-                      {{#if spell.range}}
-                        <div class="detail-row">
-                          <span class="detail-label">{{localize "VSD.Magic.Range"}}:</span>
-                          <span class="detail-value">{{spell.range}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if spell.duration}}
-                        <div class="detail-row">
-                          <span class="detail-label">{{localize "VSD.Magic.Duration"}}:</span>
-                          <span class="detail-value">{{spell.duration}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if spell.areaOfEffect}}
-                        <div class="detail-row">
-                          <span class="detail-label">{{localize "VSD.Magic.AreaOfEffect"}}:</span>
-                          <span class="detail-value">{{spell.areaOfEffect}}</span>
-                        </div>
-                      {{/if}}
-                      {{#if spell.grantsSaveRoll}}
-                        <div class="detail-row">
-                          <span class="detail-label">{{localize "VSD.Magic.SaveRoll"}}:</span>
-                          <span class="detail-value">{{localize "VSD.Magic.Yes"}}</span>
-                        </div>
-                      {{/if}}
-                    </div>
-                  </div>
-                {{/each}}
+              {{/if}}
+              {{#if spell.duration}}
+              <div class="detail-row">
+                <span class="detail-label">{{localize "VSD.Magic.Duration"}}:</span>
+                <span class="detail-value">{{spell.duration}}</span>
               </div>
-            {{else}}
-              <div class="empty-state-small">{{localize "VSD.Magic.NoSpellsInLore"}}</div>
-            {{/if}}
+              {{/if}}
+              {{#if spell.areaOfEffect}}
+              <div class="detail-row">
+                <span class="detail-label">{{localize "VSD.Magic.AreaOfEffect"}}:</span>
+                <span class="detail-value">{{spell.areaOfEffect}}</span>
+              </div>
+              {{/if}}
+              {{#if spell.grantsSaveRoll}}
+              <div class="detail-row">
+                <span class="detail-label">{{localize "VSD.Magic.SaveRoll"}}:</span>
+                <span class="detail-value">{{localize "VSD.Magic.Yes"}}</span>
+              </div>
+              {{/if}}
+            </div>
           </div>
-        {{/each}}
+          {{/each}}
+        </div>
+        {{else}}
+        <div class="empty-state-small">{{localize "VSD.Magic.NoSpellsInLore"}}</div>
+        {{/if}}
       </div>
+      {{/each}}
+    </div>
     {{else}}
-      <div class="empty-state">{{localize "VSD.Magic.NoSpells"}}</div>
+    <div class="empty-state">{{localize "VSD.Magic.NoSpells"}}</div>
     {{/if}}
   </div>
 

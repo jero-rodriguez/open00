@@ -59,7 +59,7 @@ Hooks.once('init', () => {
   };
 
   // Register Actor sheets
-  Actors.registerSheet('vsd', VsdCharacterSheet, {
+  foundry.documents.collections.Actors.registerSheet('vsd', VsdCharacterSheet, {
     types: ['character'],
     makeDefault: true,
   });
