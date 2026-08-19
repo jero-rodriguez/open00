@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/jero-rodriguez/open00/compare/v1.13.5...v1.14.0) (2026-08-19)
+
+
+### Features
+
+* character sheet revamp ([306e857](https://github.com/jero-rodriguez/open00/commit/306e857903bc88a9322caafa9d3f13d6781db26f))
+
 ## [1.13.5](https://github.com/jero-rodriguez/open00/compare/v1.13.4...v1.13.5) (2026-08-19)
 
 
