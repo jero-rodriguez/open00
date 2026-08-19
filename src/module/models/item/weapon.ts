@@ -1,8 +1,8 @@
 /**
- * WeaponDataModel — TypeDataModel for the VsD Weapon Item type.
+ * WeaponDataModel — TypeDataModel for the Open 00 Weapon Item type.
  *
- * Defines the persisted schema for weapon data matching the VsD Weapons Table [2.40].
- * VsD uses a table-driven combat system where damage comes from Attack Table results,
+ * Defines the persisted schema for weapon data matching the Open 00 Weapons Table [2.40].
+ * Open 00 uses a table-driven combat system where damage comes from Attack Table results,
  * not flat damage values. Weapons are defined by their skill, length, critical types,
  * clumsy range, max result cap, and special qualities.
  *

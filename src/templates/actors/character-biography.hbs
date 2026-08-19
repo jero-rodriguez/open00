@@ -1,70 +1,55 @@
-<section class="tab biography {{ tab.cssClass }}" data-group="{{ tab.group }}" data-tab="{{ tab.id }}">
-
-  <div class="biography-container">
-
-    {{!-- Character Building Items (Kin, Culture, Vocation) --}}
-    <div class="biography-items-grid">
-      <div class="biography-item-slot">
-        <h4>{{localize "VSD.Biography.Kin"}}</h4>
-        {{#if kinItem}}
-        <div class="item-slot-content">
-          <span class="item-name">{{kinItem.name}}</span>
-          <button type="button" class="remove-item-btn" data-action="removeItem" data-item-type="kin" title="Remove">&#x00d7;</button>
-        </div>
-        {{else}}
-        <div class="item-slot-empty">
-          <span class="placeholder">{{localize "VSD.Biography.DragItemHere"}}</span>
-        </div>
-        {{/if}}
-      </div>
-
-      <div class="biography-item-slot">
-        <h4>{{localize "VSD.Biography.Culture"}}</h4>
-        {{#if cultureItem}}
-        <div class="item-slot-content">
-          <span class="item-name">{{cultureItem.name}}</span>
-          <button type="button" class="remove-item-btn" data-action="removeItem" data-item-type="culture" title="Remove">&#x00d7;</button>
-        </div>
-        {{else}}
-        <div class="item-slot-empty">
-          <span class="placeholder">{{localize "VSD.Biography.DragItemHere"}}</span>
-        </div>
-        {{/if}}
-      </div>
-
-      <div class="biography-item-slot">
-        <h4>{{localize "VSD.Biography.Vocation"}}</h4>
-        {{#if vocationItem}}
-        <div class="item-slot-content">
-          <span class="item-name">{{vocationItem.name}}</span>
-          <button type="button" class="remove-item-btn" data-action="removeItem" data-item-type="vocation" title="Remove">&#x00d7;</button>
-        </div>
-        {{else}}
-        <div class="item-slot-empty">
-          <span class="placeholder">{{localize "VSD.Biography.DragItemHere"}}</span>
-        </div>
-        {{/if}}
-      </div>
-    </div>
-
-    {{!-- Biography Text --}}
-    <div class="biography-section">
-      <h3>{{localize "VSD.Biography.BiographyText"}}</h3>
-      <textarea name="system.biography" class="biography-textarea" placeholder="Enter character biography...">{{biography}}</textarea>
-    </div>
-
-    {{!-- Appearance --}}
-    <div class="biography-section">
-      <h3>{{localize "VSD.Biography.Appearance"}}</h3>
-      <textarea name="system.appearance" class="appearance-textarea" placeholder="Enter character appearance...">{{appearance}}</textarea>
-    </div>
-
-    {{!-- Background Notes --}}
-    <div class="biography-section">
-      <h3>{{localize "VSD.Biography.BackgroundNotes"}}</h3>
-      <textarea name="system.backgroundNotes" class="background-notes-textarea" placeholder="Enter background notes...">{{backgroundNotes}}</textarea>
-    </div>
-
+<section class="tab biography {{tab.cssClass}} open00-tab-scroll" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+  <div class="biography-identity-grid">
+    <section class="sheet-section identity-card" data-item-id="{{identity.kin.id}}">
+      <h2 class="section-title">{{localize "OPEN00.Biography.Kin"}}</h2>
+      {{#if identity.kin}}
+      <button type="button" class="item-name-button" data-action="openItem" data-item-id="{{identity.kin.id}}">{{identity.kin.name}}</button>
+      <button type="button" class="icon-button danger" data-action="removeItem" data-item-id="{{identity.kin.id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button>
+      {{else}}<p class="empty-state compact">{{localize "OPEN00.Biography.DragItemHere"}}</p>{{/if}}
+    </section>
+    <section class="sheet-section identity-card" data-item-id="{{identity.culture.id}}">
+      <h2 class="section-title">{{localize "OPEN00.Biography.Culture"}}</h2>
+      {{#if identity.culture}}
+      <button type="button" class="item-name-button" data-action="openItem" data-item-id="{{identity.culture.id}}">{{identity.culture.name}}</button>
+      <button type="button" class="icon-button danger" data-action="removeItem" data-item-id="{{identity.culture.id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button>
+      {{else}}<p class="empty-state compact">{{localize "OPEN00.Biography.DragItemHere"}}</p>{{/if}}
+    </section>
+    <section class="sheet-section identity-card" data-item-id="{{identity.vocation.id}}">
+      <h2 class="section-title">{{localize "OPEN00.Biography.Vocation"}}</h2>
+      {{#if identity.vocation}}
+      <button type="button" class="item-name-button" data-action="openItem" data-item-id="{{identity.vocation.id}}">{{identity.vocation.name}}</button>
+      <button type="button" class="icon-button danger" data-action="removeItem" data-item-id="{{identity.vocation.id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button>
+      {{else}}<p class="empty-state compact">{{localize "OPEN00.Biography.DragItemHere"}}</p>{{/if}}
+    </section>
   </div>
 
+  <div class="biography-details-grid">
+    <section class="sheet-section collection-section">
+      <h2 class="section-title">{{localize "OPEN00.Biography.SpecialAbilities"}}</h2>
+      {{#each traits}}
+      <div class="collection-row" data-item-id="{{id}}"><button type="button" class="item-name-button with-image" data-action="openItem" data-item-id="{{id}}"><img src="{{img}}" alt="" />{{name}}</button><button type="button" class="icon-button danger" data-action="removeItem" data-item-id="{{id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button></div>
+      {{else}}<p class="empty-state compact">{{localize "OPEN00.Biography.NoSpecialAbilities"}}</p>{{/each}}
+    </section>
+    <section class="sheet-section collection-section">
+      <h2 class="section-title">{{localize "OPEN00.Biography.BackgroundOptions"}}</h2>
+      {{#each backgrounds}}
+      <div class="collection-row" data-item-id="{{id}}"><button type="button" class="item-name-button with-image" data-action="openItem" data-item-id="{{id}}"><img src="{{img}}" alt="" />{{name}}</button><button type="button" class="icon-button danger" data-action="removeItem" data-item-id="{{id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button></div>
+      {{else}}<p class="empty-state compact">{{localize "OPEN00.Biography.NoBackgroundOptions"}}</p>{{/each}}
+    </section>
+  </div>
+
+  <div class="biography-text-grid">
+    <label class="sheet-section text-section">
+      <span class="section-title">{{localize "OPEN00.Biography.BiographyText"}}</span>
+      <textarea name="system.biography" placeholder="{{localize 'OPEN00.Biography.BiographyPlaceholder'}}">{{biography}}</textarea>
+    </label>
+    <label class="sheet-section text-section">
+      <span class="section-title">{{localize "OPEN00.Biography.Appearance"}}</span>
+      <textarea name="system.appearance" placeholder="{{localize 'OPEN00.Biography.AppearancePlaceholder'}}">{{appearance}}</textarea>
+    </label>
+    <label class="sheet-section text-section full-width">
+      <span class="section-title">{{localize "OPEN00.Biography.BackgroundNotes"}}</span>
+      <textarea name="system.backgroundNotes" placeholder="{{localize 'OPEN00.Biography.BackgroundPlaceholder'}}">{{backgroundNotes}}</textarea>
+    </label>
+  </div>
 </section>

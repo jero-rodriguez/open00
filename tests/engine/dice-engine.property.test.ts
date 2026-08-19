@@ -1,5 +1,5 @@
-// Feature: foundry-vsd-system, Property 3: Open-Ended Roll Computation
-// Feature: foundry-vsd-system, Property 4: Roll Display Round-Trip
+// Feature: open00-system, Property 3: Open-Ended Roll Computation
+// Feature: open00-system, Property 4: Roll Display Round-Trip
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { computeOpenEndedRoll, formatRollDisplay, RollSource, RollResult } from '../../src/module/engine/dice-engine';

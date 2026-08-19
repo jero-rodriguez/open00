@@ -1,8 +1,8 @@
 /**
- * EquipmentDataModel — TypeDataModel for the VsD Equipment Item type.
+ * EquipmentDataModel — TypeDataModel for the Open 00 Equipment Item type.
  *
- * Defines the persisted schema for general equipment/gear matching VsD's
- * Equipment Tables [2.33]-[2.37]. VsD uses a qualitative encumbrance system
+ * Defines the persisted schema for general equipment/gear matching Open 00's
+ * Equipment Tables [2.33]-[2.37]. Open 00 uses a qualitative encumbrance system
  * and Fare-based wealth rather than numeric weight/cost.
  *
  * Reference: Chapter 14 — Equipment and Wealth (pp. 160–169)
@@ -32,7 +32,7 @@ export class EquipmentDataModel extends foundry.abstract.TypeDataModel {
       }),
 
       // Encumbrance category contribution — qualitative indicator
-      // VsD uses common-sense encumbrance, not numeric weight.
+      // Open 00 uses common-sense encumbrance, not numeric weight.
       // "None" = negligible, "Light" = contributes to Lightly Encumbered,
       // "Moderate" = contributes to Encumbered, "Heavy" = contributes to Heavily Encumbered
       encumbranceCategory: new StringField({

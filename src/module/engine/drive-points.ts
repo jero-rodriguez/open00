@@ -1,5 +1,5 @@
 /**
- * Drive Points management for Against the Darkmaster (VsD).
+ * Drive Points management for Open 00.
  *
  * Pure function module — zero imports from FoundryVTT.
  *

@@ -1,5 +1,5 @@
 /**
- * VocationDataModel — TypeDataModel for the VsD Vocation Item type.
+ * VocationDataModel — TypeDataModel for the Open 00 Vocation Item type.
  *
  * Defines the persisted schema for Vocation data matching Chapter 5 and Table [1.7].
  * Vocations define Development Points per skill category, fixed Vocational Bonuses

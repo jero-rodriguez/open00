@@ -1,5 +1,5 @@
 /**
- * NpcDataModel — TypeDataModel for the VsD NPC Actor type.
+ * NpcDataModel — TypeDataModel for the Open 00 NPC Actor type.
  *
  * Defines the persisted schema for NPC stats including level, HP, defense,
  * initiative, movement rate, and resistances.

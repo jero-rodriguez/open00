@@ -1,7 +1,7 @@
 {
-  "id": "vsd",
-  "title": "Against the Darkmaster (VsD)",
-  "description": "A game system for playing Against the Darkmaster (VsD) in Foundry Virtual Tabletop.",
+  "id": "open00",
+  "title": "Open 00",
+  "description": "A game system for playing Open 00 in Foundry Virtual Tabletop.",
   "compatibility": {
     "minimum": "14",
     "verified": "14"
@@ -10,15 +10,15 @@
   "manifest": "https://github.com/jero-rodriguez/open00/releases/download/latest/system.json",
   "authors": [
     {
-      "name": "jerorodriguez",
+      "name": "Jeronimo Rodriguez",
       "flags": {}
     }
   ],
   "esmodules": [
-    "vsd-system.mjs"
+    "open00-system.mjs"
   ],
   "styles": [
-    "styles/vsd-system.css"
+    "styles/open00-system.css"
   ],
   "languages": [
     { "lang": "en", "name": "English", "path": "lang/en.json", "flags": {} },

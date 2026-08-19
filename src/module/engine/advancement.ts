@@ -1,5 +1,5 @@
 /**
- * Advancement engine for Against the Darkmaster (VsD).
+ * Advancement engine for Open 00.
  *
  * Pure function module — zero imports from FoundryVTT.
  *

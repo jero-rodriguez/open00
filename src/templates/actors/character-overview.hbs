@@ -1,190 +1,102 @@
-<section class="tab overview {{ tab.cssClass }}" data-group="{{ tab.group }}" data-tab="{{ tab.id }}">
-  <div class="passions-block">
-    <h3>{{localize "VSD.Overview.Passions"}}</h3>
-    <div class="passions-grid-section">
-      <label class="field-label">{{localize "VSD.Passions.Motivation"}}</label>
-      <span class="field-input">
-        <input type="text" name="system.passions.motivation" value="{{passions.motivation}}" class="passions-text-field" />
-      </span>
-      <label class="field-label">{{localize "VSD.Passions.Nature"}}</label>
-      <span class="field-input">
-        <input type="text" name="system.passions.nature" value="{{passions.nature}}" class="passions-text-field" />
-      </span>
-      <label class="field-label">{{localize "VSD.Passions.Allegiance"}}</label>
-      <span class="field-input">
-        <input type="text" name="system.passions.allegiance" value="{{passions.allegiance}}" class="passions-text-field" />
-      </span>
+<section class="tab overview {{tab.cssClass}} open00-tab-scroll" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+  <section class="sheet-section passions-section">
+    <h2 class="section-title">{{localize "OPEN00.Overview.Passions"}}</h2>
+    <div class="passions-grid">
+      <label for="open00-motivation">{{localize "OPEN00.Passions.Motivation"}}</label>
+      <input id="open00-motivation" type="text" name="system.passions.motivation" value="{{passions.motivation}}" autocomplete="off" />
+      <label for="open00-nature">{{localize "OPEN00.Passions.Nature"}}</label>
+      <input id="open00-nature" type="text" name="system.passions.nature" value="{{passions.nature}}" autocomplete="off" />
+      <label for="open00-allegiance">{{localize "OPEN00.Passions.Allegiance"}}</label>
+      <input id="open00-allegiance" type="text" name="system.passions.allegiance" value="{{passions.allegiance}}" autocomplete="off" />
     </div>
-  </div>
+  </section>
 
-  <div class="main-grid-section">
-    {{!-- Left Column: Drive Points, Heroic Path, Stats, Save Rolls --}}
-    <div class="leftside">
-
-      {{!-- Drive Points (checkboxes like Roll20) --}}
-      <div class="drive-points">
-        <h3>{{localize "VSD.Overview.DrivePoints"}}
-          <span class="drive-points-display">
-            <input type="number" name="system.drivePoints.value" value="{{drivePoints.value}}" class="drive-current" min="0" max="{{drivePoints.max}}" />
-            <span class="separator">/</span>
-            <input type="number" name="system.drivePoints.max" value="{{drivePoints.max}}" class="drive-max" min="0" />
+  <div class="overview-grid">
+    <aside class="overview-sidebar">
+      <section class="sheet-section drive-section">
+        <h2 class="section-title section-title-with-control">
+          <span>{{localize "OPEN00.Overview.DrivePoints"}}</span>
+          <span class="drive-pips" aria-label="{{localize 'OPEN00.Overview.DrivePoints'}}">
+            {{#each drivePips}}
+            <button type="button" class="drive-pip {{#if active}}active{{/if}}" data-action="setDrivePoints" data-value="{{value}}" title="{{value}}"></button>
+            {{/each}}
           </span>
-        </h3>
+        </h2>
+        <div class="inline-track-fields">
+          <label>{{localize "OPEN00.Overview.Current"}} <input type="number" name="system.drivePoints.value" value="{{drivePoints.value}}" min="0" max="{{drivePoints.max}}" /></label>
+          <span>/</span>
+          <label>{{localize "OPEN00.Overview.Max"}} <input type="number" name="system.drivePoints.max" value="{{drivePoints.max}}" min="0" /></label>
+        </div>
+      </section>
+
+      <section class="sheet-section">
+        <h2 class="section-title">{{localize "OPEN00.Overview.HeroicPath"}}</h2>
+        <input class="heroic-path-input" type="text" name="system.heroicPath" value="{{heroicPath}}" autocomplete="off" />
+      </section>
+
+      <section class="sheet-section">
+        <h2 class="section-title">{{localize "OPEN00.Overview.Stats"}}</h2>
+        <div class="rules-table stats-table">
+          <div class="table-row table-heading">
+            <span>{{localize "OPEN00.Stats.Header.Name"}}</span>
+            <span>{{localize "OPEN00.Stats.Header.Abbr"}}</span>
+            <span>{{localize "OPEN00.Stats.Header.Total"}}</span>
+          </div>
+          <label class="table-row"><span>{{localize "OPEN00.Stats.Brawn"}}</span><abbr>BRN</abbr><input type="number" name="system.stats.brn" value="{{stats.brn}}" /></label>
+          <label class="table-row"><span>{{localize "OPEN00.Stats.Swiftness"}}</span><abbr>SWI</abbr><input type="number" name="system.stats.swi" value="{{stats.swi}}" /></label>
+          <label class="table-row"><span>{{localize "OPEN00.Stats.Fortitude"}}</span><abbr>FOR</abbr><input type="number" name="system.stats.for" value="{{stats.for}}" /></label>
+          <label class="table-row"><span>{{localize "OPEN00.Stats.Wits"}}</span><abbr>WIT</abbr><input type="number" name="system.stats.wit" value="{{stats.wit}}" /></label>
+          <label class="table-row"><span>{{localize "OPEN00.Stats.Wisdom"}}</span><abbr>WSD</abbr><input type="number" name="system.stats.wsd" value="{{stats.wsd}}" /></label>
+          <label class="table-row"><span>{{localize "OPEN00.Stats.Bearing"}}</span><abbr>BEA</abbr><input type="number" name="system.stats.bea" value="{{stats.bea}}" /></label>
+        </div>
+      </section>
+
+      <section class="sheet-section">
+        <h2 class="section-title">{{localize "OPEN00.Overview.SaveRolls"}}</h2>
+        <div class="rules-table saves-table">
+          <div class="table-row table-heading">
+            <span>{{localize "OPEN00.Saves.RollName"}}</span>
+            <span>{{localize "OPEN00.Saves.Stat"}}</span>
+            <span>{{localize "OPEN00.Stats.Header.Total"}}</span>
+          </div>
+          <div class="table-row"><span>{{localize "OPEN00.Saves.Toughness"}}</span><abbr>FOR</abbr><strong>{{saveRolls.toughness}}</strong></div>
+          <div class="table-row"><span>{{localize "OPEN00.Saves.Willpower"}}</span><abbr>WSD</abbr><strong>{{saveRolls.willpower}}</strong></div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="skills-panel sheet-section">
+      <h2 class="section-title">{{localize "OPEN00.Skills.Title"}}</h2>
+      <div class="skills-table skills-heading" aria-hidden="true">
+        <span>{{localize "OPEN00.Skills.Name"}}</span>
+        <span>{{localize "OPEN00.Skills.StatBonusShort"}}</span>
+        <span>{{localize "OPEN00.Skills.Stat"}}</span>
+        <span>#</span>
+        <span>{{localize "OPEN00.Skills.RankBonusShort"}}</span>
+        <span>{{localize "OPEN00.Skills.ItemBonusShort"}}</span>
+        <span>{{localize "OPEN00.Skills.Total"}}</span>
+        <span></span>
       </div>
 
-      {{!-- Heroic Path --}}
-      <div class="heroic-path">
-        <h3>{{localize "VSD.Overview.HeroicPath"}}</h3>
-        <div class="heroicpath-grid-section">
-          <input type="text" name="system.heroicPath" value="{{heroicPath}}" class="heroic-path-field" />
+      {{#each skillCategories}}
+      <section class="skill-category">
+        <h3>{{localize label}}</h3>
+        {{#each skills}}
+        <div class="skills-table skill-row">
+          <button type="button" class="skill-name roll-link" data-action="rollSkill" data-skill-name="{{name}}" data-skill-bonus="{{totalBonus}}" data-stat-key="{{statKey}}" data-category="{{../id}}" title="{{localize 'OPEN00.Skills.RollTooltip'}}">{{name}}</button>
+          <span class="computed-cell">{{statBonusDisplay}}</span>
+          <abbr title="{{localize statLabel}}">{{statKey}}</abbr>
+          <input type="number" name="system.skills.{{index}}.rank" value="{{rank}}" min="0" max="30" aria-label="{{localize 'OPEN00.Skills.Rank'}}" />
+          <span class="computed-cell">{{rankBonusDisplay}}</span>
+          <input type="number" name="system.skills.{{index}}.itemModifiers" value="{{itemModifiers}}" aria-label="{{localize 'OPEN00.Skills.ItemBonusShort'}}" />
+          <strong class="total-cell">{{totalBonusDisplay}}</strong>
+          <button type="button" class="icon-button roll-skill" data-action="rollSkill" data-skill-name="{{name}}" data-skill-bonus="{{totalBonus}}" data-stat-key="{{statKey}}" data-category="{{../id}}" title="{{localize 'OPEN00.Skills.RollTooltip'}}"><i class="fas fa-dice-d100" aria-hidden="true"></i></button>
         </div>
-      </div>
-
-      {{!-- Stats Block --}}
-      <div class="stats-block">
-        <h3>{{localize "VSD.Overview.Stats"}}</h3>
-        <div class="stats-table tablelike">
-          <div class="rowlike table-header">
-            <div class="celllike">{{localize "VSD.Stats.Header.Name"}}</div>
-            <div class="celllike">{{localize "VSD.Stats.Header.Abbr"}}</div>
-            <div class="celllike">{{localize "VSD.Stats.Header.Total"}}</div>
-          </div>
-          <div class="rowlike">
-            <div class="celllike stats-name-cell">
-              <span class="stats-name" title="Brawn is character's muscular strength and physical power">{{localize "VSD.Stats.Brawn"}}</span>
-            </div>
-            <div class="celllike stat-abbr"><span class="stats-name">brn</span></div>
-            <div class="celllike">
-              <input type="number" class="stat-input" name="system.stats.brn" value="{{stats.brn}}" />
-            </div>
-          </div>
-          <div class="rowlike">
-            <div class="celllike stats-name-cell">
-              <span class="stats-name" title="Swiftness is character's dexterity, speed, coordination, balance and general agility">{{localize "VSD.Stats.Swiftness"}}</span>
-            </div>
-            <div class="celllike stat-abbr"><span class="stats-name">swi</span></div>
-            <div class="celllike">
-              <input type="number" class="stat-input" name="system.stats.swi" value="{{stats.swi}}" />
-            </div>
-          </div>
-          <div class="rowlike">
-            <div class="celllike stats-name-cell">
-              <span class="stats-name" title="Fortitude is character's resistance and vigor">{{localize "VSD.Stats.Fortitude"}}</span>
-            </div>
-            <div class="celllike stat-abbr"><span class="stats-name">for</span></div>
-            <div class="celllike">
-              <input type="number" class="stat-input" name="system.stats.for" value="{{stats.for}}" />
-            </div>
-          </div>
-          <div class="rowlike">
-            <div class="celllike stats-name-cell">
-              <span class="stats-name" title="Wits is character's reasoning, cleverness, and mental agility">{{localize "VSD.Stats.Wits"}}</span>
-            </div>
-            <div class="celllike stat-abbr"><span class="stats-name">wit</span></div>
-            <div class="celllike">
-              <input type="number" class="stat-input" name="system.stats.wit" value="{{stats.wit}}" />
-            </div>
-          </div>
-          <div class="rowlike">
-            <div class="celllike stats-name-cell">
-              <span class="stats-name" title="Wisdom is character's empathy, intuition, willpower, and awareness">{{localize "VSD.Stats.Wisdom"}}</span>
-            </div>
-            <div class="celllike stat-abbr"><span class="stats-name">wsd</span></div>
-            <div class="celllike">
-              <input type="number" class="stat-input" name="system.stats.wsd" value="{{stats.wsd}}" />
-            </div>
-          </div>
-          <div class="rowlike">
-            <div class="celllike stats-name-cell">
-              <span class="stats-name" title="Bearing is character's presence, charisma, and social influence">{{localize "VSD.Stats.Bearing"}}</span>
-            </div>
-            <div class="celllike stat-abbr"><span class="stats-name">bea</span></div>
-            <div class="celllike">
-              <input type="number" class="stat-input" name="system.stats.bea" value="{{stats.bea}}" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {{!-- Save Rolls --}}
-      <div class="saves-block">
-        <h3>{{localize "VSD.Overview.SaveRolls"}}</h3>
-        <div class="tablelike">
-          <div class="rowlike table-header">
-            <div class="celllike">{{localize "VSD.Saves.RollName"}}</div>
-            <div class="celllike">{{localize "VSD.Saves.Stat"}}</div>
-            <div class="celllike">{{localize "VSD.Stats.Header.Total"}}</div>
-          </div>
-          <div class="rowlike">
-            <div class="celllike">
-              <span class="stats-name">{{localize "VSD.Saves.Toughness"}}</span>
-            </div>
-            <div class="celllike stat-abbr"><span class="stats-name">for</span></div>
-            <div class="celllike">
-              <span class="save-total">{{saveRolls.toughness}}</span>
-            </div>
-          </div>
-          <div class="rowlike">
-            <div class="celllike">
-              <span class="stats-name">{{localize "VSD.Saves.Willpower"}}</span>
-            </div>
-            <div class="celllike stat-abbr"><span class="stats-name">wsd</span></div>
-            <div class="celllike">
-              <span class="save-total">{{saveRolls.willpower}}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    {{!-- Right Column: Skills --}}
-    <div class="rightside">
-      <h3>{{localize "VSD.Skills.Title"}}</h3>
-      <div class="skills-grid-table table-header">
-        <div class="skills-cell">{{localize "VSD.Skills.Name"}}</div>
-        <div class="skills-cell" title="Stat bonus">{{localize "VSD.Skills.StatBonus"}}</div>
-        <div class="skills-cell" title="Stat abbreviation">{{localize "VSD.Stats.Header.Abbr"}}</div>
-        <div class="skills-cell" title="Number of ranks">{{localize "VSD.Skills.Rank"}}</div>
-        <div class="skills-cell" title="Rank bonus (auto-calculated)">{{localize "VSD.Skills.RankBonus"}}</div>
-        <div class="skills-cell" title="Total skill bonus">{{localize "VSD.Skills.Total"}}</div>
-        <div class="skills-cell"></div>
-      </div>
-
-      {{#each categories as |category|}}
-      {{#if (lookup ../skillsByCategory category)}}
-      <div class="skills-grid-table-subheading">
-        <div class="skills-subheader skills-subheader-text">{{category}}</div>
-      </div>
-      {{#each (lookup ../skillsByCategory category) as |skill|}}
-      <div class="skills-grid-table">
-        <div class="skills-cell skills-name-cell">
-          <span class="skill-name" title="{{skill.name}}">{{skill.name}}</span>
-        </div>
-        <div class="skills-cell">
-          <span class="skill-stat-bonus">{{skill.statBonus}}</span>
-        </div>
-        <div class="skills-cell stat-abbr">
-          <span class="stats-name">{{skill.statKey}}</span>
-        </div>
-        <div class="skills-cell">
-          <input type="number" class="skill-rank-input" name="system.skills.{{skill.index}}.rank" value="{{skill.rank}}" min="0" max="30" />
-        </div>
-        <div class="skills-cell">
-          <span class="skill-rank-bonus">{{skill.rankBonus}}</span>
-        </div>
-        <div class="skills-cell">
-          <span class="skill-total">{{skill.totalBonus}}</span>
-        </div>
-        <div class="skills-cell">
-          <button type="button" class="roll-skill-btn" data-action="rollSkill" data-skill-name="{{skill.name}}" data-skill-bonus="{{skill.totalBonus}}" data-stat-key="{{skill.statKey}}" data-category="{{category}}" title="Roll {{skill.name}}">
-            <span class="dicetext">Roll</span>
-          </button>
-        </div>
-      </div>
+        {{/each}}
+      </section>
+      {{else}}
+      <p class="empty-state">{{localize "OPEN00.Skills.NoSkills"}}</p>
       {{/each}}
-      {{/if}}
-      {{/each}}
-    </div>
+    </main>
   </div>
 </section>

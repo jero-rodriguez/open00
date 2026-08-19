@@ -17,8 +17,10 @@ export interface AutoSaveConfig {
 interface FieldState {
   debounceTimer?: ReturnType<typeof setTimeout>;
   lastSavedValue: unknown;
-  currentElement?: HTMLInputElement | HTMLTextAreaElement;
+  currentElement?: AutoSaveElement;
 }
+
+type AutoSaveElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
 /**
  * Creates an auto-save handler for a sheet application.
@@ -74,7 +76,7 @@ export function createAutoSaveHandler(
       if (element) {
         // Revert to last saved value (Requirement 8.12)
         const savedValue = fieldStates.get(fieldName)?.lastSavedValue ?? getActorValue(fieldName);
-        (element as HTMLInputElement | HTMLTextAreaElement).value = String(savedValue ?? '');
+        element.value = String(savedValue ?? '');
       }
 
       // Show error notification
@@ -99,7 +101,7 @@ export function createAutoSaveHandler(
   /**
    * Debounced persistence handler
    */
-  function debouncedPersist(fieldName: string, newValue: string, element: HTMLInputElement | HTMLTextAreaElement) {
+  function debouncedPersist(fieldName: string, newValue: string, element: AutoSaveElement) {
     const fieldState = fieldStates.get(fieldName) || { lastSavedValue: getActorValue(fieldName) };
     fieldStates.set(fieldName, fieldState);
 
@@ -130,7 +132,11 @@ export function createAutoSaveHandler(
   function handleFieldChange(event: Event): void {
     const target = event.target as HTMLElement;
 
-    if (!(target instanceof HTMLTextAreaElement || target instanceof HTMLInputElement)) {
+    if (!(
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLSelectElement
+    )) {
       return;
     }
 
@@ -183,17 +189,29 @@ export function createAutoSaveHandler(
 export function attachAutoSaveToForm(
   form: HTMLFormElement,
   handler: ReturnType<typeof createAutoSaveHandler>
-): void {
-  const inputs = form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
-    'input[name], textarea[name]'
+): () => void {
+  const inputs = form.querySelectorAll<AutoSaveElement>(
+    'input[name], textarea[name], select[name]'
   );
+
+  const keydownListeners = new Map<AutoSaveElement, EventListener>();
 
   for (const input of inputs) {
     input.addEventListener('blur', handler.handleFieldChange);
-    input.addEventListener('keydown', (event: Event) => {
+    const keydownListener = (event: Event) => {
       if (event instanceof KeyboardEvent && event.key === 'Enter') {
         handler.handleFieldChange(event);
       }
-    });
+    };
+    keydownListeners.set(input, keydownListener);
+    input.addEventListener('keydown', keydownListener);
   }
+
+  return () => {
+    for (const input of inputs) {
+      input.removeEventListener('blur', handler.handleFieldChange);
+      const keydownListener = keydownListeners.get(input);
+      if (keydownListener) input.removeEventListener('keydown', keydownListener);
+    }
+  };
 }

@@ -1,5 +1,5 @@
 /**
- * ItemOfPowerDataModel — TypeDataModel for the VsD Item of Power Item type.
+ * ItemOfPowerDataModel — TypeDataModel for the Open 00 Item of Power Item type.
  *
  * Defines the persisted schema for Items of Power — legendary artifacts with
  * their own will, Purpose, and Affinity-gated powers.
@@ -44,7 +44,7 @@ export class ItemOfPowerDataModel extends foundry.abstract.TypeDataModel {
         bonusValue: new NumberField({ integer: true, initial: 0 }),
       })),
 
-      // Whether this item is Tainted (connected to the Darkmaster)
+      // Whether this item is Tainted.
       // Gaining Affinity with a Tainted item causes Taint to the wielder
       isTainted: new BooleanField({ initial: false }),
 

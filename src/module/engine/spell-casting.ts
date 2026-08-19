@@ -1,5 +1,5 @@
 /**
- * Spell casting engine for Against the Darkmaster (VsD).
+ * Spell casting engine for Open 00.
  *
  * Pure function module — zero imports from FoundryVTT.
  *

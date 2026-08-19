@@ -1,5 +1,5 @@
 /**
- * CultureDataModel — TypeDataModel for the VsD Culture Item type.
+ * CultureDataModel — TypeDataModel for the Open 00 Culture Item type.
  *
  * Defines the persisted schema for Culture data matching Chapter 4 and Table [1.4].
  * Cultures grant cultural skill ranks, outfitting options, optional spell lore ranks,

@@ -1,11 +1,11 @@
 /**
  * Combat Phases Engine
  *
- * Implements the VsD 9-phase Tactical Round Sequence.
+ * Implements the Open 00 9-phase Tactical Round Sequence.
  * Pure functions with no FoundryVTT imports.
  */
 
-/** The 9 combat phases in order per the VsD Tactical Round Sequence. */
+/** The 9 combat phases in order per the Open 00 Tactical Round Sequence. */
 export const COMBAT_PHASES = [
   'Assessment',
   'ActionDeclaration',

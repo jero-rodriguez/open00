@@ -1,4 +1,4 @@
-// Feature: foundry-vsd-system, Property 14: Attack Table Lookup
+// Feature: open00-system, Property 14: Attack Table Lookup
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import {

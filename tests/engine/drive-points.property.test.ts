@@ -1,4 +1,4 @@
-// Feature: foundry-vsd-system, Property 10: Drive Points Clamping Invariant
+// Feature: open00-system, Property 10: Drive Points Clamping Invariant
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { modifyDrivePoints, invokePassion } from '../../src/module/engine/drive-points';

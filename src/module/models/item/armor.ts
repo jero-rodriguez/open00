@@ -1,8 +1,8 @@
 /**
- * ArmorDataModel — TypeDataModel for the VsD Armor Item type.
+ * ArmorDataModel — TypeDataModel for the Open 00 Armor Item type.
  *
- * Defines the persisted schema for armor data matching the VsD Armors & Shields Table [2.38].
- * VsD armor is detailed with zone protection, multiple penalty types, DEF bonuses,
+ * Defines the persisted schema for armor data matching the Open 00 Armors & Shields Table [2.38].
+ * Open 00 armor is detailed with zone protection, multiple penalty types, DEF bonuses,
  * and special qualities (Metal, Rigid).
  *
  * Reference: Chapter 14 — Equipment and Wealth, Armors (pp. 170–175)

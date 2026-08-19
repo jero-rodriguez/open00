@@ -1,5 +1,5 @@
 /**
- * VsD System — Entry point for the Against the Darkmaster game system.
+ * Open 00 System — Entry point for the Open 00 game system.
  *
  * Registers Data Models, Document sub-types, and Actor sheets
  * following the official Foundry VTT system development guide.
@@ -24,7 +24,7 @@ import { ItemOfPowerDataModel } from './module/models/item/item-of-power.js';
 import { BackgroundDataModel } from './module/models/item/background.js';
 
 // Sheets
-import { VsdCharacterSheet } from './module/sheets/character-sheet.js';
+import { Open00CharacterSheet } from './module/sheets/character-sheet.js';
 
 Hooks.once('init', () => {
   // Configure System Data Models
@@ -59,7 +59,7 @@ Hooks.once('init', () => {
   };
 
   // Register Actor sheets
-  foundry.documents.collections.Actors.registerSheet('vsd', VsdCharacterSheet, {
+  foundry.documents.collections.Actors.registerSheet('open00', Open00CharacterSheet, {
     types: ['character'],
     makeDefault: true,
   });

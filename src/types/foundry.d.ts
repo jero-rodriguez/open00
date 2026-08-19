@@ -1,5 +1,5 @@
 /**
- * Minimal FoundryVTT type declarations for the VsD system.
+ * Minimal FoundryVTT type declarations for the Open 00 system.
  * These declare the global objects available at runtime within FoundryVTT.
  * Full type coverage will be added as modules are implemented.
  */
@@ -144,6 +144,7 @@ declare namespace foundry {
         tabGroups: Record<string, string>;
         _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
+        _onRender(context: Record<string, unknown>, options: ApplicationRenderOptions): Promise<void>;
         render(force?: boolean, options?: Record<string, unknown>): Promise<unknown>;
         close(options?: Record<string, unknown>): Promise<void>;
       }
@@ -160,7 +161,7 @@ declare namespace foundry {
         static PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition>;
         get actor(): Actor;
         get document(): Actor;
-        form: HTMLFormElement;
+        form: HTMLFormElement | null;
       }
     }
   }
@@ -183,6 +184,9 @@ declare class Item {
   img: string;
   type: string;
   system: Record<string, unknown>;
+  sheet?: {
+    render(force?: boolean, options?: Record<string, unknown>): Promise<unknown> | unknown;
+  };
   delete(): Promise<this>;
 }
 
@@ -250,6 +254,9 @@ declare const CONFIG: {
 
 // FoundryVTT game global
 declare const game: {
+  system?: {
+    id: string;
+  };
   i18n: {
     localize(key: string): string;
   };
@@ -270,7 +277,7 @@ declare class Roll {
 
 // FoundryVTT ChatMessage class
 declare const ChatMessage: {
-  getSpeaker(options?: { alias?: string }): { alias?: string };
+  getSpeaker(options?: { actor?: Actor; alias?: string }): { alias?: string };
   create(data: {
     speaker?: { alias?: string };
     content?: string;

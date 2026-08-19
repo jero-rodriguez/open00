@@ -6,7 +6,7 @@
  * per target armor category, returning damage and optional critical indicators.
  */
 
-/** Armor categories as defined in VsD: No Armor, Light, Medium, Heavy */
+/** Armor categories as defined in Open 00: No Armor, Light, Medium, Heavy */
 export type ArmorCategory = 'NA' | 'LA' | 'MA' | 'HA';
 
 /** Critical severity levels from least to most severe */

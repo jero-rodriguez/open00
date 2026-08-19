@@ -1,5 +1,5 @@
-// Feature: foundry-vsd-system, Property 5: Magical Resonance Detection
-// Feature: foundry-vsd-system, Property 6: Spell Casting Total Formula
+// Feature: open00-system, Property 5: Magical Resonance Detection
+// Feature: open00-system, Property 6: Spell Casting Total Formula
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { detectMagicalResonance, computeSpellTotal } from '../../src/module/engine/spell-casting';
