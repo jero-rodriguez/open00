@@ -1,4 +1,10 @@
 {
+  "VSD.Tabs.Overview": "Descripción General",
+  "VSD.Tabs.Skills": "Habilidades",
+  "VSD.Tabs.Combat": "Combate",
+  "VSD.Tabs.Magic": "Magia",
+  "VSD.Tabs.Equipment": "Equipo",
+  "VSD.Tabs.Biography": "Biografía",
   "VSD.Overview.Stats": "Estadísticas",
   "VSD.Overview.Passions": "Pasiones",
   "VSD.Overview.DrivePoints": "Puntos de Impulso",
