@@ -5,46 +5,46 @@
     {{!-- Carried Items Section --}}
     <div class="equipment-section">
       <h3>{{localize "VSD.Equipment.CarriedItems"}}</h3>
-      
+
       {{#if items}}
-        <div class="items-list">
-          <div class="items-header">
-            <div class="col-name">{{localize "VSD.Equipment.ItemName"}}</div>
-            <div class="col-quantity">{{localize "VSD.Equipment.Quantity"}}</div>
-            <div class="col-weight">{{localize "VSD.Equipment.Weight"}}</div>
-            <div class="col-encumbrance">{{localize "VSD.Equipment.Encumbrance"}}</div>
-          </div>
-          
-          {{#each items}}
-            <div class="item-row" data-item-id="{{this.id}}">
-              <div class="col-name item-link">{{this.name}}</div>
-              <div class="col-quantity">{{this.quantity}}</div>
-              <div class="col-weight">{{this.weight}}</div>
-              <div class="col-encumbrance">{{this.encumbrance}}</div>
-            </div>
-          {{/each}}
+      <div class="items-list">
+        <div class="items-header">
+          <div class="col-name">{{localize "VSD.Equipment.ItemName"}}</div>
+          <div class="col-quantity">{{localize "VSD.Equipment.Quantity"}}</div>
+          <div class="col-weight">{{localize "VSD.Equipment.Weight"}}</div>
+          <div class="col-encumbrance">{{localize "VSD.Equipment.Encumbrance"}}</div>
         </div>
-        
-        {{!-- Encumbrance Display --}}
-        <div class="encumbrance-info">
-          <div class="encumbrance-total">
-            <span class="label">{{localize "VSD.Equipment.TotalEncumbrance"}}:</span>
-            <span class="value">{{totalEncumbrancePoints}}</span>
-          </div>
-          
-          <div class="encumbrance-level-display">
-            <span class="label">{{localize "VSD.Equipment.EncumbranceLevel"}}:</span>
-            <span class="value">{{localize (concat "VSD.Equipment." encumbrance)}}</span>
-          </div>
-          
-          <div class="encumbrance-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: {{encumbrancePercentage}}%;"></div>
-            </div>
+
+        {{#each items}}
+        <div class="item-row" data-item-id="{{this.id}}">
+          <div class="col-name item-link">{{this.name}}</div>
+          <div class="col-quantity">{{this.quantity}}</div>
+          <div class="col-weight">{{this.weight}}</div>
+          <div class="col-encumbrance">{{this.encumbrance}}</div>
+        </div>
+        {{/each}}
+      </div>
+
+      {{!-- Encumbrance Display --}}
+      <div class="encumbrance-info">
+        <div class="encumbrance-total">
+          <span class="label">{{localize "VSD.Equipment.TotalEncumbrance"}}:</span>
+          <span class="value">{{totalEncumbrancePoints}}</span>
+        </div>
+
+        <div class="encumbrance-level-display">
+          <span class="label">{{localize "VSD.Equipment.EncumbranceLevel"}}:</span>
+          <span class="value">{{localize (concat "VSD.Equipment." encumbrance)}}</span>
+        </div>
+
+        <div class="encumbrance-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {{encumbrancePercentage}}%;"></div>
           </div>
         </div>
+      </div>
       {{else}}
-        <p class="empty-message">{{localize "VSD.Equipment.NoItems"}}</p>
+      <p class="empty-message">{{localize "VSD.Equipment.NoItems"}}</p>
       {{/if}}
     </div>
 
@@ -60,38 +60,39 @@
     {{!-- Items of Power Section --}}
     <div class="equipment-section">
       <h3>{{localize "VSD.Equipment.ItemsOfPower"}}</h3>
-      
+
       {{#if itemsOfPower}}
-        <div class="items-of-power-list">
-          {{#each itemsOfPower}}
-            <div class="item-of-power-entry">
-              <div class="iop-header">
-                <strong class="iop-name">{{this.name}}</strong>
-                <span class="iop-affinity">
-                  {{localize "VSD.Equipment.AffinityLevel"}}: <strong>{{this.affinityLevel}}/5</strong>
-                </span>
-                <span class="iop-attuned">
-                  {{#if this.isAttuned}}
-                    <span class="attuned-badge">{{localize "VSD.Equipment.Attuned"}}</span>
-                  {{/if}}
-                </span>
-              </div>
-              
-              {{#if this.activeBonuses}}
-                <div class="iop-bonuses">
-                  <span class="bonuses-label">{{localize "VSD.Equipment.Bonuses"}}:</span>
-                  <ul class="bonuses-list">
-                    {{#each this.activeBonuses}}
-                      <li class="bonus-item">{{this.effect}} <span class="bonus-threshold">(Threshold: {{this.threshold}})</span></li>
-                    {{/each}}
-                  </ul>
-                </div>
+      <div class="items-of-power-list">
+        {{#each itemsOfPower}}
+        <div class="item-of-power-entry">
+          <div class="iop-header">
+            <strong class="iop-name">{{this.name}}</strong>
+            <span class="iop-affinity">
+              {{localize "VSD.Equipment.AffinityLevel"}}: <strong>{{this.affinityLevel}}/5</strong>
+            </span>
+            <span class="iop-attuned">
+              {{#if this.isAttuned}}
+              <span class="attuned-badge">{{localize "VSD.Equipment.Attuned"}}</span>
               {{/if}}
-            </div>
-          {{/each}}
+            </span>
+          </div>
+
+          {{#if this.activeBonuses}}
+          <div class="iop-bonuses">
+            <span class="bonuses-label">{{localize "VSD.Equipment.Bonuses"}}:</span>
+            <ul class="bonuses-list">
+              {{#each this.activeBonuses}}
+              <li class="bonus-item">{{this.effect}} <span class="bonus-threshold">(Threshold:
+                  {{this.threshold}})</span></li>
+              {{/each}}
+            </ul>
+          </div>
+          {{/if}}
         </div>
+        {{/each}}
+      </div>
       {{else}}
-        <p class="empty-message">{{localize "VSD.Equipment.NoItemsOfPower"}}</p>
+      <p class="empty-message">{{localize "VSD.Equipment.NoItemsOfPower"}}</p>
       {{/if}}
     </div>
 
