@@ -6,7 +6,7 @@ import {
   revertPhase,
   decrementConditions,
   COMBAT_PHASES,
-} from '../../src/engine/combat-phases';
+} from '../../src/module/engine/combat-phases';
 
 /**
  * Validates: Requirements 7.1, 7.3, 7.4, 7.7, 7.10

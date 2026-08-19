@@ -1,7 +1,7 @@
 // Feature: foundry-vsd-system, Property 2: Action Resolution Table Completeness and Correctness
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { resolveAction, OutcomeBand } from '../../src/engine/action-resolution';
+import { resolveAction, OutcomeBand } from '../../src/module/engine/action-resolution';
 
 /**
  * Validates: Requirements 5.1, 5.2, 5.3, 5.4, 5.5, 5.7

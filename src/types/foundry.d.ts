@@ -205,6 +205,7 @@ declare const Items: {
 declare const CONFIG: {
   Actor: {
     dataModels: Record<string, typeof foundry.abstract.TypeDataModel>;
+    trackableAttributes: Record<string, { bar: string[]; value: string[] }>;
   };
   Item: {
     dataModels: Record<string, typeof foundry.abstract.TypeDataModel>;

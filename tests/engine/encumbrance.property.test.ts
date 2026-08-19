@@ -6,7 +6,7 @@ import {
   determineEncumbranceLevel,
   computeTotalEncumbrance,
   type EncumbranceLevel,
-} from '../../src/engine/encumbrance';
+} from '../../src/module/engine/encumbrance';
 
 /**
  * Validates: Requirements 16.2, 16.3, 16.6

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { computeRankBonus } from '../../src/engine/rank-bonus';
+import { computeRankBonus } from '../../src/module/engine/rank-bonus';
 
 describe('computeRankBonus', () => {
   it('returns 0 for rank 0', () => {

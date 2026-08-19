@@ -1,7 +1,7 @@
 // Feature: foundry-vsd-system, Property 16: Affinity Bonus Activation
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { getActiveBonuses } from '../../src/engine/affinity';
+import { getActiveBonuses } from '../../src/module/engine/affinity';
 
 /**
  * Validates: Requirements 22.2, 22.5

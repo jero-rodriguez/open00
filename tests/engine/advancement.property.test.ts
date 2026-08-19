@@ -1,7 +1,7 @@
 // Feature: foundry-vsd-system, Property 15: DP Accounting Invariant
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { allocateDP, checkLevelUp, LevelEntry } from '../../src/engine/advancement';
+import { allocateDP, checkLevelUp, LevelEntry } from '../../src/module/engine/advancement';
 
 /**
  * Validates: Requirements 11.7, 12.4, 12.5

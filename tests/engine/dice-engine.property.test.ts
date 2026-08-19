@@ -2,7 +2,7 @@
 // Feature: foundry-vsd-system, Property 4: Roll Display Round-Trip
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { computeOpenEndedRoll, formatRollDisplay, RollSource, RollResult } from '../../src/engine/dice-engine';
+import { computeOpenEndedRoll, formatRollDisplay, RollSource, RollResult } from '../../src/module/engine/dice-engine';
 
 /**
  * Validates: Requirements 4.1, 4.2, 4.3
