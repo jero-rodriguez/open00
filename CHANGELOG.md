@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.4](https://github.com/jero-rodriguez/open00/compare/v1.13.3...v1.13.4) (2026-08-19)
+
+
+### Bug Fixes
+
+* fix problems rendering sheet ([6a3d0cb](https://github.com/jero-rodriguez/open00/commit/6a3d0cbc861b60d852d20b5bf343fb5bba9bd330))
+
 ## [1.13.3](https://github.com/jero-rodriguez/open00/compare/v1.13.2...v1.13.3) (2026-08-19)
 
 
