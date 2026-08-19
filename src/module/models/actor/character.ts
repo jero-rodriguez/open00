@@ -84,6 +84,15 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
           itemModifiers: new NumberField({ integer: true, initial: 0 }),
         }),
       ),
+
+      // Biography (Req 8.9)
+      biography: new StringField({ initial: '' }),
+
+      // Appearance (Req 8.9)
+      appearance: new StringField({ initial: '' }),
+
+      // Background notes (Req 8.9)
+      backgroundNotes: new StringField({ initial: '' }),
     };
   }
 

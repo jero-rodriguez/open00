@@ -1,6 +1,84 @@
 <section class="tab biography" data-group="primary" data-tab="biography">
-  <h2>{{localize "VSD.Biography.Title"}}</h2>
-  <div class="biography-content">
-    {{!-- Character backstory, notes --}}
+
+  <div class="biography-container">
+
+    {{!-- Biography Text --}}
+    <div class="biography-section">
+      <h3>{{localize "VSD.Biography.BiographyText"}}</h3>
+      <textarea 
+        name="system.biography" 
+        class="biography-textarea" 
+        placeholder="Enter character biography...">{{biography}}</textarea>
+    </div>
+
+    {{!-- Appearance Text --}}
+    <div class="biography-section">
+      <h3>{{localize "VSD.Biography.Appearance"}}</h3>
+      <textarea 
+        name="system.appearance" 
+        class="appearance-textarea" 
+        placeholder="Enter character appearance...">{{appearance}}</textarea>
+    </div>
+
+    {{!-- Background Notes Text --}}
+    <div class="biography-section">
+      <h3>{{localize "VSD.Biography.BackgroundNotes"}}</h3>
+      <textarea 
+        name="system.backgroundNotes" 
+        class="background-notes-textarea" 
+        placeholder="Enter background notes...">{{backgroundNotes}}</textarea>
+    </div>
+
+    {{!-- Character Building Items (Kin, Culture, Vocation) --}}
+    <div class="biography-items-grid">
+
+      {{!-- Kin Item --}}
+      <div class="biography-item-slot">
+        <h4>{{localize "VSD.Biography.Kin"}}</h4>
+        {{#if kinItem}}
+          <div class="item-slot-content">
+            <span class="item-name">{{kinItem.name}}</span>
+            <button class="remove-item" data-item-type="kin" title="Remove">×</button>
+          </div>
+        {{else}}
+          <div class="item-slot-empty">
+            <span class="placeholder">{{localize "VSD.Biography.DragItemHere"}}</span>
+          </div>
+        {{/if}}
+      </div>
+
+      {{!-- Culture Item --}}
+      <div class="biography-item-slot">
+        <h4>{{localize "VSD.Biography.Culture"}}</h4>
+        {{#if cultureItem}}
+          <div class="item-slot-content">
+            <span class="item-name">{{cultureItem.name}}</span>
+            <button class="remove-item" data-item-type="culture" title="Remove">×</button>
+          </div>
+        {{else}}
+          <div class="item-slot-empty">
+            <span class="placeholder">{{localize "VSD.Biography.DragItemHere"}}</span>
+          </div>
+        {{/if}}
+      </div>
+
+      {{!-- Vocation Item --}}
+      <div class="biography-item-slot">
+        <h4>{{localize "VSD.Biography.Vocation"}}</h4>
+        {{#if vocationItem}}
+          <div class="item-slot-content">
+            <span class="item-name">{{vocationItem.name}}</span>
+            <button class="remove-item" data-item-type="vocation" title="Remove">×</button>
+          </div>
+        {{else}}
+          <div class="item-slot-empty">
+            <span class="placeholder">{{localize "VSD.Biography.DragItemHere"}}</span>
+          </div>
+        {{/if}}
+      </div>
+
+    </div>
+
   </div>
+
 </section>
