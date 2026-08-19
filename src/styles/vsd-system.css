@@ -56,13 +56,22 @@
 }
 
 /* Tab Content */
+.vsd.sheet .tab-body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 .vsd.sheet .tab {
   display: none;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .vsd.sheet .tab.active {
   display: block;
+  flex: 1;
 }
 
 /* Headings */

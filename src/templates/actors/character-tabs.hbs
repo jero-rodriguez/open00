@@ -1,7 +1,7 @@
-<nav class="tabs" data-group="primary">
-  <a class="item" data-tab="overview" data-group="primary">{{localize "VSD.Tabs.Skills"}}</a>
-  <a class="item" data-tab="combat" data-group="primary">{{localize "VSD.Tabs.Combat"}}</a>
-  <a class="item" data-tab="magic" data-group="primary">{{localize "VSD.Tabs.Spells"}}</a>
-  <a class="item" data-tab="equipment" data-group="primary">{{localize "VSD.Tabs.Equipment"}}</a>
-  <a class="item" data-tab="biography" data-group="primary">{{localize "VSD.Tabs.Biography"}}</a>
+<nav class="tabs" data-group="primary" aria-roledescription="{{localize 'SHEETS.FormNavLabel'}}">
+  {{~#each tabs}}
+  <a class="item {{ cssClass }}" data-action="tab" data-group="{{ group }}" data-tab="{{ id }}">
+    {{ localize label }}
+  </a>
+  {{/each~}}
 </nav>

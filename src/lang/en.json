@@ -1,4 +1,16 @@
 {
+  "TYPES.Actor.character": "Character",
+  "TYPES.Actor.npc": "NPC",
+  "TYPES.Item.weapon": "Weapon",
+  "TYPES.Item.armor": "Armor",
+  "TYPES.Item.spell": "Spell",
+  "TYPES.Item.equipment": "Equipment",
+  "TYPES.Item.kin": "Kin",
+  "TYPES.Item.culture": "Culture",
+  "TYPES.Item.vocation": "Vocation",
+  "TYPES.Item.trait": "Trait",
+  "TYPES.Item.itemOfPower": "Item of Power",
+  "TYPES.Item.background": "Background Option",
   "VSD.Tabs.Overview": "Overview",
   "VSD.Tabs.Skills": "Skills",
   "VSD.Tabs.Combat": "Combat",
@@ -85,7 +97,7 @@
   "VSD.Magic.NoSpellsInLore": "No spells in this lore",
   "VSD.Equipment.Title": "Equipment",
   "VSD.Equipment.CarriedItems": "Carried Items",
-  "VSD.Equipment.ItemName": "Item",
+  "VSD.Equipment.ItemName": "Item Name",
   "VSD.Equipment.Quantity": "Qty",
   "VSD.Equipment.Weight": "Weight",
   "VSD.Equipment.Encumbrance": "Encumbrance",
@@ -98,7 +110,6 @@
   "VSD.Equipment.OverEncumbered": "Over Encumbered",
   "VSD.Equipment.WealthLevel": "Wealth Level",
   "VSD.Equipment.ItemsOfPower": "Items of Power",
-  "VSD.Equipment.ItemName": "Item Name",
   "VSD.Equipment.AffinityLevel": "Affinity Level",
   "VSD.Equipment.Attuned": "Attuned",
   "VSD.Equipment.Bonuses": "Active Bonuses",
@@ -111,5 +122,6 @@
   "VSD.Biography.Culture": "Culture",
   "VSD.Biography.Vocation": "Vocation",
   "VSD.Biography.BackgroundNotes": "Background Notes",
-  "VSD.Biography.DragItemHere": "Drag item here"
+  "VSD.Biography.DragItemHere": "Drag item here",
+  "VSD.Tabs.Spells": "Spells"
 }
