@@ -1,6 +1,6 @@
 {
   "name": "vsd-system",
-  "version": "1.13.1",
+  "version": "1.13.2",
   "description": "Against the Darkmaster (VsD) game system for FoundryVTT v14",
   "type": "module",
   "engines": {
