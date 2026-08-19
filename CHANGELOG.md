@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.2](https://github.com/jero-rodriguez/open00/compare/v1.13.1...v1.13.2) (2026-08-19)
+
+
+### Bug Fixes
+
+* fix template rendering ([d42ee23](https://github.com/jero-rodriguez/open00/commit/d42ee23de9c78bcbd3c90ea07a8258ebed6ed5b6))
+
 ## [1.13.1](https://github.com/jero-rodriguez/open00/compare/v1.13.0...v1.13.1) (2026-08-19)
 
 
