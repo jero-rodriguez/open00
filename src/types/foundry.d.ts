@@ -137,6 +137,8 @@ declare namespace foundry {
         tabGroups: Record<string, string>;
         _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
+        render(force?: boolean, options?: Record<string, unknown>): Promise<unknown>;
+        close(options?: Record<string, unknown>): Promise<void>;
       }
 
       /** Mixin that adds Handlebars template rendering to ApplicationV2 */
@@ -151,6 +153,7 @@ declare namespace foundry {
         static PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition>;
         get actor(): Actor;
         get document(): Actor;
+        form: HTMLFormElement;
       }
     }
   }
@@ -168,10 +171,12 @@ declare class Actor {
 
 /** FoundryVTT Item document */
 declare class Item {
+  id: string;
   name: string;
   img: string;
   type: string;
   system: Record<string, unknown>;
+  delete(): Promise<this>;
 }
 
 /** FoundryVTT Collection */
@@ -180,6 +185,7 @@ declare class Collection<T> implements Iterable<T> {
   get size(): number;
   filter(fn: (item: T) => boolean): T[];
   map<U>(fn: (item: T) => U): U[];
+  find(fn: (item: T) => boolean): T | undefined;
   contents: T[];
 }
 

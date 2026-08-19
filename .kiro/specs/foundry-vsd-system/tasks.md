@@ -293,18 +293,18 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Skill roll buttons trigger Dice_Engine roll with skill total bonus, display in chat with skill name
     - _Requirements: 8.4, 8.5_
 
-- [ ] 18. Implement Character Sheet — Combat, Magic, Equipment, Biography tabs
-  - [ ] 18.1 Implement Combat and Magic tabs
+- [x] 18. Implement Character Sheet — Combat, Magic, Equipment, Biography tabs
+  - [x] 18.1 Implement Combat and Magic tabs
     - Combat: HP, Defense, equipped weapons/armor, active conditions
     - Magic: MP, spells by Spell Lore, casting bonuses
     - _Requirements: 8.6, 8.7_
 
-  - [ ] 18.2 Implement Equipment and Biography tabs
+  - [x] 18.2 Implement Equipment and Biography tabs
     - Equipment: carried items, encumbrance level with progress bar, wealth level, Items of Power with affinity display
     - Biography: bio, appearance, Kin, Culture, Vocation, background notes
     - _Requirements: 8.8, 8.9, 16.5, 22.3_
 
-  - [ ] 18.3 Implement auto-save on field edit
+  - [x] 18.3 Implement auto-save on field edit
     - Persist changes on blur/Enter within 500ms debounce
     - On persistence failure, revert displayed value and show notification
     - _Requirements: 8.10, 8.12_

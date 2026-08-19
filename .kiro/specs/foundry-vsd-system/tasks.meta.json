@@ -12,6 +12,49 @@
         "chatSessionId": "sess_26e804e9-942e-4393-8cdb-bfa8e59be05c",
         "timestamp": 1787129382243
       }
+    ],
+    "18.1 Implement Combat and Magic tabs": [
+      {
+        "executionId": "2b1f8721-6bc0-4766-b171-fd27dab127dc",
+        "chatSessionId": "sess_1c63dd72-8a40-45a8-8d99-a993b2f08def",
+        "timestamp": 1787129840179
+      },
+      {
+        "executionId": "2b1f8721-6bc0-4766-b171-fd27dab127dc",
+        "chatSessionId": "sess_1c63dd72-8a40-45a8-8d99-a993b2f08def",
+        "timestamp": 1787131661622
+      }
+    ],
+    "18.2 Implement Equipment and Biography tabs": [
+      {
+        "executionId": "af011e5f-80d5-44b9-8f4f-52379e0209a2",
+        "chatSessionId": "sess_d849613a-4834-43ec-8e9a-92854ac17aa6",
+        "timestamp": 1787131817014
+      },
+      {
+        "executionId": "af011e5f-80d5-44b9-8f4f-52379e0209a2",
+        "chatSessionId": "sess_d849613a-4834-43ec-8e9a-92854ac17aa6",
+        "timestamp": 1787132247314
+      }
+    ],
+    "18.3 Implement auto-save on field edit": [
+      {
+        "executionId": "6aeca94e-f6d1-48b5-bc8c-e3f408612f66",
+        "chatSessionId": "sess_755c5999-ed6e-4d62-825a-435fae6f0054",
+        "timestamp": 1787132273135
+      },
+      {
+        "executionId": "6aeca94e-f6d1-48b5-bc8c-e3f408612f66",
+        "chatSessionId": "sess_755c5999-ed6e-4d62-825a-435fae6f0054",
+        "timestamp": 1787132635474
+      }
+    ],
+    "18. Implement Character Sheet — Combat, Magic, Equipment, Biography tabs": [
+      {
+        "executionId": "6aeca94e-f6d1-48b5-bc8c-e3f408612f66",
+        "chatSessionId": "sess_755c5999-ed6e-4d62-825a-435fae6f0054",
+        "timestamp": 1787132635540
+      }
     ]
   }
 }
