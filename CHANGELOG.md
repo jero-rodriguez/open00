@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/jero-rodriguez/open00/compare/v1.12.3...v1.13.0) (2026-08-19)
+
+
+### Features
+
+* Implement Character Sheet — Combat, Magic, Equipment, Biography tabs ([656cc3a](https://github.com/jero-rodriguez/open00/commit/656cc3ae22b50ead36a407308c231f8491e4f017))
+
 ## [1.12.3](https://github.com/jero-rodriguez/open00/compare/v1.12.2...v1.12.3) (2026-08-19)
 
 
