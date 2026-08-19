@@ -15,6 +15,7 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
 
     steps:
       - name: Run release-please
@@ -44,11 +45,22 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Zip dist folder
-        run: zip -r vsd-system.zip dist/
+      - name: Stamp version and download URL in system.json
+        env:
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+          VERSION: ${{ needs.release-please.outputs.version }}
+        run: |
+          jq --arg ver "$VERSION" --arg dl "https://github.com/jero-rodriguez/open00/releases/download/$TAG_NAME/vsd-system.zip" \
+            '.version = $ver | .download = $dl' dist/system.json > dist/system.json.tmp \
+            && mv dist/system.json.tmp dist/system.json
 
-      - name: Upload release asset
+      - name: Zip dist folder
+        run: cd dist && zip -r ../vsd-system.zip .
+
+      - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.release-please.outputs.tag_name }}
-          files: vsd-system.zip
+          files: |
+            vsd-system.zip
+            dist/system.json

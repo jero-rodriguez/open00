@@ -5,7 +5,7 @@ import {
   lookupAttackTable,
   AttackTableData,
   ArmorCategory,
-} from '../../src/engine/attack-tables';
+} from '../../src/module/engine/attack-tables';
 
 /**
  * Validates: Requirements 17.2, 17.6, 17.8

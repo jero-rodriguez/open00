@@ -1,7 +1,7 @@
 // Feature: foundry-vsd-system, Property 17: Travel Duration Computation
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { computeTravelDuration, TravelPace } from '../../src/engine/travel';
+import { computeTravelDuration, TravelPace } from '../../src/module/engine/travel';
 
 /**
  * Validates: Requirements 18.3

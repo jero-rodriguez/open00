@@ -2,7 +2,7 @@
 // Feature: foundry-vsd-system, Property 6: Spell Casting Total Formula
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { detectMagicalResonance, computeSpellTotal } from '../../src/engine/spell-casting';
+import { detectMagicalResonance, computeSpellTotal } from '../../src/module/engine/spell-casting';
 
 /**
  * Validates: Requirements 6.2, 6.7

@@ -1,37 +1,66 @@
+/**
+ * VsD System — Entry point for the Against the Darkmaster game system.
+ *
+ * Registers Data Models, Document sub-types, and Actor sheets
+ * following the official Foundry VTT system development guide.
+ *
+ * Reference: https://foundryvtt.com/article/system-development/
+ */
+
 // Actor data models
-import { CharacterDataModel } from './models/actor/character.js';
-import { NpcDataModel } from './models/actor/npc.js';
+import { CharacterDataModel } from './module/models/actor/character.js';
+import { NpcDataModel } from './module/models/actor/npc.js';
 
 // Item data models
-import { WeaponDataModel } from './models/item/weapon.js';
-import { ArmorDataModel } from './models/item/armor.js';
-import { SpellDataModel } from './models/item/spell.js';
-import { EquipmentDataModel } from './models/item/equipment.js';
-import { KinDataModel } from './models/item/kin.js';
-import { CultureDataModel } from './models/item/culture.js';
-import { VocationDataModel } from './models/item/vocation.js';
-import { KinTraitDataModel } from './models/item/kin-trait.js';
-import { ItemOfPowerDataModel } from './models/item/item-of-power.js';
+import { WeaponDataModel } from './module/models/item/weapon.js';
+import { ArmorDataModel } from './module/models/item/armor.js';
+import { SpellDataModel } from './module/models/item/spell.js';
+import { EquipmentDataModel } from './module/models/item/equipment.js';
+import { KinDataModel } from './module/models/item/kin.js';
+import { CultureDataModel } from './module/models/item/culture.js';
+import { VocationDataModel } from './module/models/item/vocation.js';
+import { KinTraitDataModel } from './module/models/item/kin-trait.js';
+import { ItemOfPowerDataModel } from './module/models/item/item-of-power.js';
+import { BackgroundDataModel } from './module/models/item/background.js';
 
 // Sheets
-import { VsdCharacterSheet } from './sheets/character-sheet.js';
+import { VsdCharacterSheet } from './module/sheets/character-sheet.js';
 
 Hooks.once('init', () => {
-  // Register Actor data models
-  CONFIG.Actor.dataModels.character = CharacterDataModel;
-  CONFIG.Actor.dataModels.npc = NpcDataModel;
+  // Configure System Data Models
+  CONFIG.Actor.dataModels = {
+    character: CharacterDataModel,
+    npc: NpcDataModel,
+  };
 
-  // Register Item data models
-  CONFIG.Item.dataModels.weapon = WeaponDataModel;
-  CONFIG.Item.dataModels.armor = ArmorDataModel;
-  CONFIG.Item.dataModels.spell = SpellDataModel;
-  CONFIG.Item.dataModels.equipment = EquipmentDataModel;
-  CONFIG.Item.dataModels.kin = KinDataModel;
-  CONFIG.Item.dataModels.culture = CultureDataModel;
-  CONFIG.Item.dataModels.vocation = VocationDataModel;
-  CONFIG.Item.dataModels.trait = KinTraitDataModel;
-  CONFIG.Item.dataModels.itemOfPower = ItemOfPowerDataModel;
+  CONFIG.Item.dataModels = {
+    weapon: WeaponDataModel,
+    armor: ArmorDataModel,
+    spell: SpellDataModel,
+    equipment: EquipmentDataModel,
+    kin: KinDataModel,
+    culture: CultureDataModel,
+    vocation: VocationDataModel,
+    trait: KinTraitDataModel,
+    itemOfPower: ItemOfPowerDataModel,
+    background: BackgroundDataModel,
+  };
+
+  // Configure trackable attributes
+  CONFIG.Actor.trackableAttributes = {
+    character: {
+      bar: ['hp', 'mp'],
+      value: ['drivePoints.current'],
+    },
+    npc: {
+      bar: ['hp'],
+      value: ['level'],
+    },
+  };
 
   // Register Actor sheets
-  Actors.registerSheet('vsd', VsdCharacterSheet, { types: ['character'], makeDefault: true });
+  Actors.registerSheet('vsd', VsdCharacterSheet, {
+    types: ['character'],
+    makeDefault: true,
+  });
 });

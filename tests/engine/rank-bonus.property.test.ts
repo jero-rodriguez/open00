@@ -1,7 +1,7 @@
 // Feature: foundry-vsd-system, Property 1: Rank Bonus Piecewise Formula
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { computeRankBonus } from '../../src/engine/rank-bonus';
+import { computeRankBonus } from '../../src/module/engine/rank-bonus';
 
 /**
  * Validates: Requirements 1.6

@@ -1,12 +1,28 @@
 {
   "id": "vsd",
   "title": "Against the Darkmaster (VsD)",
-  "version": "0.1.0",
-  "compatibility": { "minimum": "14", "verified": "14" },
-  "esmodules": ["vsd-system.js"],
+  "description": "A game system for playing Against the Darkmaster (VsD) in Foundry Virtual Tabletop.",
+  "version": "1.12.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
+  },
+  "url": "https://github.com/jero-rodriguez/open00",
+  "manifest": "https://raw.githubusercontent.com/jero-rodriguez/open00/main/src/system.json",
+  "download": "https://github.com/jero-rodriguez/open00/releases/download/v1.12.0/vsd-system.zip",
+  "authors": [
+    {
+      "name": "jerorodriguez",
+      "flags": {}
+    }
+  ],
+  "esmodules": [
+    "vsd-system.mjs"
+  ],
+  "styles": [],
   "languages": [
-    { "lang": "en", "name": "English", "path": "lang/en.json" },
-    { "lang": "es", "name": "Español", "path": "lang/es.json" }
+    { "lang": "en", "name": "English", "path": "lang/en.json", "flags": {} },
+    { "lang": "es", "name": "Español", "path": "lang/es.json", "flags": {} }
   ],
   "documentTypes": {
     "Actor": {
@@ -22,7 +38,17 @@
       "culture": {},
       "vocation": {},
       "trait": {},
-      "itemOfPower": {}
+      "itemOfPower": {},
+      "background": {}
     }
-  }
+  },
+  "socket": false,
+  "initiative": "1d100",
+  "grid": {
+    "distance": 5,
+    "units": "ft"
+  },
+  "primaryTokenAttribute": "hp",
+  "secondaryTokenAttribute": "mp",
+  "flags": {}
 }
