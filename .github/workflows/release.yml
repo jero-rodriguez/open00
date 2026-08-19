@@ -66,3 +66,4 @@ jobs:
           files: |
             vsd-system.zip
             dist/system.json
+          make_latest: true

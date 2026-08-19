@@ -17,7 +17,9 @@
   "esmodules": [
     "vsd-system.mjs"
   ],
-  "styles": [],
+  "styles": [
+    "styles/vsd-system.css"
+  ],
   "languages": [
     { "lang": "en", "name": "English", "path": "lang/en.json", "flags": {} },
     { "lang": "es", "name": "Español", "path": "lang/es.json", "flags": {} }
