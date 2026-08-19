@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.5](https://github.com/jero-rodriguez/open00/compare/v1.13.4...v1.13.5) (2026-08-19)
+
+
+### Bug Fixes
+
+* render sheet tabs ([9b2e4bc](https://github.com/jero-rodriguez/open00/commit/9b2e4bc5a5c076d0140d2c98bd67fdfe0ea9ee75))
+
 ## [1.13.4](https://github.com/jero-rodriguez/open00/compare/v1.13.3...v1.13.4) (2026-08-19)
 
 
