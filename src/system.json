@@ -2,14 +2,12 @@
   "id": "vsd",
   "title": "Against the Darkmaster (VsD)",
   "description": "A game system for playing Against the Darkmaster (VsD) in Foundry Virtual Tabletop.",
-  "version": "1.12.0",
   "compatibility": {
     "minimum": "14",
     "verified": "14"
   },
   "url": "https://github.com/jero-rodriguez/open00",
-  "manifest": "https://raw.githubusercontent.com/jero-rodriguez/open00/main/src/system.json",
-  "download": "https://github.com/jero-rodriguez/open00/releases/download/v1.12.0/vsd-system.zip",
+  "manifest": "https://github.com/jero-rodriguez/open00/releases/download/latest/system.json",
   "authors": [
     {
       "name": "jerorodriguez",

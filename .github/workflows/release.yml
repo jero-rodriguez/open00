@@ -50,12 +50,14 @@ jobs:
           TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
           VERSION: ${{ needs.release-please.outputs.version }}
         run: |
-          jq --arg ver "$VERSION" --arg dl "https://github.com/jero-rodriguez/open00/releases/download/$TAG_NAME/vsd-system.zip" \
-            '.version = $ver | .download = $dl' dist/system.json > dist/system.json.tmp \
-            && mv dist/system.json.tmp dist/system.json
+          if [ ! -f dist/system.json ]; then
+            echo "Error: dist/system.json not found after build"
+            exit 1
+          fi
+          node scripts/stamp-release.js "$VERSION" "$TAG_NAME"
 
       - name: Zip dist folder
-        run: cd dist && zip -r ../vsd-system.zip .
+        run: cd dist && zip -r ../vsd-system.zip . && cd ..
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
