@@ -1,11 +1,10 @@
-<div class="character-overview">
+<section class="tab overview" data-group="primary" data-tab="overview">
   <div class="passions-block">
     <h3>{{localize "VSD.Overview.Passions"}}</h3>
-    <div class="passions-grid">
+    <div class="passions-grid-section">
       <label class="field-label">{{localize "VSD.Passions.Motivation"}}</label>
       <span class="field-input">
-        <input type="text" name="system.passions.motivation" value="{{passions.motivation}}"
-          class="passions-text-field" />
+        <input type="text" name="system.passions.motivation" value="{{passions.motivation}}" class="passions-text-field" />
       </span>
       <label class="field-label">{{localize "VSD.Passions.Nature"}}</label>
       <span class="field-input">
@@ -13,104 +12,125 @@
       </span>
       <label class="field-label">{{localize "VSD.Passions.Allegiance"}}</label>
       <span class="field-input">
-        <input type="text" name="system.passions.allegiance" value="{{passions.allegiance}}"
-          class="passions-text-field" />
+        <input type="text" name="system.passions.allegiance" value="{{passions.allegiance}}" class="passions-text-field" />
       </span>
     </div>
   </div>
 
-  {{!-- Main two-column layout (mirroring Roll20 left/right split) --}}
   <div class="main-grid-section">
-
     {{!-- Left Column: Drive Points, Heroic Path, Stats, Save Rolls --}}
     <div class="leftside">
 
-      {{!-- Drive Points --}}
+      {{!-- Drive Points (checkboxes like Roll20) --}}
       <div class="drive-points">
-        <h3>{{localize "VSD.Overview.DrivePoints"}}</h3>
-        <div class="drive-points-display">
-          <input type="number" name="system.drivePoints.value" value="{{drivePoints.value}}" class="drive-current" />
-          <span class="separator">/</span>
-          <input type="number" name="system.drivePoints.max" value="{{drivePoints.max}}" class="drive-max" />
-        </div>
+        <h3>{{localize "VSD.Overview.DrivePoints"}}
+          <span class="drive-points-display">
+            <input type="number" name="system.drivePoints.value" value="{{drivePoints.value}}" class="drive-current" min="0" max="{{drivePoints.max}}" />
+            <span class="separator">/</span>
+            <input type="number" name="system.drivePoints.max" value="{{drivePoints.max}}" class="drive-max" min="0" />
+          </span>
+        </h3>
       </div>
 
       {{!-- Heroic Path --}}
       <div class="heroic-path">
         <h3>{{localize "VSD.Overview.HeroicPath"}}</h3>
-        <input type="text" name="system.heroicPath" value="{{heroicPath}}" class="heroic-path-field" />
+        <div class="heroicpath-grid-section">
+          <input type="text" name="system.heroicPath" value="{{heroicPath}}" class="heroic-path-field" />
+        </div>
       </div>
 
-      {{!-- Stats Block (table format like Roll20: Name, Abbr, Value/Total) --}}
+      {{!-- Stats Block --}}
       <div class="stats-block">
         <h3>{{localize "VSD.Overview.Stats"}}</h3>
-        <div class="stats-table">
-          <div class="stats-row stats-header">
-            <div class="stats-cell">{{localize "VSD.Stats.Header.Name"}}</div>
-            <div class="stats-cell">{{localize "VSD.Stats.Header.Abbr"}}</div>
-            <div class="stats-cell">{{localize "VSD.Stats.Header.Total"}}</div>
+        <div class="stats-table tablelike">
+          <div class="rowlike table-header">
+            <div class="celllike">{{localize "VSD.Stats.Header.Name"}}</div>
+            <div class="celllike">{{localize "VSD.Stats.Header.Abbr"}}</div>
+            <div class="celllike">{{localize "VSD.Stats.Header.Total"}}</div>
           </div>
-          <div class="stats-row">
-            <div class="stats-cell stats-name-cell">
-              <span class="stats-name" title="Brawn is character's muscular strength and physical power">{{localize
-                "VSD.Stats.Brawn"}}</span>
+          <div class="rowlike">
+            <div class="celllike stats-name-cell">
+              <span class="stats-name" title="Brawn is character's muscular strength and physical power">{{localize "VSD.Stats.Brawn"}}</span>
             </div>
-            <div class="stats-cell stat-abbr"><span class="stats-name">brn</span></div>
-            <div class="stats-cell">
-              <input type="number" name="system.stats.brn" value="{{stats.brn}}" class="stat-input" />
-            </div>
-          </div>
-          <div class="stats-row">
-            <div class="stats-cell stats-name-cell">
-              <span class="stats-name"
-                title="Swiftness is character's dexterity, speed, coordination, balance and general agility">{{localize
-                "VSD.Stats.Swiftness"}}</span>
-            </div>
-            <div class="stats-cell stat-abbr"><span class="stats-name">swi</span></div>
-            <div class="stats-cell">
-              <input type="number" name="system.stats.swi" value="{{stats.swi}}" class="stat-input" />
+            <div class="celllike stat-abbr"><span class="stats-name">brn</span></div>
+            <div class="celllike">
+              <input type="number" class="stat-input" name="system.stats.brn" value="{{stats.brn}}" />
             </div>
           </div>
-          <div class="stats-row">
-            <div class="stats-cell stats-name-cell">
-              <span class="stats-name" title="Fortitude is character's resistance and vigor">{{localize
-                "VSD.Stats.Fortitude"}}</span>
+          <div class="rowlike">
+            <div class="celllike stats-name-cell">
+              <span class="stats-name" title="Swiftness is character's dexterity, speed, coordination, balance and general agility">{{localize "VSD.Stats.Swiftness"}}</span>
             </div>
-            <div class="stats-cell stat-abbr"><span class="stats-name">for</span></div>
-            <div class="stats-cell">
-              <input type="number" name="system.stats.for" value="{{stats.for}}" class="stat-input" />
-            </div>
-          </div>
-          <div class="stats-row">
-            <div class="stats-cell stats-name-cell">
-              <span class="stats-name" title="Wits is character's reasoning, cleverness, and mental agility">{{localize
-                "VSD.Stats.Wits"}}</span>
-            </div>
-            <div class="stats-cell stat-abbr"><span class="stats-name">wit</span></div>
-            <div class="stats-cell">
-              <input type="number" name="system.stats.wit" value="{{stats.wit}}" class="stat-input" />
+            <div class="celllike stat-abbr"><span class="stats-name">swi</span></div>
+            <div class="celllike">
+              <input type="number" class="stat-input" name="system.stats.swi" value="{{stats.swi}}" />
             </div>
           </div>
-          <div class="stats-row">
-            <div class="stats-cell stats-name-cell">
-              <span class="stats-name"
-                title="Wisdom is character's empathy, intuition, willpower, and awareness">{{localize
-                "VSD.Stats.Wisdom"}}</span>
+          <div class="rowlike">
+            <div class="celllike stats-name-cell">
+              <span class="stats-name" title="Fortitude is character's resistance and vigor">{{localize "VSD.Stats.Fortitude"}}</span>
             </div>
-            <div class="stats-cell stat-abbr"><span class="stats-name">wsd</span></div>
-            <div class="stats-cell">
-              <input type="number" name="system.stats.wsd" value="{{stats.wsd}}" class="stat-input" />
+            <div class="celllike stat-abbr"><span class="stats-name">for</span></div>
+            <div class="celllike">
+              <input type="number" class="stat-input" name="system.stats.for" value="{{stats.for}}" />
             </div>
           </div>
-          <div class="stats-row">
-            <div class="stats-cell stats-name-cell">
-              <span class="stats-name"
-                title="Bearing is character's presence, charisma, and social influence">{{localize
-                "VSD.Stats.Bearing"}}</span>
+          <div class="rowlike">
+            <div class="celllike stats-name-cell">
+              <span class="stats-name" title="Wits is character's reasoning, cleverness, and mental agility">{{localize "VSD.Stats.Wits"}}</span>
             </div>
-            <div class="stats-cell stat-abbr"><span class="stats-name">bea</span></div>
-            <div class="stats-cell">
-              <input type="number" name="system.stats.bea" value="{{stats.bea}}" class="stat-input" />
+            <div class="celllike stat-abbr"><span class="stats-name">wit</span></div>
+            <div class="celllike">
+              <input type="number" class="stat-input" name="system.stats.wit" value="{{stats.wit}}" />
+            </div>
+          </div>
+          <div class="rowlike">
+            <div class="celllike stats-name-cell">
+              <span class="stats-name" title="Wisdom is character's empathy, intuition, willpower, and awareness">{{localize "VSD.Stats.Wisdom"}}</span>
+            </div>
+            <div class="celllike stat-abbr"><span class="stats-name">wsd</span></div>
+            <div class="celllike">
+              <input type="number" class="stat-input" name="system.stats.wsd" value="{{stats.wsd}}" />
+            </div>
+          </div>
+          <div class="rowlike">
+            <div class="celllike stats-name-cell">
+              <span class="stats-name" title="Bearing is character's presence, charisma, and social influence">{{localize "VSD.Stats.Bearing"}}</span>
+            </div>
+            <div class="celllike stat-abbr"><span class="stats-name">bea</span></div>
+            <div class="celllike">
+              <input type="number" class="stat-input" name="system.stats.bea" value="{{stats.bea}}" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Save Rolls --}}
+      <div class="saves-block">
+        <h3>{{localize "VSD.Overview.SaveRolls"}}</h3>
+        <div class="tablelike">
+          <div class="rowlike table-header">
+            <div class="celllike">{{localize "VSD.Saves.RollName"}}</div>
+            <div class="celllike">{{localize "VSD.Saves.Stat"}}</div>
+            <div class="celllike">{{localize "VSD.Stats.Header.Total"}}</div>
+          </div>
+          <div class="rowlike">
+            <div class="celllike">
+              <span class="stats-name">{{localize "VSD.Saves.Toughness"}}</span>
+            </div>
+            <div class="celllike stat-abbr"><span class="stats-name">for</span></div>
+            <div class="celllike">
+              <span class="save-total">{{saveRolls.toughness}}</span>
+            </div>
+          </div>
+          <div class="rowlike">
+            <div class="celllike">
+              <span class="stats-name">{{localize "VSD.Saves.Willpower"}}</span>
+            </div>
+            <div class="celllike stat-abbr"><span class="stats-name">wsd</span></div>
+            <div class="celllike">
+              <span class="save-total">{{saveRolls.willpower}}</span>
             </div>
           </div>
         </div>
@@ -118,65 +138,53 @@
 
     </div>
 
-    {{!-- Right Column: HP/MP vitals summary --}}
+    {{!-- Right Column: Skills --}}
     <div class="rightside">
-
-      {{!-- Hit Points --}}
-      <div class="vitals-block">
-        <h3>{{localize "VSD.Overview.HitPoints"}}</h3>
-        <div class="vitals-display">
-          <div class="vital-pair">
-            <input type="number" name="system.hp.value" value="{{hp.value}}" class="vital-current" />
-            <span class="vital-label">{{localize "VSD.Overview.Current"}}</span>
-          </div>
-          <span class="separator">/</span>
-          <div class="vital-pair">
-            <input type="number" name="system.hp.max" value="{{hp.max}}" class="vital-max" />
-            <span class="vital-label">{{localize "VSD.Overview.Max"}}</span>
-          </div>
-        </div>
+      <h3>{{localize "VSD.Skills.Title"}}</h3>
+      <div class="skills-grid-table table-header">
+        <div class="skills-cell">{{localize "VSD.Skills.Name"}}</div>
+        <div class="skills-cell" title="Stat bonus">{{localize "VSD.Skills.StatBonus"}}</div>
+        <div class="skills-cell" title="Stat abbreviation">{{localize "VSD.Stats.Header.Abbr"}}</div>
+        <div class="skills-cell" title="Number of ranks">{{localize "VSD.Skills.Rank"}}</div>
+        <div class="skills-cell" title="Rank bonus (auto-calculated)">{{localize "VSD.Skills.RankBonus"}}</div>
+        <div class="skills-cell" title="Total skill bonus">{{localize "VSD.Skills.Total"}}</div>
+        <div class="skills-cell"></div>
       </div>
 
-      {{!-- Magic Points --}}
-      <div class="vitals-block">
-        <h3>{{localize "VSD.Overview.MagicPoints"}}</h3>
-        <div class="vitals-display">
-          <div class="vital-pair">
-            <input type="number" name="system.mp.value" value="{{mp.value}}" class="vital-current" />
-            <span class="vital-label">{{localize "VSD.Overview.Current"}}</span>
-          </div>
-          <span class="separator">/</span>
-          <div class="vital-pair">
-            <input type="number" name="system.mp.max" value="{{mp.max}}" class="vital-max" />
-            <span class="vital-label">{{localize "VSD.Overview.Max"}}</span>
-          </div>
+      {{#each categories as |category|}}
+      {{#if (lookup ../skillsByCategory category)}}
+      <div class="skills-grid-table-subheading">
+        <div class="skills-subheader skills-subheader-text">{{category}}</div>
+      </div>
+      {{#each (lookup ../skillsByCategory category) as |skill|}}
+      <div class="skills-grid-table">
+        <div class="skills-cell skills-name-cell">
+          <span class="skill-name" title="{{skill.name}}">{{skill.name}}</span>
+        </div>
+        <div class="skills-cell">
+          <span class="skill-stat-bonus">{{skill.statBonus}}</span>
+        </div>
+        <div class="skills-cell stat-abbr">
+          <span class="stats-name">{{skill.statKey}}</span>
+        </div>
+        <div class="skills-cell">
+          <input type="number" class="skill-rank-input" name="system.skills.{{skill.index}}.rank" value="{{skill.rank}}" min="0" max="30" />
+        </div>
+        <div class="skills-cell">
+          <span class="skill-rank-bonus">{{skill.rankBonus}}</span>
+        </div>
+        <div class="skills-cell">
+          <span class="skill-total">{{skill.totalBonus}}</span>
+        </div>
+        <div class="skills-cell">
+          <button type="button" class="roll-skill-btn" data-action="rollSkill" data-skill-name="{{skill.name}}" data-skill-bonus="{{skill.totalBonus}}" data-stat-key="{{skill.statKey}}" data-category="{{category}}" title="Roll {{skill.name}}">
+            <span class="dicetext">Roll</span>
+          </button>
         </div>
       </div>
-
-      {{!-- Defense --}}
-      <div class="vitals-block">
-        <h3>{{localize "VSD.Overview.Defense"}}</h3>
-        <div class="defense-display">
-          <input type="number" name="system.defense" value="{{defense}}" class="defense-input" />
-        </div>
-      </div>
-
-      {{!-- Encumbrance --}}
-      <div class="vitals-block">
-        <h3>{{localize "VSD.Overview.Encumbrance"}}</h3>
-        <div class="encumbrance-display">
-          <span class="encumbrance-level">{{encumbrance}}</span>
-        </div>
-      </div>
-
-      {{!-- Wealth --}}
-      <div class="vitals-block">
-        <h3>{{localize "VSD.Overview.Wealth"}}</h3>
-        <div class="wealth-display">
-          <input type="number" name="system.wealth" value="{{wealth}}" min="0" max="5" class="wealth-input" />
-        </div>
-      </div>
-
+      {{/each}}
+      {{/if}}
+      {{/each}}
     </div>
   </div>
-</div>
+</section>
