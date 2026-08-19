@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.3](https://github.com/jero-rodriguez/open00/compare/v1.12.2...v1.12.3) (2026-08-19)
+
+
+### Bug Fixes
+
+* finalize skill tab ([5ff1cc4](https://github.com/jero-rodriguez/open00/commit/5ff1cc4903ee638fa2af7afd79ca0f50b477f829))
+
 ## [1.12.2](https://github.com/jero-rodriguez/open00/compare/v1.12.1...v1.12.2) (2026-08-19)
 
 
