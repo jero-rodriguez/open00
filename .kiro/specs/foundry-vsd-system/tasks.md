@@ -288,7 +288,7 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - _Requirements: 8.2, 8.3_
 
 - [x] 17. Implement Character Sheet — Skills tab
-  - [ ] 17.1 Implement Skills tab with roll buttons
+  - [x] 17.1 Implement Skills tab with roll buttons
     - Display skills grouped by 7 categories with rank, rank bonus, stat bonus, total bonus
     - Skill roll buttons trigger Dice_Engine roll with skill total bonus, display in chat with skill name
     - _Requirements: 8.4, 8.5_

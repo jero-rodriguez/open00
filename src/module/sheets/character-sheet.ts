@@ -30,7 +30,7 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     position: { width: 720, height: 680 },
     window: { resizable: true },
     actions: {
-      rollSkill: VsdCharacterSheet.rollSkill,
+      rollSkill: VsdCharacterSheet.#rollSkill,
     },
   };
 
@@ -176,7 +176,7 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
    *
    * Requirements: 8.4, 8.5
    */
-  static rollSkill(
+  static #rollSkill(
     event: Event,
     target: HTMLElement,
   ): void {
@@ -190,10 +190,6 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       console.warn('VsdCharacterSheet: Missing skill data for roll');
       return;
     }
-
-    // Get the actor from the target element
-    const sheetElement = target.closest('.vsd.sheet.actor.character');
-    if (!sheetElement) return;
 
     // Use a random roll source (d100)
     const d100Source = () => Math.floor(Math.random() * 100) + 1;

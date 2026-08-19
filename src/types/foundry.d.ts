@@ -116,7 +116,7 @@ declare namespace foundry {
         tag?: string;
         position?: ApplicationPosition;
         window?: ApplicationWindowOptions;
-        actions?: Record<string, (event: Event, target: HTMLElement) => void>;
+        actions?: Record<string, (this: ApplicationV2, event: Event, target: HTMLElement) => void>;
       }
 
       interface ApplicationRenderOptions {
