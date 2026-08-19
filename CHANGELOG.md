@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.1](https://github.com/jero-rodriguez/open00/compare/v1.12.0...v1.12.1) (2026-08-19)
+
+
+### Bug Fixes
+
+* refactor and fixes ([fd57c2c](https://github.com/jero-rodriguez/open00/commit/fd57c2cbc160661801ec59739afbf654c41bce0c))
+
 ## [1.12.0](https://github.com/jero-rodriguez/open00/compare/v1.11.0...v1.12.0) (2026-08-18)
 
 
