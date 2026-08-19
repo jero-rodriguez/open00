@@ -49,20 +49,28 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
   };
 
   static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
+    tabs: {
+      template: 'systems/vsd/templates/actors/character-tabs.hbs',
+    },
     overview: {
       template: 'systems/vsd/templates/actors/character-overview.hbs',
+      scrollable: [''],
     },
     combat: {
       template: 'systems/vsd/templates/actors/character-combat.hbs',
+      scrollable: [''],
     },
     magic: {
       template: 'systems/vsd/templates/actors/character-magic.hbs',
+      scrollable: [''],
     },
     equipment: {
       template: 'systems/vsd/templates/actors/character-equipment.hbs',
+      scrollable: [''],
     },
     biography: {
       template: 'systems/vsd/templates/actors/character-biography.hbs',
+      scrollable: [''],
     },
   };
 
@@ -151,6 +159,8 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
     const system = this.actor.system as Record<string, unknown>;
 
     switch (partId) {
+      case 'tabs':
+        return { ...context, tabs: this.tabGroups };
       case 'overview': {
         // Get skills and stats from actor system
         const skills = (system['skills'] as SkillData[]) || [];
