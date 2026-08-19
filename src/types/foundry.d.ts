@@ -145,7 +145,10 @@ declare namespace foundry {
         _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
         _onRender(context: Record<string, unknown>, options: ApplicationRenderOptions): Promise<void>;
-        render(force?: boolean, options?: Record<string, unknown>): Promise<unknown>;
+        render(
+          options?: boolean | ApplicationRenderOptions,
+          legacyOptions?: ApplicationRenderOptions,
+        ): Promise<unknown>;
         close(options?: Record<string, unknown>): Promise<void>;
       }
 
@@ -262,7 +265,9 @@ declare const game: {
   };
   user: {
     name?: string;
+    isGM: boolean;
   };
+  actors: Collection<Actor>;
 };
 
 // FoundryVTT Roll class

@@ -6,11 +6,17 @@
  */
 
 import { computeRankBonus } from '../../engine/rank-bonus.js';
+import { createDefaultSkills } from '../../data/skills.js';
 
 const { SchemaField, NumberField, StringField, ArrayField } = foundry.data.fields;
 
 /** Stat key identifiers matching the schema */
 type StatKey = 'brn' | 'swi' | 'for' | 'wit' | 'wsd' | 'bea';
+
+function asFiniteNumber(value: unknown): number {
+  const numericValue = typeof value === 'string' && value.trim() === '' ? NaN : Number(value);
+  return Number.isFinite(numericValue) ? numericValue : 0;
+}
 
 export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   /** Derived skill totals computed in prepareDerivedData(). Keyed by skill name. */
@@ -83,6 +89,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
           statKey: new StringField({ required: true, initial: '' }),
           itemModifiers: new NumberField({ integer: true, initial: 0 }),
         }),
+        { initial: createDefaultSkills() },
       ),
 
       // Biography (Req 8.9)
@@ -111,9 +118,9 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; itemModifiers: number }> }).skills;
 
     for (const skill of skills) {
-      const statValue = stats[skill.statKey as StatKey] ?? 0;
-      const rankBonus = computeRankBonus(skill.rank);
-      const totalBonus = statValue + rankBonus + skill.itemModifiers;
+      const statValue = asFiniteNumber(stats[skill.statKey as StatKey]);
+      const rankBonus = computeRankBonus(asFiniteNumber(skill.rank));
+      const totalBonus = statValue + rankBonus + asFiniteNumber(skill.itemModifiers);
       this.skillTotals.set(skill.name, totalBonus);
     }
   }

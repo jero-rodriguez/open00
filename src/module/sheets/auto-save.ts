@@ -22,6 +22,55 @@ interface FieldState {
 
 type AutoSaveElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
+/** Preserve the persisted field type when values arrive from HTML controls. */
+function coerceFormValue(currentValue: unknown, newValue: string): unknown {
+  if (typeof currentValue === 'number') {
+    const numericValue = Number(newValue);
+    return Number.isFinite(numericValue) ? numericValue : currentValue;
+  }
+
+  if (typeof currentValue === 'boolean') return newValue === 'true';
+
+  return newValue;
+}
+
+/** Clone persisted form data without retaining references to the Actor source. */
+function cloneFormData(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(cloneFormData);
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, entry]) => [key, cloneFormData(entry)]),
+    );
+  }
+
+  return value;
+}
+
+/** Assign a value below an already-cloned array field. */
+function setNestedValue(root: unknown, parts: string[], value: unknown): void {
+  let target = root as Record<string, unknown> | unknown[];
+
+  for (const [index, part] of parts.entries()) {
+    if (index === parts.length - 1) {
+      (target as Record<string, unknown>)[part] = value;
+      return;
+    }
+
+    target = (target as Record<string, unknown>)[part] as Record<string, unknown> | unknown[];
+  }
+}
+
+/** Read a value below an object or array using path segments. */
+function getNestedValue(root: unknown, parts: string[]): unknown {
+  let value = root;
+  for (const part of parts) {
+    if (value === null || value === undefined) return undefined;
+    value = (value as Record<string, unknown>)[part];
+  }
+  return value;
+}
+
 /**
  * Creates an auto-save handler for a sheet application.
  * 
@@ -49,9 +98,39 @@ export function createAutoSaveHandler(
     const parts = fieldPath.split('.');
     let value: unknown = actor;
     for (const part of parts) {
+      if (value === null || value === undefined) return undefined;
       value = (value as Record<string, unknown>)[part];
     }
     return value;
+  }
+
+  /**
+   * Build a safe document update for a form field.
+   *
+   * Foundry ArrayFields do not support partial updates. If a form path enters an
+   * array (for example system.skills.3.rank), replace the complete array with a
+   * cloned copy containing the edited value instead of updating the indexed
+   * leaf directly.
+   */
+  function buildDocumentUpdate(fieldName: string, newValue: string): Record<string, unknown> {
+    const parts = fieldName.split('.');
+    let value: unknown = actor;
+
+    for (const [index, part] of parts.entries()) {
+      if (value === null || value === undefined) break;
+      value = (value as Record<string, unknown>)[part];
+
+      if (Array.isArray(value) && index < parts.length - 1) {
+        const arrayPath = parts.slice(0, index + 1).join('.');
+        const replacement = cloneFormData(value);
+        const nestedParts = parts.slice(index + 1);
+        const currentValue = getNestedValue(value, nestedParts);
+        setNestedValue(replacement, nestedParts, coerceFormValue(currentValue, newValue));
+        return { [arrayPath]: replacement };
+      }
+    }
+
+    return { [fieldName]: coerceFormValue(getActorValue(fieldName), newValue) };
   }
 
   /**
@@ -66,7 +145,7 @@ export function createAutoSaveHandler(
       fieldStates.set(fieldName, fieldState);
 
       // Perform the update
-      await actor.update({ [fieldName]: newValue });
+      await actor.update(buildDocumentUpdate(fieldName, newValue));
 
       // Update the saved value on success
       fieldState.lastSavedValue = newValue;
