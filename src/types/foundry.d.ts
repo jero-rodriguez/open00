@@ -127,7 +127,14 @@ declare namespace foundry {
 
       interface ApplicationPartDefinition {
         template: string;
+        id?: string;
+        classes?: string[];
         scrollable?: string[];
+        templates?: string[];
+        container?: {
+          classes?: string[];
+          id?: string;
+        };
       }
 
       class ApplicationV2 {

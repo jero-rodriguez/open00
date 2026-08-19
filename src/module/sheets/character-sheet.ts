@@ -27,6 +27,24 @@ interface SkillData {
   statKey: string;
   itemModifiers: number;
 }
+
+/** Static tab declaration — `tab` must match a PART id. */
+interface SheetTabDefinition {
+  tab: string;
+  label: string;
+}
+
+/**
+ * Per-part tab record handed to templates. Mirrors the shape core ApplicationV2
+ * expects for tab navigation (see dnd5e's PrimarySheetMixin#_getTabs).
+ */
+interface SheetTab {
+  id: string;
+  group: string;
+  label: string;
+  active: boolean;
+  cssClass: string;
+}
 /** Stat key to full name mapping */
 const STAT_NAMES: Record<string, string> = {
   brn: 'VSD.Stats.Brawn',
@@ -50,29 +68,47 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
 
   static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
     tabs: {
+      id: 'tabs',
       template: 'systems/vsd/templates/actors/character-tabs.hbs',
     },
     overview: {
+      container: { classes: ['tab-body'], id: 'tabs' },
       template: 'systems/vsd/templates/actors/character-overview.hbs',
       scrollable: [''],
     },
     combat: {
+      container: { classes: ['tab-body'], id: 'tabs' },
       template: 'systems/vsd/templates/actors/character-combat.hbs',
       scrollable: [''],
     },
     magic: {
+      container: { classes: ['tab-body'], id: 'tabs' },
       template: 'systems/vsd/templates/actors/character-magic.hbs',
       scrollable: [''],
     },
     equipment: {
+      container: { classes: ['tab-body'], id: 'tabs' },
       template: 'systems/vsd/templates/actors/character-equipment.hbs',
       scrollable: [''],
     },
     biography: {
+      container: { classes: ['tab-body'], id: 'tabs' },
       template: 'systems/vsd/templates/actors/character-biography.hbs',
       scrollable: [''],
     },
   };
+
+  /**
+   * Tab navigation entries. Each `tab` id must match a PART id so that
+   * `_preparePartContext` can look up the matching tab record.
+   */
+  static TABS: SheetTabDefinition[] = [
+    { tab: 'overview', label: 'VSD.Tabs.Skills' },
+    { tab: 'combat', label: 'VSD.Tabs.Combat' },
+    { tab: 'magic', label: 'VSD.Tabs.Magic' },
+    { tab: 'equipment', label: 'VSD.Tabs.Equipment' },
+    { tab: 'biography', label: 'VSD.Tabs.Biography' },
+  ];
 
   /** Primary tab group — defaults to overview tab */
   override tabGroups: Record<string, string> = {
@@ -81,6 +117,28 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
 
   /** Auto-save handler instance for this sheet */
   #autoSaveHandler: ReturnType<typeof createAutoSaveHandler> | null = null;
+
+  /**
+   * Build the tab records for the primary group.
+   *
+   * Every part template needs an `active` CSS class on its root element,
+   * otherwise the `.tab { display: none }` rule keeps the body hidden.
+   */
+  protected _getTabs(): Record<string, SheetTab> {
+    const active = this.tabGroups['primary'];
+    const definitions = (this.constructor as typeof VsdCharacterSheet).TABS;
+    return definitions.reduce<Record<string, SheetTab>>((tabs, { tab, label }) => {
+      const isActive = active === tab;
+      tabs[tab] = {
+        id: tab,
+        group: 'primary',
+        label,
+        active: isActive,
+        cssClass: isActive ? 'active' : '',
+      };
+      return tabs;
+    }, {});
+  }
 
   /**
    * Render method to attach auto-save handlers after content is rendered.
@@ -144,7 +202,7 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
       system: actor.system,
       name: actor.name,
       img: actor.img,
-      tabs: this.tabGroups,
+      tabs: this._getTabs(),
       options,
     };
   }
@@ -158,9 +216,12 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
   ): Promise<Record<string, unknown>> {
     const system = this.actor.system as Record<string, unknown>;
 
+    // Hand each part its own tab record so the template can stamp the
+    // `active` class onto its root element.
+    const tabs = (context['tabs'] as Record<string, SheetTab>) ?? {};
+    context = { ...context, tab: tabs[partId] };
+
     switch (partId) {
-      case 'tabs':
-        return { ...context, tabs: this.tabGroups };
       case 'overview': {
         // Get skills and stats from actor system
         const skills = (system['skills'] as SkillData[]) || [];
@@ -199,7 +260,6 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
 
         return {
           ...context,
-          tab: 'overview',
           stats: system['stats'],
           hp: system['hp'],
           mp: system['mp'],
@@ -250,7 +310,6 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
 
         return {
           ...context,
-          tab: 'combat',
           defense: system['defense'],
           hp: system['hp'],
           weapons,
@@ -315,7 +374,6 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
 
         return {
           ...context,
-          tab: 'magic',
           mp: system['mp'],
           spellsByLore,
         };
@@ -392,7 +450,6 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
 
         return {
           ...context,
-          tab: 'equipment',
           items: mappedItems,
           itemsOfPower,
           totalEncumbrancePoints: totalEncumbrance,
@@ -414,7 +471,6 @@ export class VsdCharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) 
 
         return {
           ...context,
-          tab: 'biography',
           biography,
           appearance,
           backgroundNotes,

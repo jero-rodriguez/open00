@@ -1,4 +1,16 @@
 {
+  "TYPES.Actor.character": "Personaje",
+  "TYPES.Actor.npc": "PNJ",
+  "TYPES.Item.weapon": "Arma",
+  "TYPES.Item.armor": "Armadura",
+  "TYPES.Item.spell": "Hechizo",
+  "TYPES.Item.equipment": "Equipo",
+  "TYPES.Item.kin": "Estirpe",
+  "TYPES.Item.culture": "Cultura",
+  "TYPES.Item.vocation": "Vocacion",
+  "TYPES.Item.trait": "Rasgo",
+  "TYPES.Item.itemOfPower": "Objeto de Poder",
+  "TYPES.Item.background": "Opcion de Trasfondo",
   "VSD.Tabs.Overview": "Descripción General",
   "VSD.Tabs.Skills": "Habilidades",
   "VSD.Tabs.Combat": "Combate",
@@ -110,5 +122,6 @@
   "VSD.Biography.Culture": "Cultura",
   "VSD.Biography.Vocation": "Vocación",
   "VSD.Biography.BackgroundNotes": "Notas de Trasfondo",
-  "VSD.Biography.DragItemHere": "Arrastra el artículo aquí"
+  "VSD.Biography.DragItemHere": "Arrastra el artículo aquí",
+  "VSD.Tabs.Spells": "Hechizos"
 }
