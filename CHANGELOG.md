@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.13.1](https://github.com/jero-rodriguez/open00/compare/v1.13.0...v1.13.1) (2026-08-19)
+
+
+### Bug Fixes
+
+* mark release as latest ([4a972cf](https://github.com/jero-rodriguez/open00/commit/4a972cf61a557bc5f17ab883bae39db64990c270))
+* resolve character sheet rendering ([3bec963](https://github.com/jero-rodriguez/open00/commit/3bec9630e8ea0a9503aac98d146fa5770d4d38bb))
+
 ## [1.13.0](https://github.com/jero-rodriguez/open00/compare/v1.12.3...v1.13.0) (2026-08-19)
 
 
