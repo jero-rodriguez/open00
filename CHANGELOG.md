@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.3](https://github.com/jero-rodriguez/open00/compare/v1.13.2...v1.13.3) (2026-08-19)
+
+
+### Bug Fixes
+
+* reorder rendering and fix sheet navigation ([2a303b7](https://github.com/jero-rodriguez/open00/commit/2a303b7bd0b13a87218c5312addf74a66b74179f))
+
 ## [1.13.2](https://github.com/jero-rodriguez/open00/compare/v1.13.1...v1.13.2) (2026-08-19)
 
 
