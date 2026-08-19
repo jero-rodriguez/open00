@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.1](https://github.com/jero-rodriguez/open00/compare/v1.14.0...v1.14.1) (2026-08-19)
+
+
+### Bug Fixes
+
+* skills, partial rendering and race calculations ([19ada4c](https://github.com/jero-rodriguez/open00/commit/19ada4c008eb7093a9ef5b36b0e8a1fc36ea5b99))
+
 ## [1.14.0](https://github.com/jero-rodriguez/open00/compare/v1.13.5...v1.14.0) (2026-08-19)
 
 
