@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.2](https://github.com/jero-rodriguez/open00/compare/v1.12.1...v1.12.2) (2026-08-19)
+
+
+### Bug Fixes
+
+* generate correct assets when releasing code ([575bf51](https://github.com/jero-rodriguez/open00/commit/575bf51054cdbf51d3a4f028c2ec6363b27d8a1d))
+
 ## [1.12.1](https://github.com/jero-rodriguez/open00/compare/v1.12.0...v1.12.1) (2026-08-19)
 
 
