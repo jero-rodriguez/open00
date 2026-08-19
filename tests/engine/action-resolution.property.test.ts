@@ -1,4 +1,4 @@
-// Feature: foundry-vsd-system, Property 2: Action Resolution Table Completeness and Correctness
+// Feature: open00-system, Property 2: Action Resolution Table Completeness and Correctness
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { resolveAction, OutcomeBand } from '../../src/module/engine/action-resolution';

@@ -1,5 +1,5 @@
 /**
- * BackgroundDataModel — TypeDataModel for the VsD Background Item type.
+ * BackgroundDataModel — TypeDataModel for the Open 00 Background Item type.
  *
  * Defines the persisted schema for Background Options matching Chapter 7.
  * Each background has a Minor tier (typically 1 BP) and Major tier (typically 3 BPs),

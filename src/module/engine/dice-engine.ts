@@ -1,5 +1,5 @@
 /**
- * Open-ended d100 dice engine for Against the Darkmaster (VsD).
+ * Open-ended d100 dice engine for Open 00.
  *
  * Pure function module — zero imports from FoundryVTT.
  *

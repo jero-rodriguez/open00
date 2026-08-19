@@ -1,5 +1,5 @@
 /**
- * KinDataModel — TypeDataModel for the VsD Kin Item type.
+ * KinDataModel — TypeDataModel for the Open 00 Kin Item type.
  *
  * Defines the persisted schema for Kin data matching the Kin Modifiers Table [1.2].
  * Each Kin grants stat modifiers, HP/Max HP, MP bonus, Save Roll bonuses (TSR/WSR),

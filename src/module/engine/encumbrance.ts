@@ -1,5 +1,5 @@
 /**
- * Encumbrance level determination and penalties for Against the Darkmaster (VsD).
+ * Encumbrance level determination and penalties for Open 00.
  *
  * Pure function module — zero imports from FoundryVTT.
  *

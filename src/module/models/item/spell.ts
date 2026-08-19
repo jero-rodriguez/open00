@@ -1,5 +1,5 @@
 /**
- * SpellDataModel — TypeDataModel for the VsD Spell Item type.
+ * SpellDataModel — TypeDataModel for the Open 00 Spell Item type.
  *
  * Defines the persisted schema for spell data matching the Grimoire format.
  * Each Spell belongs to a Spell Lore and is organized by Weave (1-10).

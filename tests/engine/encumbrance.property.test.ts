@@ -1,5 +1,5 @@
-// Feature: foundry-vsd-system, Property 7: Encumbrance Level Determination
-// Feature: foundry-vsd-system, Property 8: Encumbrance Total Calculation
+// Feature: open00-system, Property 7: Encumbrance Level Determination
+// Feature: open00-system, Property 8: Encumbrance Total Calculation
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import {

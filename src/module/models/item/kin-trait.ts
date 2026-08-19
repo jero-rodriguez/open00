@@ -1,5 +1,5 @@
 /**
- * KinTraitDataModel — TypeDataModel for the VsD Kin Trait Item type.
+ * KinTraitDataModel — TypeDataModel for the Open 00 Kin Trait Item type.
  *
  * Represents an individual Special Trait granted by a character's Kin.
  * These are dragged onto characters as separate items so their effects

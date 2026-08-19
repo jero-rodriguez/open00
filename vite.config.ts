@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { copyFileSync, mkdirSync, existsSync, readdirSync, statSync } from 'fs';
-import { resolve, join } from 'path';
+import { resolve, join, relative, sep } from 'path';
 
 function copyDir(src: string, dest: string) {
   if (!existsSync(src)) return;
@@ -56,12 +56,13 @@ export default defineConfig({
     sourcemap: true,
     rollupOptions: {
       input: {
-        'vsd-system': resolve('src/vsd-system.ts'),
+        'open00-system': resolve('src/open00-system.ts'),
         ...Object.fromEntries(
           moduleEntries.map(file => {
             // src/module/models/actor/character.ts -> module/models/actor/character
-            const key = file
-              .replace(/^src\//, '')
+            const key = relative(resolve('src'), resolve(file))
+              .split(sep)
+              .join('/')
               .replace(/\.ts$/, '');
             return [key, resolve(file)];
           }),

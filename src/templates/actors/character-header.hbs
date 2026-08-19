@@ -1,0 +1,50 @@
+<header class="open00-character-header">
+  <div class="open00-brand" aria-label="Open 00">
+    <strong>Open 00</strong>
+    <span class="brand-tagline">{{localize "OPEN00.Header.CharacterSheet"}}</span>
+  </div>
+
+  <div class="identity-fields">
+    <div class="identity-row identity-row-primary">
+      <label class="lined-field character-name-field">
+        <input type="text" name="name" value="{{name}}" autocomplete="off" />
+        <span>{{localize "OPEN00.Header.CharacterName"}}</span>
+      </label>
+      <label class="lined-field compact-field">
+        <input type="number" name="system.experience.total" value="{{experience.total}}" min="0" />
+        <span>{{localize "OPEN00.Header.Experience"}}</span>
+      </label>
+      <label class="lined-field compact-field">
+        <input type="number" name="system.experience.dp" value="{{experience.dp}}" min="0" />
+        <span>{{localize "OPEN00.Header.DevelopmentPoints"}}</span>
+      </label>
+    </div>
+
+    <div class="identity-row identity-row-secondary">
+      <div class="lined-field item-identity" data-item-id="{{identity.kin.id}}">
+        {{#if identity.kin}}
+        <button type="button" class="identity-item-link" data-action="openItem" data-item-id="{{identity.kin.id}}">{{identity.kin.name}}</button>
+        {{else}}
+        <span class="identity-placeholder">{{localize "OPEN00.Header.DropKin"}}</span>
+        {{/if}}
+        <span>{{localize "OPEN00.Biography.Kin"}}</span>
+      </div>
+      <div class="lined-field item-identity" data-item-id="{{identity.culture.id}}">
+        {{#if identity.culture}}
+        <button type="button" class="identity-item-link" data-action="openItem" data-item-id="{{identity.culture.id}}">{{identity.culture.name}}</button>
+        {{else}}
+        <span class="identity-placeholder">{{localize "OPEN00.Header.DropCulture"}}</span>
+        {{/if}}
+        <span>{{localize "OPEN00.Biography.Culture"}}</span>
+      </div>
+      <div class="lined-field item-identity" data-item-id="{{identity.vocation.id}}">
+        {{#if identity.vocation}}
+        <button type="button" class="identity-item-link" data-action="openItem" data-item-id="{{identity.vocation.id}}">{{identity.vocation.name}}</button>
+        {{else}}
+        <span class="identity-placeholder">{{localize "OPEN00.Header.DropVocation"}}</span>
+        {{/if}}
+        <span>{{localize "OPEN00.Biography.Vocation"}}</span>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,4 +1,4 @@
-// Feature: foundry-vsd-system, Properties 11, 12, 13: Combat Phase Cycling, Advance/Revert Round-Trip, Condition Duration Decrement
+// Feature: open00-system, Properties 11, 12, 13: Combat Phase Cycling, Advance/Revert Round-Trip, Condition Duration Decrement
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import {

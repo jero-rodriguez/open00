@@ -1,7 +1,7 @@
 {
-  "name": "vsd-system",
+  "name": "open00-system",
   "version": "1.13.5",
-  "description": "Against the Darkmaster (VsD) game system for FoundryVTT v14",
+  "description": "Open 00 game system for FoundryVTT v14",
   "type": "module",
   "engines": {
     "node": ">=24.0.0 <25"

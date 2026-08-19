@@ -1,5 +1,5 @@
 /**
- * CharacterDataModel — TypeDataModel for the VsD Player Character Actor type.
+ * CharacterDataModel — TypeDataModel for the Open 00 Player Character Actor type.
  *
  * Defines the persisted schema for stats, vitals (HP/MP/Drive Points),
  * defense, encumbrance level, and wealth.

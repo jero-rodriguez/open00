@@ -1,113 +1,96 @@
-<section class="tab combat {{ tab.cssClass }}" data-group="{{ tab.group }}" data-tab="{{ tab.id }}">
-
-  <div class="movement-defense-grid-section">
-    {{!-- Hit Points --}}
-    <span class="block">
-      <h3>{{localize "VSD.Combat.HitPoints"}}</h3>
-      <div class="hitpoint-grid-section">
-        <div>
-          <span class="large-roundborder">
-            <input type="number" class="current-hit-points hitpoint-color" name="system.hp.value" value="{{hp.value}}" min="0" />
-          </span>
-          <div class="roundborder-label">{{localize "VSD.Overview.Current"}}</div>
-        </div>
-        <div class="tablelike">
-          <div class="rowlike">
-            <div class="celllike">
-              <label class="field-label">{{localize "VSD.Combat.TotalHits"}}</label>
-            </div>
-            <div class="celllike">
-              <input type="number" class="stat-input total" name="system.hp.max" value="{{hp.max}}" />
-            </div>
-          </div>
-        </div>
+<section class="tab combat {{tab.cssClass}} open00-tab-scroll" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+  <div class="status-grid">
+    <section class="sheet-section status-card">
+      <h2 class="section-title">{{localize "OPEN00.Combat.HitPoints"}}</h2>
+      <div class="orb-and-fields">
+        <label class="resource-orb">
+          <input type="number" name="system.hp.value" value="{{hp.value}}" min="0" />
+          <span>{{localize "OPEN00.Overview.Current"}}</span>
+        </label>
+        <label class="compact-rule-field"><span>{{localize "OPEN00.Combat.TotalHits"}}</span><input type="number" name="system.hp.max" value="{{hp.max}}" min="0" /></label>
       </div>
-    </span>
+    </section>
 
-    {{!-- Defense --}}
-    <div class="defense-block block">
-      <h3>{{localize "VSD.Overview.Defense"}}</h3>
-      <div class="tablelike">
-        <div class="rowlike">
-          <div class="celllike">
-            <label class="field-label">{{localize "VSD.Combat.MeleeDefense"}}</label>
-          </div>
-          <div class="celllike">
-            <input type="number" class="stat-input defense-color" name="system.defense" value="{{defense}}" />
-          </div>
-        </div>
+    <section class="sheet-section status-card">
+      <h2 class="section-title">{{localize "OPEN00.Combat.Movement"}}</h2>
+      <div class="status-value">
+        <span>{{localize "OPEN00.Overview.Encumbrance"}}</span>
+        <strong>{{localize encumbranceLabel}}</strong>
       </div>
-    </div>
+    </section>
+
+    <section class="sheet-section status-card">
+      <h2 class="section-title">{{localize "OPEN00.Overview.Defense"}}</h2>
+      <label class="defense-field">
+        <span>{{localize "OPEN00.Combat.MeleeDefense"}}</span>
+        <input type="number" name="system.defense" value="{{defense}}" />
+      </label>
+    </section>
   </div>
 
-  {{!-- Conditions --}}
-  <div class="block">
-    <h3>{{localize "VSD.Combat.Conditions"}}</h3>
-    <div class="conditions-grid-section">
-      {{#each conditions as |condition|}}
-      <span class="condition-name">{{condition.name}}</span>
-      {{#if condition.duration}}
-      <span class="condition-duration">({{condition.duration}})</span>
-      {{/if}}
+  <section class="sheet-section">
+    <h2 class="section-title">{{localize "OPEN00.Combat.Conditions"}}</h2>
+    <div class="condition-strip">
+      {{#each conditions}}
+      <span>{{name}}{{#if duration}} ({{duration}}){{/if}}</span>
+      {{else}}
+      <span class="empty-state compact">{{localize "OPEN00.Combat.NoConditions"}}</span>
       {{/each}}
-      {{#unless conditions}}
-      <span class="empty-state-small">{{localize "VSD.Combat.NoConditions"}}</span>
-      {{/unless}}
     </div>
-  </div>
+  </section>
 
-  {{!-- Armor & Shield --}}
-  <span class="block">
-    <h3>{{localize "VSD.Combat.Armor"}}</h3>
-    {{#if armor}}
-    <div class="armor-grid-section table-header">
-      <div>{{localize "VSD.Combat.ArmorName"}}</div>
-      <div>{{localize "VSD.Combat.ArmorType"}}</div>
-      <div>{{localize "VSD.Combat.MeleeDefenseBonus"}}</div>
-      <div>{{localize "VSD.Combat.MissileDefenseBonus"}}</div>
-      <div>{{localize "VSD.Combat.CMBPenalty"}}</div>
-      <div>{{localize "VSD.Combat.MoveActionsPenalty"}}</div>
+  <section class="sheet-section item-table-section">
+    <h2 class="section-title">{{localize "OPEN00.Combat.Armor"}}</h2>
+    <div class="wide-table-scroll">
+      <div class="armor-table item-rules-table table-heading">
+        <span>{{localize "OPEN00.Combat.ArmorName"}}</span>
+        <span>{{localize "OPEN00.Combat.ArmorType"}}</span>
+        <span>{{localize "OPEN00.Combat.Zones"}}</span>
+        <span>{{localize "OPEN00.Combat.MaxSwiftness"}}</span>
+        <span>{{localize "OPEN00.Combat.MovePenalty"}}</span>
+        <span>{{localize "OPEN00.Combat.CMBPenalty"}}</span>
+        <span>{{localize "OPEN00.Combat.PerceptionPenalty"}}</span>
+        <span>{{localize "OPEN00.Combat.MeleeDefenseShort"}}</span>
+        <span>{{localize "OPEN00.Combat.MissileDefenseShort"}}</span>
+        <span>{{localize "OPEN00.Combat.Qualities"}}</span>
+        <span></span>
+      </div>
+      {{#each armor}}
+      <div class="armor-table item-rules-table item-row" data-item-id="{{id}}">
+        <button type="button" class="item-name-button" data-action="openItem" data-item-id="{{id}}">{{name}}</button>
+        <span>{{armorType}}</span><span>{{zones}}</span><span>{{maxSwiToDefense}}</span>
+        <span>{{moveActionsPenalty}}</span><span>{{cmbPenalty}}</span><span>{{perceptionPenalty}}</span>
+        <span>{{meleeDefenseBonus}}</span><span>{{missileDefenseBonus}}</span><span>{{qualities}}</span>
+        <span class="row-actions"><button type="button" class="icon-button danger" data-action="removeItem" data-item-id="{{id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button></span>
+      </div>
+      {{else}}
+      <p class="empty-state">{{localize "OPEN00.Combat.NoArmor"}}</p>
+      {{/each}}
     </div>
-    {{#each armor as |armorItem|}}
-    <div class="armor-grid-section">
-      <div>{{armorItem.name}}</div>
-      <div>{{armorItem.armorType}}</div>
-      <div>{{armorItem.meleeDefenseBonus}}</div>
-      <div>{{armorItem.missileDefenseBonus}}</div>
-      <div>{{armorItem.cmbPenalty}}</div>
-      <div>{{armorItem.moveActionsPenalty}}</div>
-    </div>
-    {{/each}}
-    {{else}}
-    <div class="empty-state">{{localize "VSD.Combat.NoArmor"}}</div>
-    {{/if}}
-  </span>
+  </section>
 
-  {{!-- Weapons & Attacks --}}
-  <span class="block">
-    <h3>{{localize "VSD.Combat.Weapons"}}</h3>
-    {{#if weapons}}
-    <div class="weapons-grid-section table-header">
-      <div>{{localize "VSD.Combat.WeaponName"}}</div>
-      <div>{{localize "VSD.Combat.Hands"}}</div>
-      <div>{{localize "VSD.Combat.Length"}}</div>
-      <div>{{localize "VSD.Combat.SkillUsed"}}</div>
-      <div>{{localize "VSD.Combat.AttackTable"}}</div>
-      <div>{{localize "VSD.Combat.Critical"}}</div>
+  <section class="sheet-section item-table-section">
+    <h2 class="section-title">{{localize "OPEN00.Combat.Weapons"}}</h2>
+    <div class="wide-table-scroll">
+      <div class="weapons-table item-rules-table table-heading">
+        <span>{{localize "OPEN00.Combat.WeaponName"}}</span><span>{{localize "OPEN00.Combat.Hands"}}</span>
+        <span>{{localize "OPEN00.Combat.Length"}}</span><span>{{localize "OPEN00.Combat.SkillUsed"}}</span>
+        <span>{{localize "OPEN00.Combat.ClumsyRange"}}</span><span>{{localize "OPEN00.Combat.AttackTable"}}</span>
+        <span>{{localize "OPEN00.Combat.MaxResult"}}</span><span>{{localize "OPEN00.Combat.PrimaryCritical"}}</span>
+        <span>{{localize "OPEN00.Combat.AlternateCritical"}}</span><span>{{localize "OPEN00.Combat.BaseRange"}}</span>
+        <span>{{localize "OPEN00.Combat.Qualities"}}</span><span></span>
+      </div>
+      {{#each weapons}}
+      <div class="weapons-table item-rules-table item-row" data-item-id="{{id}}">
+        <button type="button" class="item-name-button" data-action="openItem" data-item-id="{{id}}">{{name}}</button>
+        <span>{{hands}}</span><span>{{length}}</span><span>{{skillUsed}}</span><span>{{clumsyRange}}</span>
+        <span>{{attackTable}}</span><span>{{maxResult}}</span><span>{{primaryCritical}}</span>
+        <span>{{alternateCritical}}</span><span>{{baseRange}}</span><span>{{qualities}}</span>
+        <span class="row-actions"><button type="button" class="icon-button danger" data-action="removeItem" data-item-id="{{id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button></span>
+      </div>
+      {{else}}
+      <p class="empty-state">{{localize "OPEN00.Combat.NoWeapons"}}</p>
+      {{/each}}
     </div>
-    {{#each weapons as |weapon|}}
-    <div class="weapons-grid-section">
-      <div>{{weapon.name}}</div>
-      <div>{{weapon.hands}}</div>
-      <div>{{weapon.length}}</div>
-      <div>{{weapon.skillUsed}}</div>
-      <div>{{weapon.attackTable}}</div>
-      <div>{{weapon.primaryCritical}}</div>
-    </div>
-    {{/each}}
-    {{else}}
-    <div class="empty-state">{{localize "VSD.Combat.NoWeapons"}}</div>
-    {{/if}}
-  </span>
-
+  </section>
 </section>

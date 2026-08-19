@@ -1,4 +1,4 @@
-// Feature: foundry-vsd-system, Property 17: Travel Duration Computation
+// Feature: open00-system, Property 17: Travel Duration Computation
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { computeTravelDuration, TravelPace } from '../../src/module/engine/travel';
