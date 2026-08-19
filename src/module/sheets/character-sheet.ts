@@ -12,6 +12,7 @@ import { resolveAction } from '../engine/action-resolution.js';
 import { determineEncumbranceLevel, computeTotalEncumbrance } from '../engine/encumbrance.js';
 import { getActiveBonuses } from '../engine/affinity.js';
 import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
+import { getCharacterSheetUpdateParts } from './partial-render.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -57,7 +58,11 @@ const ENCUMBRANCE_POINTS: Record<string, number> = {
 };
 
 function asNumber(value: unknown, fallback = 0): number {
-  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : fallback;
+  if (typeof value !== 'string' || value.trim() === '') return fallback;
+
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : fallback;
 }
 
 function formatModifier(value: number): string {
@@ -134,6 +139,26 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
   #autoSaveHandler: ReturnType<typeof createAutoSaveHandler> | null = null;
   #detachAutoSave: (() => void) | null = null;
+
+  override render(
+    options: boolean | foundry.applications.api.ApplicationRenderOptions = {},
+    legacyOptions: foundry.applications.api.ApplicationRenderOptions = {},
+  ): Promise<unknown> {
+    if (typeof options === 'boolean') {
+      return super.render(options, this.#withPartialActorRender(legacyOptions));
+    }
+
+    return super.render(this.#withPartialActorRender(options));
+  }
+
+  #withPartialActorRender(
+    options: foundry.applications.api.ApplicationRenderOptions,
+  ): foundry.applications.api.ApplicationRenderOptions {
+    if (options.parts || options.renderContext !== 'updateActor') return options;
+
+    const parts = getCharacterSheetUpdateParts(options.renderData);
+    return parts ? { ...options, parts } : options;
+  }
 
   protected _getTabs(): Record<string, SheetTab> {
     const active = this.tabGroups['primary'];

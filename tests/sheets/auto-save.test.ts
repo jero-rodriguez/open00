@@ -21,6 +21,10 @@ describe('Auto-Save Utility', () => {
         biography: 'Old bio',
         passions: { motivation: 'Old motivation' },
         stats: { brn: 10 },
+        skills: [
+          { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', itemModifiers: 0 },
+          { name: 'Blades', category: 'Combat', rank: 1, statKey: 'swi', itemModifiers: 5 },
+        ],
       },
       update: vi.fn(() => Promise.resolve()),
     };
@@ -81,6 +85,37 @@ describe('Auto-Save Utility', () => {
     // Verify update was called with nested path
     expect(mockActor.update).toHaveBeenCalledWith({ 'system.passions.motivation': 'New motivation' });
     
+    handler.cleanup();
+  });
+
+  it('should replace an entire array when persisting a nested array field', async () => {
+    const handler = createAutoSaveHandler(mockActor, { debounceMs: 50 });
+
+    await handler.persistField('system.skills.1.rank', '3');
+
+    expect(mockActor.update).toHaveBeenCalledWith({
+      'system.skills': [
+        { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', itemModifiers: 0 },
+        { name: 'Blades', category: 'Combat', rank: 3, statKey: 'swi', itemModifiers: 5 },
+      ],
+    });
+    expect(mockActor.system.skills[1].rank).toBe(1);
+
+    handler.cleanup();
+  });
+
+  it('should preserve negative item modifiers as numbers', async () => {
+    const handler = createAutoSaveHandler(mockActor, { debounceMs: 50 });
+
+    await handler.persistField('system.skills.0.itemModifiers', '-2');
+
+    expect(mockActor.update).toHaveBeenCalledWith({
+      'system.skills': [
+        { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', itemModifiers: -2 },
+        { name: 'Blades', category: 'Combat', rank: 1, statKey: 'swi', itemModifiers: 5 },
+      ],
+    });
+
     handler.cleanup();
   });
 
