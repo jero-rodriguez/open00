@@ -132,6 +132,18 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
         { initial: createDefaultSkills() },
       ),
 
+      // Special Abilities (free-form text entries shown on the Overview tab)
+      specialAbilities: new ArrayField(
+        new StringField({ initial: '' }),
+        { initial: [] },
+      ),
+
+      // Known Languages (free-form text entries shown on the Overview tab)
+      knownLanguages: new ArrayField(
+        new StringField({ initial: '' }),
+        { initial: [] },
+      ),
+
       // Biography (Req 8.9)
       biography: new StringField({ initial: '' }),
 

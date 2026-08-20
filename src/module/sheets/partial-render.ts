@@ -34,6 +34,10 @@ function partsForPath(path: string): SheetPart[] | null {
     path.startsWith('system.passions.')
     || path.startsWith('system.drivePoints.')
     || path === 'system.heroicPath'
+    || path === 'system.specialAbilities'
+    || path.startsWith('system.specialAbilities.')
+    || path === 'system.knownLanguages'
+    || path.startsWith('system.knownLanguages.')
   ) {
     return ['overview'];
   }
