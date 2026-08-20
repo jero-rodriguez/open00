@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/jero-rodriguez/open00/compare/v1.14.2...v1.15.0) (2026-08-20)
+
+
+### Features
+
+* npc character sheet design ([54f2e27](https://github.com/jero-rodriguez/open00/commit/54f2e2778a7f455017658cfc74994a4f93c66bcc))
+
 ## [1.14.2](https://github.com/jero-rodriguez/open00/compare/v1.14.1...v1.14.2) (2026-08-20)
 
 
