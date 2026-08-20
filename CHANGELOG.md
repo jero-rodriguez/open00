@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.3](https://github.com/jero-rodriguez/open00/compare/v1.15.2...v1.15.3) (2026-08-20)
+
+
+### Bug Fixes
+
+* resolve section bleeding ([f774f5f](https://github.com/jero-rodriguez/open00/commit/f774f5fb293ef095c57b07133803a7a496f47ff5))
+
 ## [1.15.2](https://github.com/jero-rodriguez/open00/compare/v1.15.1...v1.15.2) (2026-08-20)
 
 
