@@ -247,9 +247,12 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     switch (partId) {
       case 'overview': {
         const skills = (system['skills'] as SkillData[]) ?? [];
-        const stats = (system['stats'] as Record<string, number>) ?? {};
+        const stats = (system['stats'] as Record<string, { base: number; kin: number; spec: number }>) ?? {};
         const skillDetails = skills.map((skill, index) => {
-          const statBonus = asNumber(stats[skill.statKey]);
+          const statBase = asNumber(stats[skill.statKey]?.base);
+          const statKin = asNumber(stats[skill.statKey]?.kin);
+          const statSpec = asNumber(stats[skill.statKey]?.spec);
+          const statBonus = statBase + statKin + statSpec;
           const rankBonus = computeRankBonus(asNumber(skill.rank));
           const itemModifiers = asNumber(skill.itemModifiers);
           const totalBonus = statBonus + rankBonus + itemModifiers;
@@ -271,16 +274,31 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           skills: skillDetails.filter((skill) => skill.category === category),
         })).filter((category) => category.skills.length > 0);
 
+        // Build stats object with both nested (base/kin/spec) and flat (total) values for template
+        const statsContext: Record<string, { base: number; kin: number; spec: number; total: number }> = {};
+        for (const statKey of ['brn', 'swi', 'for', 'wit', 'wsd', 'bea'] as const) {
+          const stat = stats[statKey];
+          const base = asNumber(stat?.base);
+          const kin = asNumber(stat?.kin);
+          const spec = asNumber(stat?.spec);
+          statsContext[statKey] = {
+            base,
+            kin,
+            spec,
+            total: base + kin + spec,
+          };
+        }
+
         return {
           ...context,
-          stats,
+          stats: statsContext,
           drivePoints: system['drivePoints'],
           passions: system['passions'],
           heroicPath: system['heroicPath'],
           skillCategories,
           saveRolls: {
-            toughness: formatModifier(asNumber(stats['for'])),
-            willpower: formatModifier(asNumber(stats['wsd'])),
+            toughness: formatModifier(asNumber(stats['for']?.base) + asNumber(stats['for']?.kin) + asNumber(stats['for']?.spec)),
+            willpower: formatModifier(asNumber(stats['wsd']?.base) + asNumber(stats['wsd']?.kin) + asNumber(stats['wsd']?.spec)),
           },
         };
       }

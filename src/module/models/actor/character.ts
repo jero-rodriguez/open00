@@ -22,16 +22,44 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   /** Derived skill totals computed in prepareDerivedData(). Keyed by skill name. */
   skillTotals: Map<string, number> = new Map();
 
+  /** Stat values with base, kin, and spec modifiers */
+  stats!: Record<StatKey, { base: number; kin: number; spec: number }>;
+
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
-      // Six stats: value IS the bonus (signed integer, -50 to +100)
+      // Six stats: each has base, kin, spec modifiers that sum to total bonus
+      // value = base + kin + spec (signed integer, -50 to +100)
       stats: new SchemaField({
-        brn: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-        swi: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-        for: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-        wit: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-        wsd: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-        bea: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+        brn: new SchemaField({
+          base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+        }),
+        swi: new SchemaField({
+          base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+        }),
+        for: new SchemaField({
+          base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+        }),
+        wit: new SchemaField({
+          base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+        }),
+        wsd: new SchemaField({
+          base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+        }),
+        bea: new SchemaField({
+          base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+          spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
+        }),
       }),
 
       // Hit Points
@@ -114,14 +142,24 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   override prepareDerivedData(): void {
     this.skillTotals = new Map();
 
-    const stats = (this as unknown as { stats: Record<StatKey, number> }).stats;
     const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; itemModifiers: number }> }).skills;
 
     for (const skill of skills) {
-      const statValue = asFiniteNumber(stats[skill.statKey as StatKey]);
+      const statValue = asFiniteNumber(this.stats[skill.statKey as StatKey].base) +
+                        asFiniteNumber(this.stats[skill.statKey as StatKey].kin) +
+                        asFiniteNumber(this.stats[skill.statKey as StatKey].spec);
       const rankBonus = computeRankBonus(asFiniteNumber(skill.rank));
       const totalBonus = statValue + rankBonus + asFiniteNumber(skill.itemModifiers);
       this.skillTotals.set(skill.name, totalBonus);
     }
+  }
+
+  /**
+   * Get the total value for a stat (base + kin + spec).
+   */
+  getStatTotal(statKey: StatKey): number {
+    return asFiniteNumber(this.stats[statKey].base) +
+           asFiniteNumber(this.stats[statKey].kin) +
+           asFiniteNumber(this.stats[statKey].spec);
   }
 }
