@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.5](https://github.com/jero-rodriguez/open00/compare/v1.15.4...v1.15.5) (2026-08-20)
+
+
+### Bug Fixes
+
+* reorder character sheet to place all elements ([cc5a7d8](https://github.com/jero-rodriguez/open00/commit/cc5a7d88f29fba4be5c8133eabc8afcd1f0862e5))
+
 ## [1.15.4](https://github.com/jero-rodriguez/open00/compare/v1.15.3...v1.15.4) (2026-08-20)
 
 
