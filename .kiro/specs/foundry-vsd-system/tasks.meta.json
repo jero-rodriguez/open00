@@ -55,6 +55,121 @@
         "chatSessionId": "sess_755c5999-ed6e-4d62-825a-435fae6f0054",
         "timestamp": 1787132635540
       }
+    ],
+    "19.1 Implement `src/sheets/npc-sheet.ts` — single-page layout": [
+      {
+        "executionId": "cb57eb56-d615-4768-94f5-4a9c6ce6e015",
+        "chatSessionId": "sess_4f0e12af-8513-4e29-b4cd-cbe47bfa8aeb",
+        "timestamp": 1787230346442
+      },
+      {
+        "executionId": "cb57eb56-d615-4768-94f5-4a9c6ce6e015",
+        "chatSessionId": "sess_4f0e12af-8513-4e29-b4cd-cbe47bfa8aeb",
+        "timestamp": 1787230873902
+      }
+    ],
+    "19.2 Implement NPC attack roll resolution": [
+      {
+        "executionId": "cb57eb56-d615-4768-94f5-4a9c6ce6e015",
+        "chatSessionId": "sess_4f0e12af-8513-4e29-b4cd-cbe47bfa8aeb",
+        "timestamp": 1787230347406
+      },
+      {
+        "executionId": "cb57eb56-d615-4768-94f5-4a9c6ce6e015",
+        "chatSessionId": "sess_4f0e12af-8513-4e29-b4cd-cbe47bfa8aeb",
+        "timestamp": 1787231229791
+      }
+    ],
+    "19.3 Implement NPC field auto-save": [
+      {
+        "executionId": "cb57eb56-d615-4768-94f5-4a9c6ce6e015",
+        "chatSessionId": "sess_4f0e12af-8513-4e29-b4cd-cbe47bfa8aeb",
+        "timestamp": 1787230348362
+      },
+      {
+        "executionId": "cb57eb56-d615-4768-94f5-4a9c6ce6e015",
+        "chatSessionId": "sess_4f0e12af-8513-4e29-b4cd-cbe47bfa8aeb",
+        "timestamp": 1787231230700
+      },
+      {
+        "executionId": "974fadb6-1171-40f8-913b-21d4815fd1dc",
+        "chatSessionId": "sess_79749e44-99fc-4b1d-aa8a-f3ec4c534fab",
+        "timestamp": 1787233285431
+      },
+      {
+        "executionId": "974fadb6-1171-40f8-913b-21d4815fd1dc",
+        "chatSessionId": "sess_79749e44-99fc-4b1d-aa8a-f3ec4c534fab",
+        "timestamp": 1787233662999
+      }
+    ],
+    "19. Implement NPC Sheet (ApplicationV2)": [
+      {
+        "executionId": "cb57eb56-d615-4768-94f5-4a9c6ce6e015",
+        "chatSessionId": "sess_4f0e12af-8513-4e29-b4cd-cbe47bfa8aeb",
+        "timestamp": 1787231230763
+      }
+    ],
+    "9.1 Rewrite `src/models/actor/npc.ts` — NpcDataModel base fields (VsD format)": [
+      {
+        "executionId": "6de3457a-a2c3-4864-8868-6dcaa88e8206",
+        "chatSessionId": "sess_d67b756c-e9bd-46f0-a88d-d37a64292e99",
+        "timestamp": 1787232018769
+      },
+      {
+        "executionId": "6de3457a-a2c3-4864-8868-6dcaa88e8206",
+        "chatSessionId": "sess_d67b756c-e9bd-46f0-a88d-d37a64292e99",
+        "timestamp": 1787233188838
+      }
+    ],
+    "9.2 Add attacks, skills, and abilities arrays to NpcDataModel (VsD format)": [
+      {
+        "executionId": "6de3457a-a2c3-4864-8868-6dcaa88e8206",
+        "chatSessionId": "sess_d67b756c-e9bd-46f0-a88d-d37a64292e99",
+        "timestamp": 1787232019682
+      },
+      {
+        "executionId": "6de3457a-a2c3-4864-8868-6dcaa88e8206",
+        "chatSessionId": "sess_d67b756c-e9bd-46f0-a88d-d37a64292e99",
+        "timestamp": 1787233189718
+      }
+    ],
+    "9. Implement NpcDataModel (VsD creature stat block format)": [
+      {
+        "executionId": "6de3457a-a2c3-4864-8868-6dcaa88e8206",
+        "chatSessionId": "sess_d67b756c-e9bd-46f0-a88d-d37a64292e99",
+        "timestamp": 1787233189822
+      }
+    ],
+    "19.1 Rewrite `src/sheets/npc-sheet.ts` and `src/templates/actors/npc-sheet.hbs` — VsD stat block layout": [
+      {
+        "executionId": "974fadb6-1171-40f8-913b-21d4815fd1dc",
+        "chatSessionId": "sess_79749e44-99fc-4b1d-aa8a-f3ec4c534fab",
+        "timestamp": 1787233283421
+      },
+      {
+        "executionId": "974fadb6-1171-40f8-913b-21d4815fd1dc",
+        "chatSessionId": "sess_79749e44-99fc-4b1d-aa8a-f3ec4c534fab",
+        "timestamp": 1787233660290
+      }
+    ],
+    "19.2 Implement NPC attack roll resolution with creature type critical reduction": [
+      {
+        "executionId": "974fadb6-1171-40f8-913b-21d4815fd1dc",
+        "chatSessionId": "sess_79749e44-99fc-4b1d-aa8a-f3ec4c534fab",
+        "timestamp": 1787233284649
+      },
+      {
+        "executionId": "974fadb6-1171-40f8-913b-21d4815fd1dc",
+        "chatSessionId": "sess_79749e44-99fc-4b1d-aa8a-f3ec4c534fab",
+        "timestamp": 1787233661283
+      }
+    ],
+    "19. Rewrite NPC Sheet (ApplicationV2) — VsD creature stat block format": [
+      {
+        "executionId": "974fadb6-1171-40f8-913b-21d4815fd1dc",
+        "chatSessionId": "sess_79749e44-99fc-4b1d-aa8a-f3ec4c534fab",
+        "timestamp": 1787233663113
+      }
     ]
   }
 }

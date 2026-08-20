@@ -1,0 +1,161 @@
+<section class="npc-sheet">
+  {{!-- Header: portrait, name, level+rank --}}
+  <header class="npc-header">
+    <img class="profile-img" src="{{img}}" alt="{{name}}" />
+    <div class="npc-identity">
+      <input type="text" name="name" value="{{name}}" placeholder="Creature Name" />
+      <span class="npc-level-rank">{{levelDisplay}}</span>
+    </div>
+  </header>
+
+  {{!-- Core stat block row: HP, Armor, DEF, TSR, WSR, Move, CT --}}
+  <div class="npc-stat-block">
+    <div class="npc-stat-item">
+      <label class="stat-label">HP</label>
+      <input type="number" name="system.hp" value="{{hp}}" min="1" />
+    </div>
+
+    <div class="npc-stat-item">
+      <label class="stat-label">Armor</label>
+      <span class="stat-value">{{armorDisplay}}</span>
+    </div>
+
+    <div class="npc-stat-item">
+      <label class="stat-label">DEF</label>
+      <input type="number" name="system.defense" value="{{defense}}" />
+    </div>
+
+    <div class="npc-stat-item">
+      <label class="stat-label">TSR</label>
+      <input type="number" name="system.tsr" value="{{tsr}}" />
+    </div>
+
+    <div class="npc-stat-item">
+      <label class="stat-label">WSR</label>
+      <input type="number" name="system.wsr" value="{{wsr}}" />
+    </div>
+
+    <div class="npc-stat-item">
+      <label class="stat-label">Move</label>
+      <input type="text" name="system.moveRates" value="{{moveRates}}" />
+    </div>
+
+    <div class="npc-stat-item">
+      <label class="stat-label">CT</label>
+      <input type="text" name="system.creatureType" value="{{creatureType}}" maxlength="2" />
+    </div>
+  </div>
+
+  {{!-- Editable fields row for level, rank, armor type, shield --}}
+  <div class="npc-edit-fields">
+    <label class="npc-field">
+      <span>Level</span>
+      <input type="number" name="system.level" value="{{level}}" min="1" max="50" />
+    </label>
+    <label class="npc-field">
+      <span>Rank</span>
+      <select name="system.rank">
+        <option value="Normal" {{#if (eq rank "Normal")}}selected{{/if}}>Normal</option>
+        <option value="Elite" {{#if (eq rank "Elite")}}selected{{/if}}>Elite</option>
+        <option value="Champion" {{#if (eq rank "Champion")}}selected{{/if}}>Champion</option>
+        <option value="Lord" {{#if (eq rank "Lord")}}selected{{/if}}>Lord</option>
+      </select>
+    </label>
+    <label class="npc-field">
+      <span>Armor Type</span>
+      <select name="system.armorType">
+        <option value="NA" {{#if (eq armorType "NA")}}selected{{/if}}>NA</option>
+        <option value="LA" {{#if (eq armorType "LA")}}selected{{/if}}>LA</option>
+        <option value="MA" {{#if (eq armorType "MA")}}selected{{/if}}>MA</option>
+        <option value="HA" {{#if (eq armorType "HA")}}selected{{/if}}>HA</option>
+      </select>
+    </label>
+    <label class="npc-field npc-field--checkbox">
+      <input type="checkbox" name="system.hasShield" {{#if hasShield}}checked{{/if}} />
+      <span>Shield</span>
+    </label>
+  </div>
+
+  {{!-- Attacks section --}}
+  <section class="npc-section">
+    <h2 class="section-title">Attacks</h2>
+    <div class="npc-attacks-list">
+      {{#each attacks}}
+      <div class="npc-attack-row" data-index="{{index}}">
+        <button type="button" class="npc-roll-btn" data-action="rollAttack" data-index="{{index}}" title="Roll Attack">
+          <i class="fas fa-dice-d20" aria-hidden="true"></i>
+        </button>
+        <span class="npc-attack-summary">{{summary}}</span>
+        <input type="text" name="system.attacks.{{index}}.name" value="{{name}}" placeholder="Name" class="attack-name" />
+        <input type="number" name="system.attacks.{{index}}.bonus" value="{{bonus}}" class="attack-bonus" />
+        <select name="system.attacks.{{index}}.size" class="attack-size">
+          <option value="Small" {{#if (eq size "Small")}}selected{{/if}}>Small</option>
+          <option value="Medium" {{#if (eq size "Medium")}}selected{{/if}}>Medium</option>
+          <option value="Large" {{#if (eq size "Large")}}selected{{/if}}>Large</option>
+          <option value="Huge" {{#if (eq size "Huge")}}selected{{/if}}>Huge</option>
+        </select>
+        <input type="text" name="system.attacks.{{index}}.attackType" value="{{attackType}}" placeholder="Type" class="attack-type" />
+        <input type="text" name="system.attacks.{{index}}.tableId" value="{{tableId}}" placeholder="Table" class="attack-table" />
+        <input type="text" name="system.attacks.{{index}}.criticalTableId" value="{{criticalTableId}}" placeholder="Crit Table" class="attack-crit-table" />
+        <input type="number" name="system.attacks.{{index}}.multiAttack" value="{{multiAttack}}" min="1" max="5" class="attack-multi" />
+      </div>
+      {{else}}
+      <p class="empty-state">No attacks defined.</p>
+      {{/each}}
+    </div>
+  </section>
+
+  {{!-- Skill Bonuses section grouped by category --}}
+  <section class="npc-section">
+    <h2 class="section-title">Skill Bonuses</h2>
+
+    {{#each skillCategories}}
+    <div class="npc-skill-group">
+      <h3 class="skill-group-label">{{label}}</h3>
+      <div class="npc-skills-list">
+        {{#each skills}}
+        <div class="npc-skill-row" data-index="{{index}}">
+          <input type="text" name="system.skillBonuses.{{index}}.name" value="{{name}}" placeholder="Skill" />
+          <input type="number" name="system.skillBonuses.{{index}}.bonus" value="{{bonus}}" />
+          <span class="skill-bonus-display">{{bonusDisplay}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/each}}
+
+    {{#if uncategorizedSkills.length}}
+    <div class="npc-skill-group">
+      <h3 class="skill-group-label">Other</h3>
+      <div class="npc-skills-list">
+        {{#each uncategorizedSkills}}
+        <div class="npc-skill-row" data-index="{{index}}">
+          <input type="text" name="system.skillBonuses.{{index}}.name" value="{{name}}" placeholder="Skill" />
+          <input type="number" name="system.skillBonuses.{{index}}.bonus" value="{{bonus}}" />
+          <span class="skill-bonus-display">{{bonusDisplay}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#unless allSkills.length}}
+    <p class="empty-state">No skill bonuses defined.</p>
+    {{/unless}}
+  </section>
+
+  {{!-- Special Abilities section --}}
+  <section class="npc-section">
+    <h2 class="section-title">Special Abilities</h2>
+    <div class="npc-abilities-list">
+      {{#each specialAbilities}}
+      <div class="npc-ability" data-index="{{index}}">
+        <input type="text" name="system.specialAbilities.{{index}}.name" value="{{name}}" placeholder="Ability Name" class="ability-name" />
+        <textarea name="system.specialAbilities.{{index}}.description" placeholder="Description" class="ability-desc">{{description}}</textarea>
+      </div>
+      {{else}}
+      <p class="empty-state">No special abilities defined.</p>
+      {{/each}}
+    </div>
+  </section>
+</section>
