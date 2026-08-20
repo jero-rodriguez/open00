@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.1](https://github.com/jero-rodriguez/open00/compare/v1.15.0...v1.15.1) (2026-08-20)
+
+
+### Bug Fixes
+
+* redesing stats section and add missing modifiers ([fdd0efd](https://github.com/jero-rodriguez/open00/commit/fdd0efdcf7ee3d683cd77dc84c538303e7c4a0be))
+
 ## [1.15.0](https://github.com/jero-rodriguez/open00/compare/v1.14.2...v1.15.0) (2026-08-20)
 
 
