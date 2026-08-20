@@ -322,12 +322,33 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           },
         ];
 
+        // Heroic Path: split stored string into displayable list items
+        const heroicPathRaw = String(system['heroicPath'] ?? '');
+        const heroicPathItems = heroicPathRaw
+          ? heroicPathRaw.split('\n').map((line) => line.trim()).filter(Boolean)
+          : [];
+
+        // Special Abilities (stored as string array on the character)
+        const specialAbilities = (system['specialAbilities'] as string[] | undefined) ?? [];
+
+        // Known Languages (stored as string array on the character)
+        const knownLanguages = (system['knownLanguages'] as string[] | undefined) ?? [];
+
+        // Background Options (Item type 'background' owned by the actor)
+        const backgroundOptions = this.actor.items
+          .filter((item: Item) => item.type === 'background')
+          .map((item: Item) => ({ id: item.id, name: item.name }));
+
         return {
           ...context,
           stats: statsContext,
           drivePoints: system['drivePoints'],
           passions: system['passions'],
-          heroicPath: system['heroicPath'],
+          heroicPath: heroicPathRaw,
+          heroicPathItems,
+          specialAbilities,
+          knownLanguages,
+          backgroundOptions,
           level,
           skillCategories,
           saveRolls,
