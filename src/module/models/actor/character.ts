@@ -157,6 +157,14 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; vocation: number; kin: number; spec: number; item: number }> }).skills;
 
     for (const skill of skills) {
+      // If statKey is empty, the skill has no stat component (e.g., "Armor")
+      if (!skill.statKey || skill.statKey.trim() === '') {
+        const rankBonus = computeRankBonus(asFiniteNumber(skill.rank));
+        const totalBonus = rankBonus + asFiniteNumber(skill.vocation) + asFiniteNumber(skill.kin) + asFiniteNumber(skill.spec) + asFiniteNumber(skill.item);
+        this.skillTotals.set(skill.name, totalBonus);
+        continue;
+      }
+
       const stat = this.stats[skill.statKey as StatKey];
       if (!stat) {
         this.skillTotals.set(skill.name, 0);
