@@ -131,6 +131,7 @@
   "OPEN00.Header.CharacterName": "Nombre del Personaje",
   "OPEN00.Header.Experience": "Experiencia",
   "OPEN00.Header.DevelopmentPoints": "Puntos de Desarrollo",
+  "OPEN00.Header.DevelopmentPointsPerLevel": "Puntos de Desarrollo por Nivel",
   "OPEN00.Header.DropKin": "Arrastra la Estirpe aquí",
   "OPEN00.Header.DropCulture": "Arrastra la Cultura aquí",
   "OPEN00.Header.DropVocation": "Arrastra la Vocación aquí",

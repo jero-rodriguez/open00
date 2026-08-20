@@ -383,6 +383,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             };
           });
 
+        const developmentPointsPerLevel = (system['developmentPointsPerLevel'] as number[] | undefined) ?? [];
+
         return {
           ...context,
           defense: system['defense'],
@@ -392,6 +394,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           weapons,
           armor,
           conditions: [],
+          developmentPointsPerLevel,
         };
       }
 

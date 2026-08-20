@@ -111,6 +111,12 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       // Character Level
       level: new NumberField({ integer: true, min: 0, initial: 0 }),
 
+      // Development Points Per Level (array tracking DP earned at each level)
+      developmentPointsPerLevel: new ArrayField(
+        new NumberField({ integer: true, min: 0, initial: 0 }),
+        { initial: [] },
+      ),
+
       // Skills array (Req 1.11, 1.12)
       skills: new ArrayField(
         new SchemaField({

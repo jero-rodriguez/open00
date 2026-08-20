@@ -39,6 +39,20 @@
     </div>
   </section>
 
+  <section class="sheet-section">
+    <h2 class="section-title">{{localize "OPEN00.Header.DevelopmentPointsPerLevel"}}</h2>
+    <div class="development-points-row">
+      <div class="development-points-header">
+        <span>{{localize "OPEN00.Header.DevelopmentPoints"}}</span>
+        {{#each developmentPointsPerLevel}}
+        <span class="development-point-value">{{this}}</span>
+        {{else}}
+        <span class="empty-state compact">{{localize "OPEN00.Combat.NoConditions"}}</span>
+        {{/each}}
+      </div>
+    </div>
+  </section>
+
   <section class="sheet-section item-table-section">
     <h2 class="section-title">{{localize "OPEN00.Combat.Armor"}}</h2>
     <div class="wide-table-scroll">

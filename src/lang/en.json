@@ -131,6 +131,7 @@
   "OPEN00.Header.CharacterName": "Character Name",
   "OPEN00.Header.Experience": "Experience",
   "OPEN00.Header.DevelopmentPoints": "Development Points",
+  "OPEN00.Header.DevelopmentPointsPerLevel": "Development Points Per Level",
   "OPEN00.Header.DropKin": "Drop Kin here",
   "OPEN00.Header.DropCulture": "Drop Culture here",
   "OPEN00.Header.DropVocation": "Drop Vocation here",
