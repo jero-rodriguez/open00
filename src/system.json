@@ -7,7 +7,7 @@
     "verified": "14"
   },
   "url": "https://github.com/jero-rodriguez/open00",
-  "manifest": "https://github.com/jero-rodriguez/open00/releases/download/latest/system.json",
+  "manifest": "https://github.com/jero-rodriguez/open00/releases/latest/download/system.json",
   "authors": [
     {
       "name": "Jeronimo Rodriguez",
