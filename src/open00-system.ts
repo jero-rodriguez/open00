@@ -26,6 +26,7 @@ import { createDefaultSkills } from './module/data/skills.js';
 
 // Sheets
 import { Open00CharacterSheet } from './module/sheets/character-sheet.js';
+import { Open00NpcSheet } from './module/sheets/npc-sheet.js';
 
 Hooks.once('init', () => {
   // Configure System Data Models
@@ -62,6 +63,11 @@ Hooks.once('init', () => {
   // Register Actor sheets
   foundry.documents.collections.Actors.registerSheet('open00', Open00CharacterSheet, {
     types: ['character'],
+    makeDefault: true,
+  });
+
+  foundry.documents.collections.Actors.registerSheet('open00', Open00NpcSheet, {
+    types: ['npc'],
     makeDefault: true,
   });
 });

@@ -186,20 +186,19 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Verify with `tsc --noEmit`
     - _Requirements: 1.12, 1.13_
 
-- [ ] 9. Implement NpcDataModel
-  - [x] 9.1 Create `src/models/actor/npc.ts` — NpcDataModel base fields
-    - Define `defineSchema()` with `level` (NumberField, min: 1, initial: 1), `hp.value`, `hp.max` (NumberField), `defense` (NumberField), `initiativeModifier` (NumberField), `movementRate` (NumberField)
-    - Add `resistances` as SchemaField: `stamina` (NumberField), `will` (NumberField), `magic` (NumberField)
+- [x] 9. Implement NpcDataModel (VsD creature stat block format)
+  - [x] 9.1 Rewrite `src/models/actor/npc.ts` — NpcDataModel base fields (VsD format)
+    - Define `defineSchema()` with `level` (NumberField, min: 1, max: 50, initial: 1), `rank` (StringField, choices: ['Normal','Elite','Champion','Lord'], initial: 'Normal'), `hp` (NumberField, integer, min: 1, initial: 1), `armorType` (StringField, choices: ['NA','LA','MA','HA'], initial: 'NA'), `hasShield` (BooleanField, initial: false), `defense` (NumberField, integer), `tsr` (NumberField, integer), `wsr` (NumberField, integer), `moveRates` (StringField, initial: '30L', stores multi-mode movement e.g. "50F/10L"), `creatureType` (StringField, max: 2, initial: 'NH', stores CT code e.g. "HB")
     - Export the class extending `foundry.abstract.TypeDataModel`
     - Verify with `tsc --noEmit`
-    - _Requirements: 2.1, 2.2, 2.3_
+    - _Requirements: 2.1, 2.5, 2.7_
 
-  - [x] 9.2 Add attacks, skills, and abilities arrays to NpcDataModel
-    - Add `attacks` as ArrayField (max 10 entries) of SchemaField: `name`, `bonus` (NumberField), `tableId` (StringField), `damage` (NumberField)
-    - Add `skillBonuses` as ArrayField (max 30 entries) of SchemaField: `name`, `bonus` (NumberField)
-    - Add `specialAbilities` as ArrayField (max 20 entries) of SchemaField: `name`, `description`
+  - [x] 9.2 Add attacks, skills, and abilities arrays to NpcDataModel (VsD format)
+    - Add `attacks` as ArrayField (max 10 entries) of SchemaField: `name` (StringField, max 80), `bonus` (NumberField, integer), `size` (StringField, choices: ['Small','Medium','Large','Huge'], initial: 'Medium'), `attackType` (StringField, max 40, e.g. "Weapon", "Claw", "Bite"), `tableId` (StringField), `criticalTableId` (StringField), `multiAttack` (NumberField, integer, min: 1, max: 5, initial: 1)
+    - Add `skillBonuses` as ArrayField (max 30 entries) of SchemaField: `name` (StringField, max 80), `bonus` (NumberField, integer), `category` (StringField, choices: ['CMB','Rog','Adv','Lor',''], initial: '')
+    - Add `specialAbilities` as ArrayField (max 20 entries) of SchemaField: `name` (StringField, max 80), `description` (StringField, max 500)
     - Verify with `tsc --noEmit`
-    - _Requirements: 2.4, 2.5, 2.6_
+    - _Requirements: 2.2, 2.3, 2.4_
 
 - [ ] 10. Implement Item TypeDataModels: Weapon and Armor
   - [x] 10.1 Implement `src/models/item/weapon.ts` — WeaponDataModel
@@ -309,21 +308,23 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - On persistence failure, revert displayed value and show notification
     - _Requirements: 8.10, 8.12_
 
-- [ ] 19. Implement NPC Sheet (ApplicationV2)
-  - [ ] 19.1 Implement `src/sheets/npc-sheet.ts` — single-page layout
+- [x] 19. Rewrite NPC Sheet (ApplicationV2) — VsD creature stat block format
+  - [x] 19.1 Rewrite `src/sheets/npc-sheet.ts` and `src/templates/actors/npc-sheet.hbs` — VsD stat block layout
     - Extend ApplicationV2 (ActorSheetV2), no tabs
-    - Create Handlebars template in `src/templates/actors/npc-sheet.hbs`
-    - Display all NPC fields: level, HP, defense, initiative, movement, attacks, skills, abilities, resistances
-    - _Requirements: 9.1, 9.2_
+    - Display VsD creature stat block format: level+rank, move rates (multi-mode codes), armor type (with shield indicator), DEF, TSR, WSR, HP, creature type (CT), attacks with "+bonus Size Type (xN)" format, skill bonuses grouped by category (CMB/Rog/Adv/Lor), and special abilities
+    - Match the official Against the Darkmaster creature sheet layout
+    - _Requirements: 9.1, 9.2, 9.6_
 
-  - [ ] 19.2 Implement NPC attack roll resolution
+  - [x] 19.2 Implement NPC attack roll resolution with creature type critical reduction
     - Attack click triggers open-ended roll with attack bonus
-    - Prompt for target armor category
-    - Resolve against attack table, display damage + critical in chat
-    - Auto-roll critical table on critical hit
+    - Prompt for target armor category (NA/LA/MA/HA)
+    - Resolve against attack table specified in attack entry, display damage + critical in chat
+    - Apply creature type critical severity reduction: H = -1 step, E = -2 steps
+    - Auto-roll critical table on critical hit using the attack's criticalTableId
+    - Display multi-attack notation in chat for attacks with multiAttack > 1
     - _Requirements: 9.3, 9.5_
 
-  - [ ] 19.3 Implement NPC field auto-save
+  - [x] 19.3 Implement NPC field auto-save
     - Persist changes on field commit
     - _Requirements: 9.4_
 

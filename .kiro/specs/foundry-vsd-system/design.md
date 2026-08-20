@@ -332,7 +332,7 @@ All sheets extend `foundry.applications.api.ApplicationV2` (or the document-spec
 
 **CharacterSheet** — Six tabs: Overview, Skills, Combat, Magic, Equipment, Biography. Uses CSS Grid with V2 CSS variables. Skill roll buttons dispatch to the dice engine. Field changes auto-save on blur/Enter within 500ms.
 
-**NpcSheet** — Single-page layout, no tabs. Compact grid for attacks, abilities, resistances. Attack clicks trigger full resolution (roll → attack table → optional critical).
+**NpcSheet** — Single-page layout, no tabs. Displays the official VsD creature stat block format: level+rank, move rates (multi-mode), armor type, DEF, TSR, WSR, HP, creature type (CT), attacks with size/multi-attack notation, skill bonuses by category, and special abilities. Attack clicks trigger full resolution (roll → attack table → optional critical with creature type severity reduction).
 
 **ItemSheet** — Common header + polymorphic body based on item type. Type dispatched via the Item's `type` field.
 
@@ -400,17 +400,18 @@ Hooks.once('init', () => {
 | Field Group | Character | NPC |
 |---|---|---|
 | Stats (BRN/SWI/FOR/WIT/WSD/BEA) | ✓ (signed integer, -50 to +100; value IS the bonus) | — |
-| Level | Derived from XP | 1-50 |
-| HP (current/max) | ✓ | ✓ (min 1) |
+| Level | Derived from XP | 1-50 with rank (Normal/Elite/Champion/Lord) |
+| HP | ✓ (current/max) | ✓ (integer, min 1) |
 | MP (current/max) | ✓ | — |
 | Drive Points (current/max) | ✓ | — |
-| Defense | ✓ | ✓ |
-| Initiative Modifier | — | ✓ |
-| Movement Rate | Derived | ✓ (meters/round) |
-| Skills (category, rank, total) | Full array (7 categories) | Flat bonuses (up to 30) |
-| Attacks | Via owned Weapon Items | Up to 10 inline entries |
+| Armor Type | Via owned Armor Items | AT field (NA/LA/MA/HA + shield flag) |
+| Defense (DEF) | ✓ | ✓ (total bonus including armor, shield, natural) |
+| TSR / WSR | Derived from stats + level | ✓ (integer bonuses) |
+| Movement Rate | Derived | ✓ (multi-mode string: "50F/10L") |
+| Creature Type (CT) | — | ✓ (2-char code: N/H/E + H/B) |
+| Skills (category, rank, total) | Full array (7 categories) | Flat bonuses with category (up to 30) |
+| Attacks | Via owned Weapon Items | Up to 10 inline entries with size + multi-attack |
 | Special Abilities | Via owned Trait Items | Up to 20 inline entries |
-| Resistances (Stamina/Will/Magic) | Derived from stats | 3 integer bonuses |
 | Passions | ✓ (Nature/Allegiance/Motivation) | — |
 | Heroic Path + Milestones | ✓ | — |
 | Encumbrance | ✓ (5 levels) | — |

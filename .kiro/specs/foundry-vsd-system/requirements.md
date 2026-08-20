@@ -37,6 +37,10 @@ This document specifies the requirements for a FoundryVTT v14 game system implem
 - **Heroic_Path**: A narrative track representing the character's growth arc across sessions
 - **Background_Options**: Character creation choices purchased with Background Points during Kin and Culture selection
 - **Items_of_Power**: Special magical items with Affinity tracking that bond to characters
+- **Creature_Type**: A two-character code describing an NPC/Monster's nature: first letter indicates Critical Reduction tier (N=Normal/no reduction, H=Heroic/-1 step, E=Epic/-2 steps), second letter indicates category (H=Humanoid, B=Beast)
+- **Creature_Rank**: A descriptor appended to creature level indicating power tier: Normal (baseline), Elite (tougher individual), Champion (named leader), Lord (legendary foe)
+- **Attack_Size**: The size category of an NPC attack (Small, Medium, Large, Huge) which determines the attack table used for damage resolution
+- **Multi_Attack**: The number of times an NPC can execute a particular attack in a single action (1-5), displayed as "(x2)", "(x3)" etc. in the stat block
 
 ## Requirements
 
@@ -62,16 +66,17 @@ This document specifies the requirements for a FoundryVTT v14 game system implem
 
 ### Requirement 2: NPC and Monster Data Model
 
-**User Story:** As a game master, I want a compact NPC/Monster stat block, so that I can run encounters efficiently without full character sheet overhead.
+**User Story:** As a game master, I want a compact NPC/Monster stat block matching the official Against the Darkmaster creature format, so that I can run encounters efficiently without full character sheet overhead.
 
 #### Acceptance Criteria
 
-1. THE VsD_System SHALL define an NPC Actor type using TypeDataModel with fields for level (integer from 1 to 50 inclusive), hit points (current and maximum integer values, minimum 1), defense (integer), initiative modifier (integer), movement rate (integer in meters per round), attacks, skill bonuses, special abilities, and resistances
-2. THE VsD_System SHALL store NPC attacks as an ordered collection of up to 10 entries where each attack has a name (up to 80 characters), attack bonus (integer), attack table reference, critical table reference, and damage value expressed as a dice formula string (up to 40 characters)
-3. THE VsD_System SHALL store NPC skill bonuses as a flat collection of up to 30 skill name and integer bonus value pairs
+1. THE VsD_System SHALL define an NPC Actor type using TypeDataModel with fields for: level (integer from 1 to 50 inclusive), rank (one of Normal, Elite, Champion, or Lord, default Normal), hit points (integer, minimum 1), defense bonus (integer), armor type (one of NA, LA, MA, HA), shield flag (boolean, default false), Toughness Save Roll bonus (integer), Willpower Save Roll bonus (integer), movement rates (string encoding multi-mode movement using codes L=Land, F=Flight, S=Swim, e.g. "50F/10L"), creature type (two-character string code: first letter N/H/E for Critical Reduction tier, second letter H/B for Humanoid/Beast category), attacks, skill bonuses, and special abilities
+2. THE VsD_System SHALL store NPC attacks as an ordered collection of up to 10 entries where each attack has a name (up to 80 characters), attack bonus (integer), attack size (one of Small, Medium, Large, or Huge), attack type description (up to 40 characters, e.g. "Weapon", "Claw", "Bite"), attack table reference (string identifier), critical table reference (string identifier), and multi-attack count (integer from 1 to 5, default 1)
+3. THE VsD_System SHALL store NPC skill bonuses as a flat collection of up to 30 entries where each entry has a skill name (up to 80 characters), integer bonus value, and optional category (one of CMB, Rog, Adv, Lor) for display grouping
 4. THE VsD_System SHALL store NPC special abilities as a collection of up to 20 entries with name (up to 80 characters) and description (up to 500 characters) fields
-5. THE VsD_System SHALL store NPC resistances as a collection containing one integer bonus value for each of the three resistance categories: Stamina, Will, and Magic
+5. THE VsD_System SHALL store NPC save rolls as two integer bonus values: TSR (Toughness Save Roll) and WSR (Willpower Save Roll)
 6. THE VsD_System SHALL register the NPC type in the documentTypes section of system.json without using template.json
+7. THE VsD_System SHALL interpret creature type critical reduction tier as: N (Normal) = no critical severity reduction, H (Heroic) = reduce critical severity by 1 step, E (Epic) = reduce critical severity by 2 steps
 
 ### Requirement 3: Item Data Models
 
@@ -172,15 +177,16 @@ This document specifies the requirements for a FoundryVTT v14 game system implem
 
 ### Requirement 9: NPC Sheet
 
-**User Story:** As a game master, I want a compact NPC sheet on a single page, so that I can reference NPC stats quickly during play.
+**User Story:** As a game master, I want a compact NPC sheet matching the official Against the Darkmaster creature stat block format, so that I can reference NPC stats quickly during play.
 
 #### Acceptance Criteria
 
 1. THE NPC_Sheet SHALL extend ApplicationV2 and render all NPC data on a single page without tabs
-2. THE NPC_Sheet SHALL display level, hit points, defense, initiative modifier, movement rate, all attacks, skill bonuses, special abilities, and resistances in a single-page layout without scrolling sections or collapsible panels
-3. WHEN an NPC attack is clicked, THE NPC_Sheet SHALL trigger an open-ended roll using the Dice_Engine with the attack bonus applied, prompt for or accept the target armor category, resolve against the attack table specified in the attack entry, and display the resulting damage and critical indicator in the chat message
+2. THE NPC_Sheet SHALL display level with rank suffix (e.g. "12 Elite"), hit points, armor type (with shield indicator if applicable), defense bonus (DEF), Toughness Save Roll (TSR), Willpower Save Roll (WSR), movement rates with mode codes (e.g. "50F/10L"), creature type code (CT), all attacks with size and multi-attack notation, skill bonuses grouped by category, and special abilities in a single-page layout
+3. WHEN an NPC attack is clicked, THE NPC_Sheet SHALL trigger an open-ended roll using the Dice_Engine with the attack bonus applied, use the NPC's armor type as context (not prompt—the target armor category is prompted from the user or defaults to the target token's armor type), resolve against the attack table specified in the attack entry, and display the resulting damage and critical indicator in the chat message, applying creature type critical reduction if applicable
 4. WHEN an NPC field is edited, THE NPC_Sheet SHALL persist the change to the Actor document on field value commit without requiring an explicit save action
-5. IF the attack table resolution indicates a critical hit, THEN THE NPC_Sheet SHALL automatically roll on the critical table referenced in the attack entry and display the critical effect in the chat message
+5. IF the attack table resolution indicates a critical hit, THEN THE NPC_Sheet SHALL automatically roll on the critical table referenced in the attack entry, apply creature type critical severity reduction (H = -1 step, E = -2 steps), and display the adjusted critical effect in the chat message
+6. THE NPC_Sheet SHALL display attacks in preference order with format: "+bonus Size Type (xN)" where N is the multi-attack count when greater than 1 (e.g. "+55 Medium Claw (x2)")
 
 ### Requirement 10: Item Sheets
 
