@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.2](https://github.com/jero-rodriguez/open00/compare/v1.15.1...v1.15.2) (2026-08-20)
+
+
+### Bug Fixes
+
+* resolve validation error when modifier is empty ([52c0fe6](https://github.com/jero-rodriguez/open00/commit/52c0fe6d9074a4df55db7767ab29c485e103b688))
+
 ## [1.15.1](https://github.com/jero-rodriguez/open00/compare/v1.15.0...v1.15.1) (2026-08-20)
 
 
