@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.6](https://github.com/jero-rodriguez/open00/compare/v1.15.5...v1.15.6) (2026-08-20)
+
+
+### Bug Fixes
+
+* add missing sections in character sheet ([8f02464](https://github.com/jero-rodriguez/open00/commit/8f02464523a91a6e670df8af2d96a023a318993d))
+
 ## [1.15.5](https://github.com/jero-rodriguez/open00/compare/v1.15.4...v1.15.5) (2026-08-20)
 
 
