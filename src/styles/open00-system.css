@@ -388,20 +388,90 @@
   height: 28px;
 }
 
-.overview-grid {
-  display: grid;
-  grid-template-columns: minmax(270px, 0.82fr) minmax(470px, 1.7fr);
+/* Drive points + heroic path bar */
+.drive-and-path-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.drive-bar-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.drive-bar-left .section-title {
+  width: auto;
+  margin: 0;
+  padding: 2px 10px 3px;
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.drive-bar-right {
+  flex: 1 1 200px;
+  min-width: 160px;
+}
+
+.heroic-path-field {
+  display: flex;
+  align-items: center;
   gap: 8px;
 }
 
-.overview-sidebar {
-  min-width: 0;
-  overflow: hidden;
+.heroic-path-field > span {
+  flex: 0 0 auto;
+  color: var(--open00-muted);
+  font-size: 13px;
+  font-variant: small-caps;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.dice-roller-buttons {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.dice-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 26px;
+  padding: 2px 7px;
+  border: 1px solid #8f9198;
+  border-radius: 4px;
+  color: var(--open00-ink);
+  background: linear-gradient(#f7f7f7, #e8e7eb);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dice-button:hover {
+  border-color: var(--open00-ink);
+  color: #fff;
+  background: var(--open00-ink);
 }
 
 .skills-panel {
   min-width: 0;
-  overflow: hidden;
+  overflow-x: auto;
+}
+
+/* Stats + Save Rolls bottom grid */
+.stats-and-saves-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr);
+  gap: 12px;
+  margin-top: 10px;
 }
 
 .drive-pips {
@@ -451,9 +521,9 @@
 }
 
 .heroic-path-input {
+  flex: 1 1 auto;
   width: 100%;
   height: 31px;
-  text-align: center;
 }
 
 .rules-table .table-row {
@@ -502,7 +572,7 @@
 
 .skills-table {
   display: grid;
-  grid-template-columns: minmax(120px, 2.1fr) repeat(6, minmax(42px, 0.72fr)) 31px;
+  grid-template-columns: minmax(120px, 2.1fr) minmax(42px, 0.72fr) 40px repeat(6, minmax(38px, 0.65fr)) minmax(42px, 0.72fr) 31px;
   align-items: center;
   text-align: center;
 }
@@ -1024,12 +1094,12 @@
     gap: 12px;
   }
 
-  .overview-grid {
-    grid-template-columns: minmax(245px, 0.8fr) minmax(430px, 1.4fr);
+  .skills-table {
+    grid-template-columns: minmax(105px, 1.7fr) minmax(38px, 0.65fr) 36px repeat(6, minmax(34px, 0.6fr)) minmax(38px, 0.65fr) 29px;
   }
 
-  .skills-table {
-    grid-template-columns: minmax(105px, 1.7fr) repeat(6, minmax(39px, 0.65fr)) 29px;
+  .stats-and-saves-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1046,10 +1116,15 @@
     display: none;
   }
 
-  .overview-grid,
+  .stats-and-saves-grid,
   .magic-layout,
   .equipment-layout {
     grid-template-columns: 1fr;
+  }
+
+  .drive-and-path-bar {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .status-grid {
