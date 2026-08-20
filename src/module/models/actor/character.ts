@@ -108,6 +108,9 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
         dp: new NumberField({ integer: true, min: 0, initial: 0 }),
       }),
 
+      // Character Level
+      level: new NumberField({ integer: true, min: 0, initial: 0 }),
+
       // Skills array (Req 1.11, 1.12)
       skills: new ArrayField(
         new SchemaField({
@@ -145,9 +148,14 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; itemModifiers: number }> }).skills;
 
     for (const skill of skills) {
-      const statValue = asFiniteNumber(this.stats[skill.statKey as StatKey].base) +
-                        asFiniteNumber(this.stats[skill.statKey as StatKey].kin) +
-                        asFiniteNumber(this.stats[skill.statKey as StatKey].spec);
+      const stat = this.stats[skill.statKey as StatKey];
+      if (!stat) {
+        this.skillTotals.set(skill.name, 0);
+        continue;
+      }
+      const statValue = asFiniteNumber(stat.base) +
+                        asFiniteNumber(stat.kin) +
+                        asFiniteNumber(stat.spec);
       const rankBonus = computeRankBonus(asFiniteNumber(skill.rank));
       const totalBonus = statValue + rankBonus + asFiniteNumber(skill.itemModifiers);
       this.skillTotals.set(skill.name, totalBonus);
