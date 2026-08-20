@@ -458,7 +458,7 @@
 
 .stats-table .table-row,
 .saves-table .table-row {
-  grid-template-columns: minmax(115px, 1fr) 58px 62px;
+  grid-template-columns: minmax(115px, 1fr) 58px 52px 52px 52px 62px;
 }
 
 .rules-table .table-heading {
