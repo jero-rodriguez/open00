@@ -92,6 +92,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       openItem: Open00CharacterSheet.#openItem,
       removeItem: Open00CharacterSheet.#removeItem,
       setDrivePoints: Open00CharacterSheet.#setDrivePoints,
+      rollDice: Open00CharacterSheet.#rollDice,
     },
   };
 
@@ -599,5 +600,50 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     const drivePoints = sheet.actor.system['drivePoints'] as { value?: number } | undefined;
     const nextValue = asNumber(drivePoints?.value) === selected ? selected - 1 : selected;
     void sheet.actor.update({ 'system.drivePoints.value': Math.max(0, nextValue) });
+  }
+
+  static #rollDice(event: Event, target: HTMLElement): void {
+    event.preventDefault();
+    const sheet = this as unknown as Open00CharacterSheet;
+    const diceType = target.dataset.dice ?? '';
+
+    let rollResult;
+    let rollLabel = '';
+
+    switch (diceType) {
+      case 'd5':
+        rollResult = Math.floor(Math.random() * 5) + 1;
+        rollLabel = 'd5';
+        break;
+      case 'd10':
+        rollResult = Math.floor(Math.random() * 10) + 1;
+        rollLabel = 'd10';
+        break;
+      case 'd100':
+        rollResult = Math.floor(Math.random() * 100) + 1;
+        rollLabel = 'd100';
+        break;
+      case 'd100oe':
+        rollResult = computeOpenEndedRoll(() => Math.floor(Math.random() * 100) + 1).total;
+        rollLabel = 'd100 OE';
+        break;
+      default:
+        return;
+    }
+
+    const chatContent = `
+      <div class="open00-dice-roll">
+        <header class="roll-header">
+          <strong>${escapeHTML(rollLabel)}</strong>
+        </header>
+        <div class="roll-result">
+          <strong class="roll-total">${rollResult}</strong>
+        </div>
+      </div>`;
+
+    void ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: sheet.actor }),
+      content: chatContent,
+    });
   }
 }

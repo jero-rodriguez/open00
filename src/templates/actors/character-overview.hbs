@@ -22,10 +22,19 @@
             {{/each}}
           </span>
         </h2>
-        <div class="inline-track-fields">
-          <label>{{localize "OPEN00.Overview.Current"}} <input type="number" name="system.drivePoints.value" value="{{drivePoints.value}}" min="0" max="{{drivePoints.max}}" /></label>
-          <span>/</span>
-          <label>{{localize "OPEN00.Overview.Max"}} <input type="number" name="system.drivePoints.max" value="{{drivePoints.max}}" min="0" /></label>
+        <div class="dice-roller-buttons">
+          <button type="button" class="dice-button" data-action="rollDice" data-dice="d5" title="Roll d5">
+            <span class="dice-label">d5</span>
+          </button>
+          <button type="button" class="dice-button" data-action="rollDice" data-dice="d10" title="Roll d10">
+            <span class="dice-label">d10</span>
+          </button>
+          <button type="button" class="dice-button" data-action="rollDice" data-dice="d100" title="Roll d100">
+            <span class="dice-label">d100</span>
+          </button>
+          <button type="button" class="dice-button" data-action="rollDice" data-dice="d100oe" title="Roll d100 Open-Ended">
+            <span class="dice-label">d100 OE</span>
+          </button>
         </div>
       </section>
 
