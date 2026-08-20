@@ -83,10 +83,13 @@
       <h2 class="section-title">{{localize "OPEN00.Skills.Title"}}</h2>
       <div class="skills-table skills-heading" aria-hidden="true">
         <span>{{localize "OPEN00.Skills.Name"}}</span>
-        <span>{{localize "OPEN00.Skills.StatBonusShort"}}</span>
+        <span>{{localize "OPEN00.Skills.Bonus"}}</span>
         <span>{{localize "OPEN00.Skills.Stat"}}</span>
         <span>#</span>
         <span>{{localize "OPEN00.Skills.RankBonusShort"}}</span>
+        <span>{{localize "OPEN00.Skills.VocationShort"}}</span>
+        <span>{{localize "OPEN00.Skills.KinShort"}}</span>
+        <span>{{localize "OPEN00.Skills.SpecShort"}}</span>
         <span>{{localize "OPEN00.Skills.ItemBonusShort"}}</span>
         <span>{{localize "OPEN00.Skills.Total"}}</span>
         <span></span>
@@ -102,7 +105,10 @@
           <abbr title="{{localize statLabel}}">{{statKey}}</abbr>
           <input type="number" name="system.skills.{{index}}.rank" value="{{rank}}" min="0" max="30" aria-label="{{localize 'OPEN00.Skills.Rank'}}" />
           <span class="computed-cell">{{rankBonusDisplay}}</span>
-          <input type="number" name="system.skills.{{index}}.itemModifiers" value="{{itemModifiers}}" aria-label="{{localize 'OPEN00.Skills.ItemBonusShort'}}" />
+          <input type="number" name="system.skills.{{index}}.vocation" value="{{vocation}}" aria-label="{{localize 'OPEN00.Skills.Vocation'}}" />
+          <input type="number" name="system.skills.{{index}}.kin" value="{{kin}}" aria-label="{{localize 'OPEN00.Skills.Kin'}}" />
+          <input type="number" name="system.skills.{{index}}.spec" value="{{spec}}" aria-label="{{localize 'OPEN00.Skills.Spec'}}" />
+          <input type="number" name="system.skills.{{index}}.item" value="{{item}}" aria-label="{{localize 'OPEN00.Skills.ItemBonus'}}" />
           <strong class="total-cell">{{totalBonusDisplay}}</strong>
           <button type="button" class="icon-button roll-skill" data-action="rollSkill" data-skill-name="{{name}}" data-skill-bonus="{{totalBonus}}" data-stat-key="{{statKey}}" data-category="{{../id}}" title="{{localize 'OPEN00.Skills.RollTooltip'}}"><i class="fas fa-dice-d100" aria-hidden="true"></i></button>
         </div>

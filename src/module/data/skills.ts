@@ -16,7 +16,10 @@ export interface SkillData {
   category: SkillCategory;
   rank: number;
   statKey: SkillStatKey;
-  itemModifiers: number;
+  vocation: number;
+  kin: number;
+  spec: number;
+  item: number;
 }
 
 type SkillDefinition = Pick<SkillData, 'name' | 'category' | 'statKey'>;
@@ -60,6 +63,9 @@ export function createDefaultSkills(): SkillData[] {
   return DEFAULT_SKILL_DEFINITIONS.map((skill) => ({
     ...skill,
     rank: 0,
-    itemModifiers: 0,
+    vocation: 0,
+    kin: 0,
+    spec: 0,
+    item: 0,
   }));
 }

@@ -23,7 +23,10 @@ interface SkillData {
   category: string;
   rank: number;
   statKey: string;
-  itemModifiers: number;
+  vocation: number;
+  kin: number;
+  spec: number;
+  item: number;
 }
 
 interface SheetTabDefinition {
@@ -254,15 +257,21 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           const statSpec = asNumber(stats[skill.statKey]?.spec);
           const statBonus = statBase + statKin + statSpec;
           const rankBonus = computeRankBonus(asNumber(skill.rank));
-          const itemModifiers = asNumber(skill.itemModifiers);
-          const totalBonus = statBonus + rankBonus + itemModifiers;
+          const vocation = asNumber(skill.vocation);
+          const kin = asNumber(skill.kin);
+          const spec = asNumber(skill.spec);
+          const item = asNumber(skill.item);
+          const totalBonus = statBonus + rankBonus + vocation + kin + spec + item;
           return {
             ...skill,
             index,
             statLabel: STAT_NAMES[skill.statKey] ?? skill.statKey,
             statBonusDisplay: formatModifier(statBonus),
             rankBonusDisplay: formatModifier(rankBonus),
-            itemModifiers,
+            vocationDisplay: formatModifier(vocation),
+            kinDisplay: formatModifier(kin),
+            specDisplay: formatModifier(spec),
+            itemDisplay: formatModifier(item),
             totalBonus,
             totalBonusDisplay: formatModifier(totalBonus),
           };
@@ -432,7 +441,10 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           const castingBonus = castingSkill
             ? asNumber(stats[castingSkill.statKey])
               + computeRankBonus(asNumber(castingSkill.rank))
-              + asNumber(castingSkill.itemModifiers)
+              + asNumber(castingSkill.vocation)
+              + asNumber(castingSkill.kin)
+              + asNumber(castingSkill.spec)
+              + asNumber(castingSkill.item)
             : 0;
           return {
             loreName,

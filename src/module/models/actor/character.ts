@@ -124,7 +124,10 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
           category: new StringField({ required: true, initial: '' }),
           rank: new NumberField({ integer: true, min: 0, max: 30, initial: 0 }),
           statKey: new StringField({ required: true, initial: '' }),
-          itemModifiers: new NumberField({ integer: true, initial: 0 }),
+          vocation: new NumberField({ integer: true, initial: 0 }),
+          kin: new NumberField({ integer: true, initial: 0 }),
+          spec: new NumberField({ integer: true, initial: 0 }),
+          item: new NumberField({ integer: true, initial: 0 }),
         }),
         { initial: createDefaultSkills() },
       ),
@@ -144,14 +147,14 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
    * Compute derived data for the character.
    *
    * Populates `skillTotals` map with totalBonus for each skill:
-   *   totalBonus = statValue + computeRankBonus(rank) + itemModifiers
+   *   totalBonus = statValue + computeRankBonus(rank) + vocation + kin + spec + item
    *
    * Requirements: 1.12, 1.13
    */
   override prepareDerivedData(): void {
     this.skillTotals = new Map();
 
-    const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; itemModifiers: number }> }).skills;
+    const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; vocation: number; kin: number; spec: number; item: number }> }).skills;
 
     for (const skill of skills) {
       const stat = this.stats[skill.statKey as StatKey];
@@ -163,7 +166,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
                         asFiniteNumber(stat.kin) +
                         asFiniteNumber(stat.spec);
       const rankBonus = computeRankBonus(asFiniteNumber(skill.rank));
-      const totalBonus = statValue + rankBonus + asFiniteNumber(skill.itemModifiers);
+      const totalBonus = statValue + rankBonus + asFiniteNumber(skill.vocation) + asFiniteNumber(skill.kin) + asFiniteNumber(skill.spec) + asFiniteNumber(skill.item);
       this.skillTotals.set(skill.name, totalBonus);
     }
   }
