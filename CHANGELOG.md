@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.15.4](https://github.com/jero-rodriguez/open00/compare/v1.15.3...v1.15.4) (2026-08-20)
+
+
+### Bug Fixes
+
+* add columns to save rolls to modify totals ([f08cb9a](https://github.com/jero-rodriguez/open00/commit/f08cb9ad3d25e5dab7b6d6c1144dafa55dd4afee))
+* add development points per level in skills ([65fb57f](https://github.com/jero-rodriguez/open00/commit/65fb57f53b083a4533624eeb66309575b4831980))
+* add missing modifier fileds in skills ([0c4262c](https://github.com/jero-rodriguez/open00/commit/0c4262c35a0fcd176b8924753a3d0a50e5a3d050))
+* remove current and max drive points. add dice roller ([389003a](https://github.com/jero-rodriguez/open00/commit/389003aaa2a7d5c6eabb5273b1394fa66f284453))
+* resolve error when marking drive points ([9bc72e9](https://github.com/jero-rodriguez/open00/commit/9bc72e91a68019e007f21c246432f05b701676e9))
+
 ## [1.15.3](https://github.com/jero-rodriguez/open00/compare/v1.15.2...v1.15.3) (2026-08-20)
 
 
