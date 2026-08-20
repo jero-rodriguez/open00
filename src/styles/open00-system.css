@@ -396,6 +396,12 @@
 
 .overview-sidebar {
   min-width: 0;
+  overflow: hidden;
+}
+
+.skills-panel {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .drive-pips {
@@ -458,7 +464,7 @@
 
 .stats-table .table-row,
 .saves-table .table-row {
-  grid-template-columns: minmax(115px, 1fr) 58px 52px 52px 52px 62px;
+  grid-template-columns: minmax(90px, 1fr) 42px 44px 44px 44px 52px;
 }
 
 .rules-table .table-heading {
@@ -492,10 +498,6 @@
 .rules-table .table-row > :last-child {
   background: rgba(80, 90, 98, 0.07);
   font-weight: 700;
-}
-
-.skills-panel {
-  min-width: 0;
 }
 
 .skills-table {
