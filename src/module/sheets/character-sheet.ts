@@ -23,7 +23,10 @@ interface SkillData {
   category: string;
   rank: number;
   statKey: string;
-  itemModifiers: number;
+  vocation: number;
+  kin: number;
+  spec: number;
+  item: number;
 }
 
 interface SheetTabDefinition {
@@ -89,6 +92,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       openItem: Open00CharacterSheet.#openItem,
       removeItem: Open00CharacterSheet.#removeItem,
       setDrivePoints: Open00CharacterSheet.#setDrivePoints,
+      rollDice: Open00CharacterSheet.#rollDice,
     },
   };
 
@@ -254,15 +258,21 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           const statSpec = asNumber(stats[skill.statKey]?.spec);
           const statBonus = statBase + statKin + statSpec;
           const rankBonus = computeRankBonus(asNumber(skill.rank));
-          const itemModifiers = asNumber(skill.itemModifiers);
-          const totalBonus = statBonus + rankBonus + itemModifiers;
+          const vocation = asNumber(skill.vocation);
+          const kin = asNumber(skill.kin);
+          const spec = asNumber(skill.spec);
+          const item = asNumber(skill.item);
+          const totalBonus = statBonus + rankBonus + vocation + kin + spec + item;
           return {
             ...skill,
             index,
             statLabel: STAT_NAMES[skill.statKey] ?? skill.statKey,
             statBonusDisplay: formatModifier(statBonus),
             rankBonusDisplay: formatModifier(rankBonus),
-            itemModifiers,
+            vocationDisplay: formatModifier(vocation),
+            kinDisplay: formatModifier(kin),
+            specDisplay: formatModifier(spec),
+            itemDisplay: formatModifier(item),
             totalBonus,
             totalBonusDisplay: formatModifier(totalBonus),
           };
@@ -289,17 +299,38 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           };
         }
 
+        // Build save rolls with full breakdown (Stat, Kin, Spec, Lvl, Total)
+        const level = asNumber(system['level']);
+        const saveRolls = [
+          {
+            name: 'OPEN00.Saves.Toughness',
+            stat: 'FOR',
+            statBase: asNumber(stats['for']?.base),
+            kin: asNumber(stats['for']?.kin),
+            spec: asNumber(stats['for']?.spec),
+            level,
+            total: asNumber(stats['for']?.base) + asNumber(stats['for']?.kin) + asNumber(stats['for']?.spec) + level,
+          },
+          {
+            name: 'OPEN00.Saves.Willpower',
+            stat: 'WSD',
+            statBase: asNumber(stats['wsd']?.base),
+            kin: asNumber(stats['wsd']?.kin),
+            spec: asNumber(stats['wsd']?.spec),
+            level,
+            total: asNumber(stats['wsd']?.base) + asNumber(stats['wsd']?.kin) + asNumber(stats['wsd']?.spec) + level,
+          },
+        ];
+
         return {
           ...context,
           stats: statsContext,
           drivePoints: system['drivePoints'],
           passions: system['passions'],
           heroicPath: system['heroicPath'],
+          level,
           skillCategories,
-          saveRolls: {
-            toughness: formatModifier(asNumber(stats['for']?.base) + asNumber(stats['for']?.kin) + asNumber(stats['for']?.spec)),
-            willpower: formatModifier(asNumber(stats['wsd']?.base) + asNumber(stats['wsd']?.kin) + asNumber(stats['wsd']?.spec)),
-          },
+          saveRolls,
         };
       }
 
@@ -362,6 +393,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             };
           });
 
+        const developmentPointsPerLevel = (system['developmentPointsPerLevel'] as number[] | undefined) ?? [];
+
         return {
           ...context,
           defense: system['defense'],
@@ -371,6 +404,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           weapons,
           armor,
           conditions: [],
+          developmentPointsPerLevel,
         };
       }
 
@@ -408,7 +442,10 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           const castingBonus = castingSkill
             ? asNumber(stats[castingSkill.statKey])
               + computeRankBonus(asNumber(castingSkill.rank))
-              + asNumber(castingSkill.itemModifiers)
+              + asNumber(castingSkill.vocation)
+              + asNumber(castingSkill.kin)
+              + asNumber(castingSkill.spec)
+              + asNumber(castingSkill.item)
             : 0;
           return {
             loreName,
@@ -563,5 +600,50 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     const drivePoints = sheet.actor.system['drivePoints'] as { value?: number } | undefined;
     const nextValue = asNumber(drivePoints?.value) === selected ? selected - 1 : selected;
     void sheet.actor.update({ 'system.drivePoints.value': Math.max(0, nextValue) });
+  }
+
+  static #rollDice(event: Event, target: HTMLElement): void {
+    event.preventDefault();
+    const sheet = this as unknown as Open00CharacterSheet;
+    const diceType = target.dataset.dice ?? '';
+
+    let rollResult;
+    let rollLabel = '';
+
+    switch (diceType) {
+      case 'd5':
+        rollResult = Math.floor(Math.random() * 5) + 1;
+        rollLabel = 'd5';
+        break;
+      case 'd10':
+        rollResult = Math.floor(Math.random() * 10) + 1;
+        rollLabel = 'd10';
+        break;
+      case 'd100':
+        rollResult = Math.floor(Math.random() * 100) + 1;
+        rollLabel = 'd100';
+        break;
+      case 'd100oe':
+        rollResult = computeOpenEndedRoll(() => Math.floor(Math.random() * 100) + 1).total;
+        rollLabel = 'd100 OE';
+        break;
+      default:
+        return;
+    }
+
+    const chatContent = `
+      <div class="open00-dice-roll">
+        <header class="roll-header">
+          <strong>${escapeHTML(rollLabel)}</strong>
+        </header>
+        <div class="roll-result">
+          <strong class="roll-total">${rollResult}</strong>
+        </div>
+      </div>`;
+
+    void ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: sheet.actor }),
+      content: chatContent,
+    });
   }
 }
