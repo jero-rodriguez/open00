@@ -60,10 +60,21 @@
           <div class="table-row table-heading">
             <span>{{localize "OPEN00.Saves.RollName"}}</span>
             <span>{{localize "OPEN00.Saves.Stat"}}</span>
+            <span>{{localize "OPEN00.Stats.Header.Kin"}}</span>
+            <span>{{localize "OPEN00.Stats.Header.Spec"}}</span>
+            <span>{{localize "OPEN00.Saves.Level"}}</span>
             <span>{{localize "OPEN00.Stats.Header.Total"}}</span>
           </div>
-          <div class="table-row"><span>{{localize "OPEN00.Saves.Toughness"}}</span><abbr>FOR</abbr><strong>{{saveRolls.toughness}}</strong></div>
-          <div class="table-row"><span>{{localize "OPEN00.Saves.Willpower"}}</span><abbr>WSD</abbr><strong>{{saveRolls.willpower}}</strong></div>
+          {{#each saveRolls}}
+          <div class="table-row">
+            <span>{{localize this.name}}</span>
+            <span><strong>{{this.statBase}}</strong></span>
+            <span>{{this.kin}}</span>
+            <span>{{this.spec}}</span>
+            <span>{{this.level}}</span>
+            <strong>{{this.total}}</strong>
+          </div>
+          {{/each}}
         </div>
       </section>
     </aside>

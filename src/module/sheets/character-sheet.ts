@@ -289,17 +289,38 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           };
         }
 
+        // Build save rolls with full breakdown (Stat, Kin, Spec, Lvl, Total)
+        const level = asNumber(system['level']);
+        const saveRolls = [
+          {
+            name: 'OPEN00.Saves.Toughness',
+            stat: 'FOR',
+            statBase: asNumber(stats['for']?.base),
+            kin: asNumber(stats['for']?.kin),
+            spec: asNumber(stats['for']?.spec),
+            level,
+            total: asNumber(stats['for']?.base) + asNumber(stats['for']?.kin) + asNumber(stats['for']?.spec) + level,
+          },
+          {
+            name: 'OPEN00.Saves.Willpower',
+            stat: 'WSD',
+            statBase: asNumber(stats['wsd']?.base),
+            kin: asNumber(stats['wsd']?.kin),
+            spec: asNumber(stats['wsd']?.spec),
+            level,
+            total: asNumber(stats['wsd']?.base) + asNumber(stats['wsd']?.kin) + asNumber(stats['wsd']?.spec) + level,
+          },
+        ];
+
         return {
           ...context,
           stats: statsContext,
           drivePoints: system['drivePoints'],
           passions: system['passions'],
           heroicPath: system['heroicPath'],
+          level,
           skillCategories,
-          saveRolls: {
-            toughness: formatModifier(asNumber(stats['for']?.base) + asNumber(stats['for']?.kin) + asNumber(stats['for']?.spec)),
-            willpower: formatModifier(asNumber(stats['wsd']?.base) + asNumber(stats['wsd']?.kin) + asNumber(stats['wsd']?.spec)),
-          },
+          saveRolls,
         };
       }
 
