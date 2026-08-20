@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.2](https://github.com/jero-rodriguez/open00/compare/v1.14.1...v1.14.2) (2026-08-20)
+
+
+### Bug Fixes
+
+* latest release url fixed ([942c7b7](https://github.com/jero-rodriguez/open00/commit/942c7b72a1bd188953f7e502a86c7d30967ebb1e))
+
 ## [1.14.1](https://github.com/jero-rodriguez/open00/compare/v1.14.0...v1.14.1) (2026-08-19)
 
 
