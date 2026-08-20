@@ -19,7 +19,7 @@ export interface SkillData {
   vocation: number;
   kin: number;
   spec: number;
-  item: number;
+  itemModifiers: number;
 }
 
 type SkillDefinition = Pick<SkillData, 'name' | 'category' | 'statKey'>;
@@ -66,6 +66,6 @@ export function createDefaultSkills(): SkillData[] {
     vocation: 0,
     kin: 0,
     spec: 0,
-    item: 0,
+    itemModifiers: 0,
   }));
 }
