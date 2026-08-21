@@ -140,7 +140,6 @@ declare namespace foundry {
       class ApplicationV2 {
         static DEFAULT_OPTIONS: ApplicationConfiguration;
         static PARTS: Record<string, ApplicationPartDefinition>;
-        get document(): Actor;
         tabGroups: Record<string, string>;
         _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
@@ -153,7 +152,7 @@ declare namespace foundry {
       }
 
       /** Mixin that adds Handlebars template rendering to ApplicationV2 */
-      function HandlebarsApplicationMixin<T extends new (...args: unknown[]) => ApplicationV2>(
+      function HandlebarsApplicationMixin<T extends abstract new (...args: any[]) => ApplicationV2>(
         base: T
       ): T;
     }
@@ -164,6 +163,14 @@ declare namespace foundry {
         static PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition>;
         get actor(): Actor;
         get document(): Actor;
+        form: HTMLFormElement | null;
+      }
+
+      class ItemSheetV2 extends foundry.applications.api.ApplicationV2 {
+        static DEFAULT_OPTIONS: foundry.applications.api.ApplicationConfiguration;
+        static PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition>;
+        get item(): Item;
+        get document(): Item;
         form: HTMLFormElement | null;
       }
     }
@@ -190,6 +197,7 @@ declare class Item {
   sheet?: {
     render(force?: boolean, options?: Record<string, unknown>): Promise<unknown> | unknown;
   };
+  update(data: Record<string, unknown>): Promise<this>;
   delete(): Promise<this>;
 }
 
@@ -218,7 +226,7 @@ declare namespace foundry {
       const Items: {
         registerSheet(
           scope: string,
-          sheetClass: unknown,
+          sheetClass: typeof foundry.applications.sheets.ItemSheetV2,
           options?: { types?: string[]; makeDefault?: boolean; label?: string }
         ): void;
       };
@@ -239,7 +247,7 @@ declare const Actors: {
 declare const Items: {
   registerSheet(
     scope: string,
-    sheetClass: unknown,
+    sheetClass: typeof foundry.applications.sheets.ItemSheetV2,
     options?: { types?: string[]; makeDefault?: boolean; label?: string }
   ): void;
 };
