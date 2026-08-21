@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/jero-rodriguez/open00/compare/v1.15.6...v1.16.0) (2026-08-21)
+
+
+### Features
+
+* add item sheet to system ([e0e5548](https://github.com/jero-rodriguez/open00/commit/e0e5548cc356c0d10b2ef9e64c7f335deff54395))
+
 ## [1.15.6](https://github.com/jero-rodriguez/open00/compare/v1.15.5...v1.15.6) (2026-08-20)
 
 
