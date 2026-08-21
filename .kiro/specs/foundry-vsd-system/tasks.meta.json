@@ -170,6 +170,25 @@
         "chatSessionId": "sess_79749e44-99fc-4b1d-aa8a-f3ec4c534fab",
         "timestamp": 1787233663113
       }
+    ],
+    "20.1 Implement `src/sheets/item-sheet.ts` — polymorphic item sheet": [
+      {
+        "executionId": "e0fca70b-caaf-415d-8338-d2fbb6771617",
+        "chatSessionId": "sess_36602945-38bd-4eb7-8a8b-a5522e3ed0e5",
+        "timestamp": 1787317546668
+      },
+      {
+        "executionId": "e0fca70b-caaf-415d-8338-d2fbb6771617",
+        "chatSessionId": "sess_36602945-38bd-4eb7-8a8b-a5522e3ed0e5",
+        "timestamp": 1787318448014
+      }
+    ],
+    "20. Implement Item Sheet (ApplicationV2)": [
+      {
+        "executionId": "e0fca70b-caaf-415d-8338-d2fbb6771617",
+        "chatSessionId": "sess_36602945-38bd-4eb7-8a8b-a5522e3ed0e5",
+        "timestamp": 1787318448286
+      }
     ]
   }
 }

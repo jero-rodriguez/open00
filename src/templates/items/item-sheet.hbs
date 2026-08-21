@@ -1,0 +1,698 @@
+<section class="item-sheet item-type-{{itemType}}">
+  {{!-- Common Header: portrait, name --}}
+  <header class="item-header">
+    <img class="item-img" src="{{img}}" alt="{{name}}" />
+    <input type="text" name="name" value="{{name}}" placeholder="Item Name" class="item-name" />
+    <span class="item-type-label">{{itemType}}</span>
+  </header>
+
+  {{!-- Type-dispatched body --}}
+  <div class="item-body">
+    {{#if isWeapon}}
+    {{!-- Weapon Fields --}}
+    <div class="item-fields">
+      <div class="field-row">
+        <label class="field-label">Hands</label>
+        <select name="system.hands">
+          <option value="1H" {{#if (eq system.hands "1H")}}selected{{/if}}>1H</option>
+          <option value="2H" {{#if (eq system.hands "2H")}}selected{{/if}}>2H</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Skill Used</label>
+        <input type="text" name="system.skillUsed" value="{{system.skillUsed}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Secondary Skill</label>
+        <input type="text" name="system.secondarySkill" value="{{system.secondarySkill}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Secondary Penalty</label>
+        <input type="number" name="system.secondarySkillPenalty" value="{{system.secondarySkillPenalty}}" max="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Clumsy Range</label>
+        <input type="number" name="system.clumsyRange" value="{{system.clumsyRange}}" min="1" max="10" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Length</label>
+        <select name="system.length">
+          <option value="Hand" {{#if (eq system.length "Hand")}}selected{{/if}}>Hand</option>
+          <option value="Short" {{#if (eq system.length "Short")}}selected{{/if}}>Short</option>
+          <option value="Long" {{#if (eq system.length "Long")}}selected{{/if}}>Long</option>
+          <option value="Longest" {{#if (eq system.length "Longest")}}selected{{/if}}>Longest</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Attack Table</label>
+        <select name="system.attackTable">
+          <option value="Edged" {{#if (eq system.attackTable "Edged")}}selected{{/if}}>Edged</option>
+          <option value="Blunt" {{#if (eq system.attackTable "Blunt")}}selected{{/if}}>Blunt</option>
+          <option value="Missile" {{#if (eq system.attackTable "Missile")}}selected{{/if}}>Missile</option>
+          <option value="Unarmed" {{#if (eq system.attackTable "Unarmed")}}selected{{/if}}>Unarmed</option>
+          <option value="Beast" {{#if (eq system.attackTable "Beast")}}selected{{/if}}>Beast</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Max Result</label>
+        <input type="number" name="system.maxResult" value="{{system.maxResult}}" min="80" max="175" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Primary Critical</label>
+        <select name="system.primaryCritical">
+          <option value="Cut" {{#if (eq system.primaryCritical "Cut")}}selected{{/if}}>Cut</option>
+          <option value="Impact" {{#if (eq system.primaryCritical "Impact")}}selected{{/if}}>Impact</option>
+          <option value="Pierce" {{#if (eq system.primaryCritical "Pierce")}}selected{{/if}}>Pierce</option>
+          <option value="Grapple" {{#if (eq system.primaryCritical "Grapple")}}selected{{/if}}>Grapple</option>
+          <option value="Fire" {{#if (eq system.primaryCritical "Fire")}}selected{{/if}}>Fire</option>
+          <option value="Frost" {{#if (eq system.primaryCritical "Frost")}}selected{{/if}}>Frost</option>
+          <option value="Lightning" {{#if (eq system.primaryCritical "Lightning")}}selected{{/if}}>Lightning</option>
+          <option value="DarkMagic" {{#if (eq system.primaryCritical "DarkMagic")}}selected{{/if}}>Dark Magic</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Alternate Critical</label>
+        <input type="text" name="system.alternateCritical" value="{{system.alternateCritical}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Base Range (m)</label>
+        <input type="number" name="system.baseRange" value="{{system.baseRange}}" min="0" />
+      </div>
+
+      <h3 class="section-subtitle">Qualities</h3>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityBackstab" {{#if system.qualityBackstab}}checked{{/if}} />
+        <label>Backstab</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityHandAndHalf" {{#if system.qualityHandAndHalf}}checked{{/if}} />
+        <label>Hand and a Half</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityHeavy" {{#if system.qualityHeavy}}checked{{/if}} />
+        <label>Heavy</label>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Load Rounds</label>
+        <input type="number" name="system.qualityLoadRounds" value="{{system.qualityLoadRounds}}" min="0" max="5" />
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityMartial" {{#if system.qualityMartial}}checked{{/if}} />
+        <label>Martial</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityMighty" {{#if system.qualityMighty}}checked{{/if}} />
+        <label>Mighty</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityQuickLoad" {{#if system.qualityQuickLoad}}checked{{/if}} />
+        <label>Quick Load</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityReach" {{#if system.qualityReach}}checked{{/if}} />
+        <label>Reach</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityUnreliable" {{#if system.qualityUnreliable}}checked{{/if}} />
+        <label>Unreliable</label>
+      </div>
+
+      <h3 class="section-subtitle">Commerce</h3>
+      <div class="field-row">
+        <label class="field-label">Item Modifier</label>
+        <input type="number" name="system.itemModifier" value="{{system.itemModifier}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Fare</label>
+        <input type="number" name="system.fare" value="{{system.fare}}" min="0" max="5" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Availability</label>
+        <select name="system.availability">
+          <option value="Common" {{#if (eq system.availability "Common")}}selected{{/if}}>Common</option>
+          <option value="Uncommon" {{#if (eq system.availability "Uncommon")}}selected{{/if}}>Uncommon</option>
+          <option value="Rare" {{#if (eq system.availability "Rare")}}selected{{/if}}>Rare</option>
+        </select>
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if isArmor}}
+    {{!-- Armor Fields --}}
+    <div class="item-fields">
+      <div class="field-row">
+        <label class="field-label">Armor Type</label>
+        <select name="system.armorType">
+          <option value="NA" {{#if (eq system.armorType "NA")}}selected{{/if}}>NA</option>
+          <option value="LA" {{#if (eq system.armorType "LA")}}selected{{/if}}>LA</option>
+          <option value="MA" {{#if (eq system.armorType "MA")}}selected{{/if}}>MA</option>
+          <option value="HA" {{#if (eq system.armorType "HA")}}selected{{/if}}>HA</option>
+          <option value="Shield" {{#if (eq system.armorType "Shield")}}selected{{/if}}>Shield</option>
+        </select>
+      </div>
+
+      <h3 class="section-subtitle">Qualities</h3>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityMetal" {{#if system.qualityMetal}}checked{{/if}} />
+        <label>Metal</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.qualityRigid" {{#if system.qualityRigid}}checked{{/if}} />
+        <label>Rigid</label>
+      </div>
+
+      <h3 class="section-subtitle">Penalties &amp; Bonuses</h3>
+      <div class="field-row">
+        <label class="field-label">Max SWI to DEF</label>
+        <input type="number" name="system.maxSwiToDefense" value="{{system.maxSwiToDefense}}" min="0" max="50" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Move Actions Penalty</label>
+        <input type="number" name="system.moveActionsPenalty" value="{{system.moveActionsPenalty}}" max="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">CMB Penalty</label>
+        <input type="number" name="system.cmbPenalty" value="{{system.cmbPenalty}}" max="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Perception Penalty</label>
+        <input type="number" name="system.perceptionPenalty" value="{{system.perceptionPenalty}}" max="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Melee DEF Bonus</label>
+        <input type="number" name="system.meleeDefenseBonus" value="{{system.meleeDefenseBonus}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Missile DEF Bonus</label>
+        <input type="number" name="system.missileDefenseBonus" value="{{system.missileDefenseBonus}}" min="0" />
+      </div>
+
+      <h3 class="section-subtitle">Commerce</h3>
+      <div class="field-row">
+        <label class="field-label">Item Modifier</label>
+        <input type="number" name="system.itemModifier" value="{{system.itemModifier}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Fare</label>
+        <input type="number" name="system.fare" value="{{system.fare}}" min="0" max="5" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Availability</label>
+        <select name="system.availability">
+          <option value="Common" {{#if (eq system.availability "Common")}}selected{{/if}}>Common</option>
+          <option value="Uncommon" {{#if (eq system.availability "Uncommon")}}selected{{/if}}>Uncommon</option>
+          <option value="Rare" {{#if (eq system.availability "Rare")}}selected{{/if}}>Rare</option>
+        </select>
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if isSpell}}
+    {{!-- Spell Fields --}}
+    <div class="item-fields">
+      <div class="field-row">
+        <label class="field-label">Weave Number</label>
+        <input type="number" name="system.weaveNumber" value="{{system.weaveNumber}}" min="1" max="10" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Spell Lore</label>
+        <input type="text" name="system.spellLore" value="{{system.spellLore}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Stat Key</label>
+        <select name="system.statKey">
+          <option value="brn" {{#if (eq system.statKey "brn")}}selected{{/if}}>BRN</option>
+          <option value="swi" {{#if (eq system.statKey "swi")}}selected{{/if}}>SWI</option>
+          <option value="for" {{#if (eq system.statKey "for")}}selected{{/if}}>FOR</option>
+          <option value="wit" {{#if (eq system.statKey "wit")}}selected{{/if}}>WIT</option>
+          <option value="wsd" {{#if (eq system.statKey "wsd")}}selected{{/if}}>WSD</option>
+          <option value="bea" {{#if (eq system.statKey "bea")}}selected{{/if}}>BEA</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Range</label>
+        <input type="text" name="system.range" value="{{system.range}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Duration</label>
+        <input type="text" name="system.duration" value="{{system.duration}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Area of Effect</label>
+        <input type="text" name="system.areaOfEffect" value="{{system.areaOfEffect}}" />
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.grantsSaveRoll" {{#if system.grantsSaveRoll}}checked{{/if}} />
+        <label>Grants Save Roll</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.isInstantaneous" {{#if system.isInstantaneous}}checked{{/if}} />
+        <label>Instantaneous</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.isAttackSpell" {{#if system.isAttackSpell}}checked{{/if}} />
+        <label>Attack Spell</label>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Attack Spell Type</label>
+        <select name="system.attackSpellType">
+          <option value="" {{#if (eq system.attackSpellType "")}}selected{{/if}}>None</option>
+          <option value="Bolt" {{#if (eq system.attackSpellType "Bolt")}}selected{{/if}}>Bolt</option>
+          <option value="Area" {{#if (eq system.attackSpellType "Area")}}selected{{/if}}>Area</option>
+        </select>
+      </div>
+
+      <h3 class="section-subtitle">Description</h3>
+      <textarea name="system.description" class="item-description">{{system.description}}</textarea>
+
+      {{#if system.warpingOptions.length}}
+      <h3 class="section-subtitle">Warping Options</h3>
+      <div class="item-array-list">
+        {{#each system.warpingOptions}}
+        <div class="array-row">
+          <span class="array-label">+{{this.weaveCost}} Weave{{#if this.repeatable}} (repeatable){{/if}}</span>
+          <span class="array-value">{{this.description}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if isEquipment}}
+    {{!-- Equipment Fields --}}
+    <div class="item-fields">
+      <div class="field-row">
+        <label class="field-label">Quantity</label>
+        <input type="number" name="system.quantity" value="{{system.quantity}}" min="0" max="999" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Fare</label>
+        <input type="number" name="system.fare" value="{{system.fare}}" min="0" max="5" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Availability</label>
+        <select name="system.availability">
+          <option value="Common" {{#if (eq system.availability "Common")}}selected{{/if}}>Common</option>
+          <option value="Uncommon" {{#if (eq system.availability "Uncommon")}}selected{{/if}}>Uncommon</option>
+          <option value="Rare" {{#if (eq system.availability "Rare")}}selected{{/if}}>Rare</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Encumbrance</label>
+        <select name="system.encumbranceCategory">
+          <option value="None" {{#if (eq system.encumbranceCategory "None")}}selected{{/if}}>None</option>
+          <option value="Light" {{#if (eq system.encumbranceCategory "Light")}}selected{{/if}}>Light</option>
+          <option value="Moderate" {{#if (eq system.encumbranceCategory "Moderate")}}selected{{/if}}>Moderate</option>
+          <option value="Heavy" {{#if (eq system.encumbranceCategory "Heavy")}}selected{{/if}}>Heavy</option>
+        </select>
+      </div>
+
+      <h3 class="section-subtitle">Description</h3>
+      <textarea name="system.description" class="item-description">{{system.description}}</textarea>
+    </div>
+    {{/if}}
+
+    {{#if isKin}}
+    {{!-- Kin Fields --}}
+    <div class="item-fields">
+      <h3 class="section-subtitle">Stat Modifiers</h3>
+      <div class="field-row">
+        <label class="field-label">BRN</label>
+        <input type="number" name="system.statModifiers.brn" value="{{system.statModifiers.brn}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">SWI</label>
+        <input type="number" name="system.statModifiers.swi" value="{{system.statModifiers.swi}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">FOR</label>
+        <input type="number" name="system.statModifiers.for" value="{{system.statModifiers.for}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">WIT</label>
+        <input type="number" name="system.statModifiers.wit" value="{{system.statModifiers.wit}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">WSD</label>
+        <input type="number" name="system.statModifiers.wsd" value="{{system.statModifiers.wsd}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">BEA</label>
+        <input type="number" name="system.statModifiers.bea" value="{{system.statModifiers.bea}}" />
+      </div>
+
+      <h3 class="section-subtitle">Vitals</h3>
+      <div class="field-row">
+        <label class="field-label">HP Bonus</label>
+        <input type="number" name="system.hpBonus" value="{{system.hpBonus}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Max HP</label>
+        <input type="number" name="system.maxHp" value="{{system.maxHp}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">MP Bonus</label>
+        <input type="number" name="system.mpBonus" value="{{system.mpBonus}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">TSR</label>
+        <input type="number" name="system.tsr" value="{{system.tsr}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">WSR</label>
+        <input type="number" name="system.wsr" value="{{system.wsr}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Background Points</label>
+        <input type="number" name="system.backgroundPoints" value="{{system.backgroundPoints}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Starting Wealth</label>
+        <input type="number" name="system.startingWealth" value="{{system.startingWealth}}" min="0" max="5" />
+      </div>
+
+      {{#if system.specialTraits.length}}
+      <h3 class="section-subtitle">Special Traits</h3>
+      <div class="item-array-list">
+        {{#each system.specialTraits}}
+        <div class="array-row">
+          <span class="array-label">{{this.name}}</span>
+          <span class="array-value">{{this.description}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if system.suggestedCultures.length}}
+      <h3 class="section-subtitle">Suggested Cultures</h3>
+      <div class="item-array-list">
+        {{#each system.suggestedCultures}}
+        <div class="array-row">
+          <span class="array-value">{{this}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if isCulture}}
+    {{!-- Culture Fields --}}
+    <div class="item-fields">
+      <div class="field-row">
+        <label class="field-label">Starting Wealth</label>
+        <input type="number" name="system.startingWealth" value="{{system.startingWealth}}" min="0" max="5" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Spell Lore Ranks</label>
+        <input type="number" name="system.spellLoreRanks" value="{{system.spellLoreRanks}}" min="0" max="3" />
+      </div>
+
+      {{#if system.skillRankAllocations.length}}
+      <h3 class="section-subtitle">Skill Rank Allocations</h3>
+      <div class="item-array-list">
+        {{#each system.skillRankAllocations}}
+        <div class="array-row">
+          <span class="array-label">{{this.skillName}}</span>
+          <span class="array-value">{{this.ranks}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if system.availableSpellLores.length}}
+      <h3 class="section-subtitle">Available Spell Lores</h3>
+      <div class="item-array-list">
+        {{#each system.availableSpellLores}}
+        <div class="array-row">
+          <span class="array-value">{{this}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if system.outfitting.length}}
+      <h3 class="section-subtitle">Outfitting</h3>
+      <div class="item-array-list">
+        {{#each system.outfitting}}
+        <div class="array-row">
+          <span class="array-label">{{this.group}}</span>
+          <span class="array-value">{{this.options}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      <h3 class="section-subtitle">Passions Guidance</h3>
+      <textarea name="system.passionsGuidance" class="item-description">{{system.passionsGuidance}}</textarea>
+
+      <h3 class="section-subtitle">Description</h3>
+      <textarea name="system.description" class="item-description">{{system.description}}</textarea>
+    </div>
+    {{/if}}
+
+    {{#if isVocation}}
+    {{!-- Vocation Fields --}}
+    <div class="item-fields">
+      <h3 class="section-subtitle">Development Points</h3>
+      <div class="field-row">
+        <label class="field-label">Armor</label>
+        <input type="number" name="system.developmentPoints.armor" value="{{system.developmentPoints.armor}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Combat</label>
+        <input type="number" name="system.developmentPoints.combat" value="{{system.developmentPoints.combat}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Adventuring</label>
+        <input type="number" name="system.developmentPoints.adventuring" value="{{system.developmentPoints.adventuring}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Roguery</label>
+        <input type="number" name="system.developmentPoints.roguery" value="{{system.developmentPoints.roguery}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Lore</label>
+        <input type="number" name="system.developmentPoints.lore" value="{{system.developmentPoints.lore}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Spells</label>
+        <input type="number" name="system.developmentPoints.spells" value="{{system.developmentPoints.spells}}" min="0" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Body</label>
+        <input type="number" name="system.developmentPoints.body" value="{{system.developmentPoints.body}}" min="0" />
+      </div>
+
+      <div class="field-row">
+        <label class="field-label">MP Per Level</label>
+        <input type="number" name="system.magicPointsPerLevel" value="{{system.magicPointsPerLevel}}" min="0" />
+      </div>
+
+      {{#if system.vocationalBonuses.length}}
+      <h3 class="section-subtitle">Vocational Bonuses</h3>
+      <div class="item-array-list">
+        {{#each system.vocationalBonuses}}
+        <div class="array-row">
+          <span class="array-label">{{this.skillName}}</span>
+          <span class="array-value">+{{this.bonus}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if system.combatSkillChoices.length}}
+      <h3 class="section-subtitle">Combat Skill Choices</h3>
+      <div class="item-array-list">
+        {{#each system.combatSkillChoices}}
+        <div class="array-row">
+          <span class="array-value">+{{this}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if system.vocationalSpellLores.length}}
+      <h3 class="section-subtitle">Vocational Spell Lores</h3>
+      <div class="item-array-list">
+        {{#each system.vocationalSpellLores}}
+        <div class="array-row">
+          <span class="array-value">{{this}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if isTrait}}
+    {{!-- Kin Trait Fields --}}
+    <div class="item-fields">
+      <h3 class="section-subtitle">Description</h3>
+      <textarea name="system.description" class="item-description">{{system.description}}</textarea>
+
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.grantsVision" {{#if system.grantsVision}}checked{{/if}} />
+        <label>Grants Vision</label>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Vision Type</label>
+        <select name="system.visionType">
+          <option value="" {{#if (eq system.visionType "")}}selected{{/if}}>None</option>
+          <option value="DarkSight" {{#if (eq system.visionType "DarkSight")}}selected{{/if}}>Dark Sight</option>
+          <option value="NightSight" {{#if (eq system.visionType "NightSight")}}selected{{/if}}>Night Sight</option>
+          <option value="StarSight" {{#if (eq system.visionType "StarSight")}}selected{{/if}}>Star Sight</option>
+        </select>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.isRestriction" {{#if system.isRestriction}}checked{{/if}} />
+        <label>Is Restriction</label>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Restriction Description</label>
+        <input type="text" name="system.restrictionDescription" value="{{system.restrictionDescription}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Granted Spell Lore Ranks</label>
+        <input type="number" name="system.grantedSpellLoreRanks" value="{{system.grantedSpellLoreRanks}}" min="0" />
+      </div>
+
+      {{#if system.skillBonuses.length}}
+      <h3 class="section-subtitle">Skill Bonuses</h3>
+      <div class="item-array-list">
+        {{#each system.skillBonuses}}
+        <div class="array-row">
+          <span class="array-label">{{this.skillName}}</span>
+          <span class="array-value">+{{this.bonus}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if system.saveRollBonuses.length}}
+      <h3 class="section-subtitle">Save Roll Bonuses</h3>
+      <div class="item-array-list">
+        {{#each system.saveRollBonuses}}
+        <div class="array-row">
+          <span class="array-label">{{this.against}}</span>
+          <span class="array-value">+{{this.bonus}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if system.defenseBonuses.length}}
+      <h3 class="section-subtitle">Defense Bonuses</h3>
+      <div class="item-array-list">
+        {{#each system.defenseBonuses}}
+        <div class="array-row">
+          <span class="array-label">{{this.against}}</span>
+          <span class="array-value">+{{this.bonus}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if system.grantsSpellLores.length}}
+      <h3 class="section-subtitle">Granted Spell Lores</h3>
+      <div class="item-array-list">
+        {{#each system.grantsSpellLores}}
+        <div class="array-row">
+          <span class="array-value">{{this}}</span>
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if isItemOfPower}}
+    {{!-- Item of Power Fields --}}
+    <div class="item-fields">
+      <div class="field-row">
+        <label class="field-label">Purpose</label>
+        <input type="text" name="system.purpose" value="{{system.purpose}}" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Affinity Score</label>
+        <input type="number" name="system.affinityScore" value="{{system.affinityScore}}" min="0" max="10" />
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.attunementStatus" {{#if system.attunementStatus}}checked{{/if}} />
+        <label>Attuned</label>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Attunement Requirements</label>
+        <input type="text" name="system.attunementRequirements" value="{{system.attunementRequirements}}" />
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.isTainted" {{#if system.isTainted}}checked{{/if}} />
+        <label>Tainted</label>
+      </div>
+      <div class="field-row field-row--checkbox">
+        <input type="checkbox" name="system.isCursed" {{#if system.isCursed}}checked{{/if}} />
+        <label>Cursed</label>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Curse Description</label>
+        <input type="text" name="system.curseDescription" value="{{system.curseDescription}}" />
+      </div>
+
+      <h3 class="section-subtitle">Description</h3>
+      <textarea name="system.description" class="item-description">{{system.description}}</textarea>
+
+      {{#if system.powers.length}}
+      <h3 class="section-subtitle">Powers</h3>
+      <div class="item-array-list">
+        {{#each system.powers}}
+        <div class="array-row">
+          <span class="array-label">Affinity {{this.affinityThreshold}}+</span>
+          <span class="array-value">{{this.description}}</span>
+          {{#if this.bonusType}}
+          <span class="array-extra">({{this.bonusType}} +{{this.bonusValue}})</span>
+          {{/if}}
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if isBackground}}
+    {{!-- Background Fields --}}
+    <div class="item-fields">
+      <h3 class="section-subtitle">Description</h3>
+      <textarea name="system.description" class="item-description">{{system.description}}</textarea>
+
+      <h3 class="section-subtitle">Minor Tier</h3>
+      <div class="field-row">
+        <label class="field-label">Cost (BP)</label>
+        <input type="number" name="system.minor.cost" value="{{system.minor.cost}}" min="1" max="10" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Requirement</label>
+        <textarea name="system.minor.requirement" class="item-description-sm">{{system.minor.requirement}}</textarea>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Effects</label>
+        <textarea name="system.minor.effects" class="item-description-sm">{{system.minor.effects}}</textarea>
+      </div>
+
+      <h3 class="section-subtitle">Major Tier</h3>
+      <div class="field-row">
+        <label class="field-label">Cost (BP)</label>
+        <input type="number" name="system.major.cost" value="{{system.major.cost}}" min="1" max="10" />
+      </div>
+      <div class="field-row">
+        <label class="field-label">Requirement</label>
+        <textarea name="system.major.requirement" class="item-description-sm">{{system.major.requirement}}</textarea>
+      </div>
+      <div class="field-row">
+        <label class="field-label">Effects</label>
+        <textarea name="system.major.effects" class="item-description-sm">{{system.major.effects}}</textarea>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</section>

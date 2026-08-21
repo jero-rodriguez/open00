@@ -328,8 +328,8 @@ This plan implements the "Against the Darkmaster" (VsD) FoundryVTT v14 game syst
     - Persist changes on field commit
     - _Requirements: 9.4_
 
-- [ ] 20. Implement Item Sheet (ApplicationV2)
-  - [ ] 20.1 Implement `src/sheets/item-sheet.ts` — polymorphic item sheet
+- [x] 20. Implement Item Sheet (ApplicationV2)
+  - [x] 20.1 Implement `src/sheets/item-sheet.ts` — polymorphic item sheet
     - Extend ApplicationV2 (ItemSheetV2)
     - Common header (name, description) + type-dispatched body
     - Create Handlebars templates in `src/templates/items/` for each item type
