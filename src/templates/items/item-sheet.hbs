@@ -19,7 +19,7 @@
         </select>
       </div>
       <div class="field-row">
-        <label class="field-label">Skill Used</label>
+        <label class="field-label">Skill(s) Used</label>
         <input type="text" name="system.skillUsed" value="{{system.skillUsed}}" />
       </div>
       <div class="field-row">
@@ -72,7 +72,17 @@
       </div>
       <div class="field-row">
         <label class="field-label">Alternate Critical</label>
-        <input type="text" name="system.alternateCritical" value="{{system.alternateCritical}}" />
+        <select name="system.alternateCritical">
+          <option value="" {{#if (eq system.alternateCritical "")}}selected{{/if}}>None</option>
+          <option value="Cut" {{#if (eq system.alternateCritical "Cut")}}selected{{/if}}>Cut</option>
+          <option value="Impact" {{#if (eq system.alternateCritical "Impact")}}selected{{/if}}>Impact</option>
+          <option value="Pierce" {{#if (eq system.alternateCritical "Pierce")}}selected{{/if}}>Pierce</option>
+          <option value="Grapple" {{#if (eq system.alternateCritical "Grapple")}}selected{{/if}}>Grapple</option>
+          <option value="Fire" {{#if (eq system.alternateCritical "Fire")}}selected{{/if}}>Fire</option>
+          <option value="Frost" {{#if (eq system.alternateCritical "Frost")}}selected{{/if}}>Frost</option>
+          <option value="Lightning" {{#if (eq system.alternateCritical "Lightning")}}selected{{/if}}>Lightning</option>
+          <option value="DarkMagic" {{#if (eq system.alternateCritical "DarkMagic")}}selected{{/if}}>Dark Magic</option>
+        </select>
       </div>
       <div class="field-row">
         <label class="field-label">Base Range (m)</label>
@@ -116,6 +126,12 @@
         <input type="checkbox" name="system.qualityUnreliable" {{#if system.qualityUnreliable}}checked{{/if}} />
         <label>Unreliable</label>
       </div>
+
+      <h3 class="section-subtitle">Notes</h3>
+      <textarea name="system.notes" class="item-description-sm">{{system.notes}}</textarea>
+
+      <h3 class="section-subtitle">Description</h3>
+      <textarea name="system.description" class="item-description">{{system.description}}</textarea>
 
       <h3 class="section-subtitle">Commerce</h3>
       <div class="field-row">
