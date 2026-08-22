@@ -21,8 +21,7 @@ export class WeaponDataModel extends foundry.abstract.TypeDataModel {
         initial: '1H',
       }),
 
-      // Primary skill used for the weapon's Combat Bonus (CMB)
-      // e.g., "Blades", "Blunt", "Ranged", "Polearms", "Brawl"
+      // Skill(s) Used: primary skill used to determine the weapon's CMB.
       skillUsed: new StringField({ initial: '' }),
 
       // Secondary skill (optional) with penalty — e.g., Battle Axe can use "Blades -20"
@@ -61,9 +60,13 @@ export class WeaponDataModel extends foundry.abstract.TypeDataModel {
         initial: 'Cut',
       }),
 
-      // Alternate Critical Strike type (optional, attacker can choose)
-      // Empty string means no alternate critical
-      alternateCritical: new StringField({ initial: '' }),
+      // Alternate Critical Strike type (optional, attacker can choose freely).
+      // Empty string means no alternate critical.
+      alternateCritical: new StringField({
+        choices: ['', 'Cut', 'Impact', 'Pierce', 'Grapple', 'Fire', 'Frost', 'Lightning', 'DarkMagic'],
+        initial: '',
+        blank: true,
+      }),
 
       // Base Range in meters for ranged/thrown weapons (0 = melee only)
       // Medium Range = 1-2x Base, Long = 2-3x, Extreme = 3-4x
@@ -88,6 +91,12 @@ export class WeaponDataModel extends foundry.abstract.TypeDataModel {
       qualityReach: new BooleanField({ initial: false }),
       // Unreliable: fumble inflicts Superficial Critical on wielder
       qualityUnreliable: new BooleanField({ initial: false }),
+
+      // Rules exceptions, drawbacks, and other special handling for this weapon.
+      notes: new StringField({ initial: '', blank: true }),
+
+      // Physical description of the weapon and its variants.
+      description: new StringField({ initial: '', blank: true }),
 
       // Item quality modifier (from Superior/Masterwork quality)
       // Adds to CMB: +5 for Superior, +15 for Masterwork
