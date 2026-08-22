@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.3](https://github.com/jero-rodriguez/open00/compare/v1.16.2...v1.16.3) (2026-08-22)
+
+
+### Bug Fixes
+
+* add new attributes to weapon entity ([78a61d1](https://github.com/jero-rodriguez/open00/commit/78a61d1970f456ee6d241152f11ba976258e1632))
+
 ## [1.16.2](https://github.com/jero-rodriguez/open00/compare/v1.16.1...v1.16.2) (2026-08-22)
 
 
