@@ -177,12 +177,14 @@ describe('Combat Phase Functions – Property 13: Condition Duration Decrement',
           expect(c.duration).toBeGreaterThan(0);
         }
 
-        // Conditions with original duration === 1 should be removed (decrement to 0)
-        for (const c of conditions) {
-          if (c.duration === 1) {
-            expect(result.find((r) => r.name === c.name)).toBeUndefined();
-          }
-        }
+        // Compare the complete transformation rather than searching by name:
+        // condition names are not unique, so a surviving duplicate may share
+        // the name of a condition that was removed.
+        const expected = conditions
+          .filter((c) => c.duration > 1)
+          .map((c) => ({ ...c, duration: c.duration - 1 }));
+
+        expect(result).toEqual(expected);
       }),
       { numRuns: 100 },
     );
