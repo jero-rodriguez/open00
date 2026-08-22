@@ -34,7 +34,7 @@
     var(--open00-paper);
 }
 
-.open00.sheet.actor.character button,
+.open00.sheet.actor.character .window-content button,
 .open00.sheet.actor.character input,
 .open00.sheet.actor.character select,
 .open00.sheet.actor.character textarea {
@@ -1226,7 +1226,7 @@
     var(--open00-paper);
 }
 
-.open00.sheet.actor.npc button,
+.open00.sheet.actor.npc .window-content button,
 .open00.sheet.actor.npc input,
 .open00.sheet.actor.npc select,
 .open00.sheet.actor.npc textarea {
