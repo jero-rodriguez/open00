@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/jero-rodriguez/open00/compare/v1.16.0...v1.16.1) (2026-08-22)
+
+
+### Bug Fixes
+
+* layout design fixes ([faa246c](https://github.com/jero-rodriguez/open00/commit/faa246c4dee872e5ab760fea9d85ee19bd37686d))
+
 ## [1.16.0](https://github.com/jero-rodriguez/open00/compare/v1.15.6...v1.16.0) (2026-08-21)
 
 
