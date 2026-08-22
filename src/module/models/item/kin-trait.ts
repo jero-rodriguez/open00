@@ -46,6 +46,7 @@ export class KinTraitDataModel extends foundry.abstract.TypeDataModel {
       visionType: new StringField({
         choices: ['', 'DarkSight', 'NightSight', 'StarSight'],
         initial: '',
+        blank: true,
       }),
 
       // Whether this trait imposes a restriction (e.g., Superstitious, Sun Sensitivity)

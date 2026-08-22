@@ -56,6 +56,7 @@ export class SpellDataModel extends foundry.abstract.TypeDataModel {
       attackSpellType: new StringField({
         choices: ['', 'Bolt', 'Area'],
         initial: '',
+        blank: true,
       }),
 
       // Warping Options — ways to cast the spell at a higher Weave for enhanced effects
