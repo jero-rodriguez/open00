@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.16.2](https://github.com/jero-rodriguez/open00/compare/v1.16.1...v1.16.2) (2026-08-22)
+
+
+### Bug Fixes
+
+* align item css with character css ([c876c22](https://github.com/jero-rodriguez/open00/commit/c876c22239fa92a69e8f5746250fbf71138ac81b))
+* character sheet buttons icons not showing ([7c33f83](https://github.com/jero-rodriguez/open00/commit/7c33f8386f8061ecf9ece12845507717a26b8aff))
+* spell creation validation ([a03d5ca](https://github.com/jero-rodriguez/open00/commit/a03d5ca67a26df8d8dd173c233b0fe14da4944b2))
+* validate kin trait creation ([8723335](https://github.com/jero-rodriguez/open00/commit/87233351270a6fe33a24762c3311e64c83e71e61))
+
 ## [1.16.1](https://github.com/jero-rodriguez/open00/compare/v1.16.0...v1.16.1) (2026-08-22)
 
 
