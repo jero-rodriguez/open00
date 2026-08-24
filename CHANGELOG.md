@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.17.3](https://github.com/jero-rodriguez/open00/compare/v1.17.2...v1.17.3) (2026-08-24)
+
+
+### Bug Fixes
+
+* add description editable as rich text format ([97cf2c5](https://github.com/jero-rodriguez/open00/commit/97cf2c54edae339d2593082d6a8e27a84e4ba6ae))
+* add level to sheet ([90c122c](https://github.com/jero-rodriguez/open00/commit/90c122c2e13c3f2e49733f25f838a1beb1a5b5e8))
+* adjust spells table size ([8ab3dd7](https://github.com/jero-rodriguez/open00/commit/8ab3dd774fa2a98ebdf5b9f491165f0f13757dc7))
+
 ## [1.17.2](https://github.com/jero-rodriguez/open00/compare/v1.17.1...v1.17.2) (2026-08-24)
 
 
