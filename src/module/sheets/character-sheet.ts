@@ -13,6 +13,7 @@ import { determineEncumbranceLevel, computeTotalEncumbrance } from '../engine/en
 import { getActiveBonuses } from '../engine/affinity.js';
 import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
 import { getCharacterSheetUpdateParts } from './partial-render.js';
+import { deriveKinCultureVocationEffects } from './kin-culture-vocation-effects.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -234,66 +235,32 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
     const itemType = item.type;
 
-    // For identity items, remove existing item of same type first, then apply modifiers
+    // Replace the existing identity choice, then apply its game effects
     if (itemType === 'kin' || itemType === 'culture' || itemType === 'vocation') {
       const existing = this.actor.items.find((i: Item) => i.type === itemType);
       if (existing) await existing.delete();
 
       const result = await super._onDropItem(event, data);
-      await this.#applyIdentityModifiers();
+      if (result !== false) await this.#applyIdentityEffects(result);
       return result;
     }
 
     return super._onDropItem(event, data);
   }
 
-  async #applyIdentityModifiers(): Promise<void> {
-    const updates: Record<string, unknown> = {};
-    const kin = this.actor.items.find((i: Item) => i.type === 'kin');
-    const vocation = this.actor.items.find((i: Item) => i.type === 'vocation');
-    const culture = this.actor.items.find((i: Item) => i.type === 'culture');
-
-    // Apply Kin stat modifiers to system.stats.*.kin
-    if (kin) {
-      const kinData = kin.system as Record<string, unknown>;
-      const statMods = kinData['statModifiers'] as Record<string, number> | undefined;
-      if (statMods) {
-        for (const stat of ['brn', 'swi', 'for', 'wit', 'wsd', 'bea']) {
-          updates[`system.stats.${stat}.kin`] = statMods[stat] ?? 0;
-        }
-      }
-
-      // Set HP max from kin hpBonus + body development rank bonus
-      const kinHpBonus = asNumber(kinData['hpBonus']);
-      const skills = (this.actor.system as Record<string, unknown>)['skills'] as SkillData[] ?? [];
-      const bodySkill = skills.find((s) => s.name === 'Body Development');
-      const bodyRankBonus = bodySkill ? computeRankBonus(asNumber(bodySkill.rank)) : 0;
-      updates['system.hp.max'] = kinHpBonus + bodyRankBonus;
-    }
-
-    // Apply Vocation vocationalBonuses to skill.vocation fields
-    const skills = [...((this.actor.system as Record<string, unknown>)['skills'] as SkillData[] ?? [])];
-
-    if (vocation) {
-      const vocData = vocation.system as Record<string, unknown>;
-      const vocBonuses = (vocData['vocationalBonuses'] as Array<{ skillName: string; bonus: number }>) ?? [];
-      for (let i = 0; i < skills.length; i++) {
-        const match = vocBonuses.find((vb) => vb.skillName === skills[i].name);
-        updates[`system.skills.${i}.vocation`] = match ? match.bonus : 0;
-      }
-    }
-
-    // Apply Culture skillRankAllocations
-    if (culture) {
-      const culData = culture.system as Record<string, unknown>;
-      const rankAllocations = (culData['skillRankAllocations'] as Array<{ skillName: string; ranks: number }>) ?? [];
-      for (let i = 0; i < skills.length; i++) {
-        const match = rankAllocations.find((ra) => ra.skillName === skills[i].name);
-        if (match) {
-          updates[`system.skills.${i}.rank`] = Math.max(skills[i].rank, match.ranks);
-        }
-      }
-    }
+  async #applyIdentityEffects(createdItems: Item[] = []): Promise<void> {
+    const identityDocument = (type: string): Item | undefined => (
+      createdItems.find((item) => item.type === type)
+      ?? this.actor.items.find((item: Item) => item.type === type)
+    );
+    const kin = identityDocument('kin');
+    const vocation = identityDocument('vocation');
+    const culture = identityDocument('culture');
+    const updates = deriveKinCultureVocationEffects(this.actor.system as Record<string, unknown>, {
+      kin: kin?.system as Record<string, unknown> | undefined,
+      vocation: vocation?.system as Record<string, unknown> | undefined,
+      culture: culture?.system as Record<string, unknown> | undefined,
+    });
 
     if (Object.keys(updates).length > 0) {
       await this.actor.update(updates);
