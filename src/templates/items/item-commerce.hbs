@@ -1,0 +1,34 @@
+<section class="tab open00-tab-scroll item-type-{{itemType}} {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+  <div class="item-fields">
+    <h3 class="section-subtitle">Commerce</h3>
+    {{#if isEquipment}}
+    <div class="field-row">
+      <label class="field-label">Encumbrance</label>
+      <select name="system.encumbranceCategory">
+        <option value="None" {{#if (eq system.encumbranceCategory "None")}}selected{{/if}}>None</option>
+        <option value="Light" {{#if (eq system.encumbranceCategory "Light")}}selected{{/if}}>Light</option>
+        <option value="Moderate" {{#if (eq system.encumbranceCategory "Moderate")}}selected{{/if}}>Moderate</option>
+        <option value="Heavy" {{#if (eq system.encumbranceCategory "Heavy")}}selected{{/if}}>Heavy</option>
+      </select>
+    </div>
+    {{/if}}
+    {{#if (or isWeapon isArmor isItemOfPower)}}
+    <div class="field-row">
+      <label class="field-label">Item Modifier</label>
+      <input type="number" name="system.itemModifier" value="{{system.itemModifier}}" />
+    </div>
+    {{/if}}
+    <div class="field-row">
+      <label class="field-label">Fare</label>
+      <input type="number" name="system.fare" value="{{system.fare}}" min="0" max="5" />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Availability</label>
+      <select name="system.availability">
+        <option value="Common" {{#if (eq system.availability "Common")}}selected{{/if}}>Common</option>
+        <option value="Uncommon" {{#if (eq system.availability "Uncommon")}}selected{{/if}}>Uncommon</option>
+        <option value="Rare" {{#if (eq system.availability "Rare")}}selected{{/if}}>Rare</option>
+      </select>
+    </div>
+  </div>
+</section>

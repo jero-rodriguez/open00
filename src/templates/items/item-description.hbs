@@ -1,0 +1,16 @@
+<section class="tab open00-tab-scroll item-type-{{itemType}} {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+  <div class="item-fields">
+    {{#if isWeapon}}
+    <h3 class="section-subtitle">Notes</h3>
+    <textarea name="system.notes" class="item-description-sm">{{system.notes}}</textarea>
+    {{/if}}
+
+    {{#if isCulture}}
+    <h3 class="section-subtitle">Passions Guidance</h3>
+    <textarea name="system.passionsGuidance" class="item-description">{{system.passionsGuidance}}</textarea>
+    {{/if}}
+
+    <h3 class="section-subtitle">Description</h3>
+    <textarea name="system.description" class="item-description">{{system.description}}</textarea>
+  </div>
+</section>

@@ -1807,6 +1807,64 @@
   scrollbar-gutter: stable;
 }
 
+/* Item sheet tabs */
+.open00.sheet.item .tabs.sheet-tabs {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 5px 12px 8px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.open00.sheet.item .tabs.sheet-tabs > .item {
+  flex: 0 1 auto;
+  width: auto;
+  min-height: 30px;
+  margin: 0;
+  padding: 3px 13px;
+  border: 1px solid #8f9198;
+  border-radius: 6px;
+  color: var(--open00-ink);
+  background: linear-gradient(#f7f7f7, #dedde1);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.open00.sheet.item .tabs.sheet-tabs > .item:hover,
+.open00.sheet.item .tabs.sheet-tabs > .item.active {
+  border-color: var(--open00-ink);
+  color: #fff;
+  background: var(--open00-ink);
+  text-shadow: none;
+}
+
+.open00.sheet.item .tab-body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.open00.sheet.item .tab {
+  display: none;
+  width: 100%;
+  min-height: 0;
+  padding: 14px 20px 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.open00.sheet.item .tab.active {
+  display: block;
+  flex: 1 1 auto;
+}
+
 .open00.sheet.item .item-fields {
   display: grid;
   gap: 8px;
