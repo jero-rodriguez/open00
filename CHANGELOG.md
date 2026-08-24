@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.17.4](https://github.com/jero-rodriguez/open00/compare/v1.17.3...v1.17.4) (2026-08-24)
+
+
+### Bug Fixes
+
+* autosave handler not work for blurs ([db8b0a0](https://github.com/jero-rodriguez/open00/commit/db8b0a03fd02f4ef4b72db937d680e21ad425132))
+* brawn status when no compute ([13f9bef](https://github.com/jero-rodriguez/open00/commit/13f9bef8e8dc89f044270a846d20868ddbcb410e))
+* minor fixes ([b89fe8f](https://github.com/jero-rodriguez/open00/commit/b89fe8fd753c43f5eb1f08db2abc88dda37738a0))
+* remove unnecessary label ([57e96f4](https://github.com/jero-rodriguez/open00/commit/57e96f4ec3909057c56ee6a84ef7c7df99c4c509))
+* spell lore sheet size ([94c81c0](https://github.com/jero-rodriguez/open00/commit/94c81c0742d3268e703310c386c19891418b32ac))
+
 ## [1.17.3](https://github.com/jero-rodriguez/open00/compare/v1.17.2...v1.17.3) (2026-08-24)
 
 
