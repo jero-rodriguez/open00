@@ -26,21 +26,21 @@
   ],
   "documentTypes": {
     "Actor": {
-      "character": {},
+      "character": { "htmlFields": ["biography", "appearance", "backgroundNotes"] },
       "npc": {}
     },
     "Item": {
-      "weapon": {},
-      "armor": {},
-      "spell": {},
-      "spellLore": {},
-      "equipment": {},
-      "kin": {},
-      "culture": {},
-      "vocation": {},
-      "trait": {},
-      "itemOfPower": {},
-      "background": {}
+      "weapon": { "htmlFields": ["notes", "description"] },
+      "armor": { "htmlFields": ["description"] },
+      "spell": { "htmlFields": ["description"] },
+      "spellLore": { "htmlFields": ["description"] },
+      "equipment": { "htmlFields": ["description"] },
+      "kin": { "htmlFields": ["description"] },
+      "culture": { "htmlFields": ["passionsGuidance", "description"] },
+      "vocation": { "htmlFields": ["description"] },
+      "trait": { "htmlFields": ["description"] },
+      "itemOfPower": { "htmlFields": ["description"] },
+      "background": { "htmlFields": ["description", "minor.requirement", "minor.effects", "major.requirement", "major.effects"] }
     }
   },
   "socket": false,

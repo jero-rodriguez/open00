@@ -39,17 +39,17 @@
   </div>
 
   <div class="biography-text-grid">
-    <label class="sheet-section text-section">
+    <div class="sheet-section text-section">
       <span class="section-title">{{localize "OPEN00.Biography.BiographyText"}}</span>
-      <textarea name="system.biography" placeholder="{{localize 'OPEN00.Biography.BiographyPlaceholder'}}">{{biography}}</textarea>
-    </label>
-    <label class="sheet-section text-section">
+      {{editor biography target="system.biography" button=true editable=true class="biography-editor"}}
+    </div>
+    <div class="sheet-section text-section">
       <span class="section-title">{{localize "OPEN00.Biography.Appearance"}}</span>
-      <textarea name="system.appearance" placeholder="{{localize 'OPEN00.Biography.AppearancePlaceholder'}}">{{appearance}}</textarea>
-    </label>
-    <label class="sheet-section text-section full-width">
+      {{editor appearance target="system.appearance" button=true editable=true class="biography-editor"}}
+    </div>
+    <div class="sheet-section text-section full-width">
       <span class="section-title">{{localize "OPEN00.Biography.BackgroundNotes"}}</span>
-      <textarea name="system.backgroundNotes" placeholder="{{localize 'OPEN00.Biography.BackgroundPlaceholder'}}">{{backgroundNotes}}</textarea>
-    </label>
+      {{editor backgroundNotes target="system.backgroundNotes" button=true editable=true class="biography-editor"}}
+    </div>
   </div>
 </section>

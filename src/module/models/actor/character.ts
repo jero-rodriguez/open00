@@ -8,7 +8,7 @@
 import { computeRankBonus } from '../../engine/rank-bonus.js';
 import { createDefaultSkills } from '../../data/skills.js';
 
-const { SchemaField, NumberField, StringField, ArrayField } = foundry.data.fields;
+const { SchemaField, NumberField, StringField, HTMLField, ArrayField } = foundry.data.fields;
 
 /** Stat key identifiers matching the schema */
 type StatKey = 'brn' | 'swi' | 'for' | 'wit' | 'wsd' | 'bea';
@@ -145,13 +145,13 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       ),
 
       // Biography (Req 8.9)
-      biography: new StringField({ initial: '' }),
+      biography: new HTMLField({ initial: '' }),
 
       // Appearance (Req 8.9)
-      appearance: new StringField({ initial: '' }),
+      appearance: new HTMLField({ initial: '' }),
 
       // Background notes (Req 8.9)
-      backgroundNotes: new StringField({ initial: '' }),
+      backgroundNotes: new HTMLField({ initial: '' }),
     };
   }
 

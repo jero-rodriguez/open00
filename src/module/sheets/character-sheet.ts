@@ -225,6 +225,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       name: this.actor.name,
       img: this.actor.img,
       experience: system['experience'],
+      level: asNumber(system['level']),
       identity: {
         kin: kin ? { id: kin.id, name: kin.name } : null,
         culture: culture ? { id: culture.id, name: culture.name } : null,
