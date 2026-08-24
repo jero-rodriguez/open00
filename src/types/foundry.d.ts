@@ -182,6 +182,13 @@ declare namespace foundry {
         _prepareContext(options: foundry.applications.api.ApplicationRenderOptions): Promise<Record<string, unknown>>;
       }
     }
+    namespace ux {
+      const TextEditor: {
+        implementation: {
+          enrichHTML(content: string, options?: { async?: boolean; relativeTo?: Actor | Item }): Promise<string>;
+        };
+      };
+    }
   }
 }
 
@@ -311,10 +318,8 @@ declare const ChatMessage: {
   }): Promise<unknown>;
 };
 
-// FoundryVTT TextEditor utility
-declare const TextEditor: {
-  enrichHTML(content: string, options?: { async?: boolean; relativeTo?: Actor | Item }): Promise<string>;
-};
+// FoundryVTT TextEditor utility (v13+ namespace)
+// Access via foundry.applications.ux.TextEditor.implementation
 
 // FoundryVTT constants
 declare const CONST: {

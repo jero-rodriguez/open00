@@ -677,9 +677,9 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           biography: system['biography'] ?? '',
           appearance: system['appearance'] ?? '',
           backgroundNotes: system['backgroundNotes'] ?? '',
-          enrichedBiography: await TextEditor.enrichHTML(String(system['biography'] ?? ''), enrichOptions),
-          enrichedAppearance: await TextEditor.enrichHTML(String(system['appearance'] ?? ''), enrichOptions),
-          enrichedBackgroundNotes: await TextEditor.enrichHTML(String(system['backgroundNotes'] ?? ''), enrichOptions),
+          enrichedBiography: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['biography'] ?? ''), enrichOptions),
+          enrichedAppearance: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['appearance'] ?? ''), enrichOptions),
+          enrichedBackgroundNotes: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['backgroundNotes'] ?? ''), enrichOptions),
           traits: this.actor.items.filter((item: Item) => item.type === 'trait').map(itemView),
           backgrounds: this.actor.items.filter((item: Item) => item.type === 'background').map(itemView),
         };
