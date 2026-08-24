@@ -146,10 +146,12 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   override async _prepareContext(
     options: foundry.applications.api.ApplicationRenderOptions,
   ): Promise<Record<string, unknown>> {
+    const baseContext = await super._prepareContext(options);
     const system = this.item.system as Record<string, unknown>;
     const itemType = this.item.type;
 
     return {
+      ...baseContext,
       item: this.item,
       system,
       name: this.item.name,

@@ -302,6 +302,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
   override async _prepareContext(
     options: foundry.applications.api.ApplicationRenderOptions,
   ): Promise<Record<string, unknown>> {
+    const baseContext = await super._prepareContext(options);
     const system = this.actor.system as Record<string, unknown>;
     const identityItem = (type: string) => this.actor.items.find((item: Item) => item.type === type);
     const kin = identityItem('kin');
@@ -312,6 +313,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     const driveMax = Math.max(0, asNumber(drivePoints?.max, 5));
 
     return {
+      ...baseContext,
       actor: this.actor,
       system,
       name: this.actor.name,
