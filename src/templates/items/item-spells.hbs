@@ -18,7 +18,7 @@
         </span>
       </summary>
       <div class="spell-description">
-        <textarea name="system.spells.{{@index}}.description" placeholder="Spell description...">{{this.description}}</textarea>
+        {{editor this.description target=(concat "system.spells." @index ".description") button=true editable=true class="item-description-sm"}}
       </div>
     </details>
     {{/each}}

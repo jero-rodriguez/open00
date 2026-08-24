@@ -8,13 +8,13 @@
  * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.7
  */
 
-const { SchemaField, NumberField, StringField, BooleanField, ArrayField } = foundry.data.fields;
+const { SchemaField, NumberField, StringField, HTMLField, BooleanField, ArrayField } = foundry.data.fields;
 
 export class NpcDataModel extends foundry.abstract.TypeDataModel {
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
-      // Level (1–50, default 1) — Req 2.1
-      level: new NumberField({ integer: true, min: 1, max: 50, initial: 1 }),
+      // Level (0–50, default 1) — Req 2.1
+      level: new NumberField({ integer: true, min: 0, max: 50, initial: 1 }),
 
       // Creature rank descriptor — Req 2.1
       rank: new StringField({
@@ -83,7 +83,7 @@ export class NpcDataModel extends foundry.abstract.TypeDataModel {
       specialAbilities: new ArrayField(
         new SchemaField({
           name: new StringField({ max: 80, initial: '' }),
-          description: new StringField({ max: 500, initial: '' }),
+          description: new HTMLField({ initial: '' }),
         }),
         { max: 20 },
       ),

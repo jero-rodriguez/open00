@@ -523,11 +523,11 @@
     </div>
     <div class="field-row">
       <label class="field-label">Requirement</label>
-      <textarea name="system.minor.requirement" class="item-description-sm">{{system.minor.requirement}}</textarea>
+      {{editor system.minor.requirement target="system.minor.requirement" button=true editable=true class="item-description-sm"}}
     </div>
     <div class="field-row">
       <label class="field-label">Effects</label>
-      <textarea name="system.minor.effects" class="item-description-sm">{{system.minor.effects}}</textarea>
+      {{editor system.minor.effects target="system.minor.effects" button=true editable=true class="item-description-sm"}}
     </div>
 
     <h3 class="section-subtitle">Major Tier</h3>
@@ -537,11 +537,11 @@
     </div>
     <div class="field-row">
       <label class="field-label">Requirement</label>
-      <textarea name="system.major.requirement" class="item-description-sm">{{system.major.requirement}}</textarea>
+      {{editor system.major.requirement target="system.major.requirement" button=true editable=true class="item-description-sm"}}
     </div>
     <div class="field-row">
       <label class="field-label">Effects</label>
-      <textarea name="system.major.effects" class="item-description-sm">{{system.major.effects}}</textarea>
+      {{editor system.major.effects target="system.major.effects" button=true editable=true class="item-description-sm"}}
     </div>
     {{/if}}
   </div>

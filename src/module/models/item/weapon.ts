@@ -9,7 +9,7 @@
  * Reference: Chapter 14 — Equipment and Wealth, Weapons (pp. 176–180)
  */
 
-const { NumberField, StringField, BooleanField, ArrayField } = foundry.data.fields;
+const { NumberField, StringField, HTMLField, BooleanField, ArrayField } = foundry.data.fields;
 
 export class WeaponDataModel extends foundry.abstract.TypeDataModel {
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
@@ -93,10 +93,10 @@ export class WeaponDataModel extends foundry.abstract.TypeDataModel {
       qualityUnreliable: new BooleanField({ initial: false }),
 
       // Rules exceptions, drawbacks, and other special handling for this weapon.
-      notes: new StringField({ initial: '', blank: true }),
+      notes: new HTMLField({ initial: '' }),
 
       // Physical description of the weapon and its variants.
-      description: new StringField({ initial: '', blank: true }),
+      description: new HTMLField({ initial: '' }),
 
       // Item quality modifier (from Superior/Masterwork quality)
       // Adds to CMB: +5 for Superior, +15 for Masterwork
