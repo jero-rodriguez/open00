@@ -18,7 +18,7 @@
         </span>
       </summary>
       <div class="spell-description">
-        {{editor this.enrichedSpellDescription target=(concat "system.spells." @index ".description") button=true editable=editable class="item-description-sm"}}
+        {{#if ../editable}}<prose-mirror name="system.spells.{{@index}}.description" value="{{this.description}}" document-uuid="{{../item.uuid}}"></prose-mirror>{{else}}<div class="editor"><div class="editor-content">{{{this.enrichedSpellDescription}}}</div></div>{{/if}}
       </div>
     </details>
     {{/each}}

@@ -58,6 +58,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     tag: 'form',
     position: { width: 560, height: 520 },
     window: { resizable: true },
+    form: { submitOnChange: true },
   };
 
   /** Wider sheets for types with large tables */
@@ -154,6 +155,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       ...baseContext,
       item: this.item,
       system,
+      source: (this.item as unknown as { system: { _source: Record<string, unknown> } }).system._source ?? system,
       name: this.item.name,
       img: this.item.img,
       itemType,

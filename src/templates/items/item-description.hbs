@@ -2,15 +2,27 @@
   <div class="item-fields">
     {{#if isWeapon}}
     <h3 class="section-subtitle">Notes</h3>
-    {{editor enrichedNotes target="system.notes" button=true editable=editable class="item-description-sm"}}
+    {{#if editable}}
+    <prose-mirror name="system.notes" value="{{source.notes}}" document-uuid="{{item.uuid}}"></prose-mirror>
+    {{else}}
+    <div class="editor"><div class="editor-content">{{{enrichedNotes}}}</div></div>
+    {{/if}}
     {{/if}}
 
     {{#if isCulture}}
     <h3 class="section-subtitle">Passions Guidance</h3>
-    {{editor enrichedPassionsGuidance target="system.passionsGuidance" button=true editable=editable class="item-description"}}
+    {{#if editable}}
+    <prose-mirror name="system.passionsGuidance" value="{{source.passionsGuidance}}" document-uuid="{{item.uuid}}"></prose-mirror>
+    {{else}}
+    <div class="editor"><div class="editor-content">{{{enrichedPassionsGuidance}}}</div></div>
+    {{/if}}
     {{/if}}
 
     <h3 class="section-subtitle">Description</h3>
-    {{editor enrichedItemDescription target="system.description" button=true editable=editable class="item-description"}}
+    {{#if editable}}
+    <prose-mirror name="system.description" value="{{source.description}}" document-uuid="{{item.uuid}}"></prose-mirror>
+    {{else}}
+    <div class="editor"><div class="editor-content">{{{enrichedItemDescription}}}</div></div>
+    {{/if}}
   </div>
 </section>

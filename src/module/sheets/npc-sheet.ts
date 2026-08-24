@@ -93,6 +93,7 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     tag: 'form',
     position: { width: 700, height: 720 },
     window: { resizable: true },
+    form: { submitOnChange: true },
     actions: {
       rollAttack: Open00NpcSheet.#rollAttack,
     },
@@ -192,6 +193,7 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
       ...baseContext,
       actor: this.actor,
       system,
+      source: (this.actor as unknown as { system: { _source: Record<string, unknown> } }).system._source ?? system,
       name: this.actor.name,
       img: this.actor.img,
       level,

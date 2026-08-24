@@ -41,15 +41,27 @@
   <div class="biography-text-grid">
     <div class="sheet-section text-section">
       <span class="section-title">{{localize "OPEN00.Biography.BiographyText"}}</span>
-      {{editor enrichedBiography target="system.biography" button=true editable=editable class="biography-editor"}}
+      {{#if editable}}
+      <prose-mirror name="system.biography" value="{{source.biography}}" document-uuid="{{actor.uuid}}"></prose-mirror>
+      {{else}}
+      <div class="editor"><div class="editor-content">{{{enrichedBiography}}}</div></div>
+      {{/if}}
     </div>
     <div class="sheet-section text-section">
       <span class="section-title">{{localize "OPEN00.Biography.Appearance"}}</span>
-      {{editor enrichedAppearance target="system.appearance" button=true editable=editable class="biography-editor"}}
+      {{#if editable}}
+      <prose-mirror name="system.appearance" value="{{source.appearance}}" document-uuid="{{actor.uuid}}"></prose-mirror>
+      {{else}}
+      <div class="editor"><div class="editor-content">{{{enrichedAppearance}}}</div></div>
+      {{/if}}
     </div>
     <div class="sheet-section text-section full-width">
       <span class="section-title">{{localize "OPEN00.Biography.BackgroundNotes"}}</span>
-      {{editor enrichedBackgroundNotes target="system.backgroundNotes" button=true editable=editable class="biography-editor"}}
+      {{#if editable}}
+      <prose-mirror name="system.backgroundNotes" value="{{source.backgroundNotes}}" document-uuid="{{actor.uuid}}"></prose-mirror>
+      {{else}}
+      <div class="editor"><div class="editor-content">{{{enrichedBackgroundNotes}}}</div></div>
+      {{/if}}
     </div>
   </div>
 </section>

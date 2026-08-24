@@ -116,6 +116,7 @@ declare namespace foundry {
         tag?: string;
         position?: ApplicationPosition;
         window?: ApplicationWindowOptions;
+        form?: { submitOnChange?: boolean };
         actions?: Record<string, (this: ApplicationV2, event: Event, target: HTMLElement) => void>;
       }
 
@@ -143,6 +144,8 @@ declare namespace foundry {
         tabGroups: Record<string, string>;
         position: ApplicationPosition;
         get element(): HTMLElement;
+        get window(): { content: HTMLElement };
+        submit(): Promise<void>;
         _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
         _onRender(context: Record<string, unknown>, options: ApplicationRenderOptions): Promise<void>;
@@ -184,6 +187,7 @@ declare namespace foundry {
 
 /** FoundryVTT Actor document */
 declare class Actor {
+  uuid: string;
   name: string;
   img: string;
   type: string;
@@ -195,6 +199,7 @@ declare class Actor {
 /** FoundryVTT Item document */
 declare class Item {
   id: string;
+  uuid: string;
   name: string;
   img: string;
   type: string;

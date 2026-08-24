@@ -151,7 +151,7 @@
       {{#each specialAbilities}}
       <div class="npc-ability" data-index="{{index}}">
         <input type="text" name="system.specialAbilities.{{index}}.name" value="{{name}}" placeholder="Ability Name" class="ability-name" />
-        {{editor enrichedAbilityDescription target=(concat "system.specialAbilities." index ".description") button=true editable=editable class="ability-desc"}}
+        {{#if ../editable}}<prose-mirror name="system.specialAbilities.{{index}}.description" value="{{description}}" document-uuid="{{../actor.uuid}}"></prose-mirror>{{else}}<div class="editor"><div class="editor-content">{{{enrichedAbilityDescription}}}</div></div>{{/if}}
       </div>
       {{else}}
       <p class="empty-state">No special abilities defined.</p>

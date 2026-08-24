@@ -87,6 +87,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     tag: 'form',
     position: { width: 1080, height: 800 },
     window: { resizable: true },
+    form: { submitOnChange: true },
     actions: {
       rollSkill: Open00CharacterSheet.#rollSkill,
       rollStat: Open00CharacterSheet.#rollStat,
@@ -316,6 +317,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       ...baseContext,
       actor: this.actor,
       system,
+      source: (this.actor as unknown as { system: { _source: Record<string, unknown> } }).system._source ?? system,
       name: this.actor.name,
       img: this.actor.img,
       experience: system['experience'],

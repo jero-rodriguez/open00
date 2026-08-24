@@ -537,11 +537,11 @@
     </div>
     <div class="field-row">
       <label class="field-label">Requirement</label>
-      {{editor enrichedMinorRequirement target="system.minor.requirement" button=true editable=editable class="item-description-sm"}}
+      {{#if editable}}<prose-mirror name="system.minor.requirement" value="{{source.minor.requirement}}" document-uuid="{{item.uuid}}"></prose-mirror>{{else}}<div class="editor"><div class="editor-content">{{{enrichedMinorRequirement}}}</div></div>{{/if}}
     </div>
     <div class="field-row">
       <label class="field-label">Effects</label>
-      {{editor enrichedMinorEffects target="system.minor.effects" button=true editable=editable class="item-description-sm"}}
+      {{#if editable}}<prose-mirror name="system.minor.effects" value="{{source.minor.effects}}" document-uuid="{{item.uuid}}"></prose-mirror>{{else}}<div class="editor"><div class="editor-content">{{{enrichedMinorEffects}}}</div></div>{{/if}}
     </div>
 
     <h3 class="section-subtitle">Major Tier</h3>
@@ -551,11 +551,11 @@
     </div>
     <div class="field-row">
       <label class="field-label">Requirement</label>
-      {{editor enrichedMajorRequirement target="system.major.requirement" button=true editable=editable class="item-description-sm"}}
+      {{#if editable}}<prose-mirror name="system.major.requirement" value="{{source.major.requirement}}" document-uuid="{{item.uuid}}"></prose-mirror>{{else}}<div class="editor"><div class="editor-content">{{{enrichedMajorRequirement}}}</div></div>{{/if}}
     </div>
     <div class="field-row">
       <label class="field-label">Effects</label>
-      {{editor enrichedMajorEffects target="system.major.effects" button=true editable=editable class="item-description-sm"}}
+      {{#if editable}}<prose-mirror name="system.major.effects" value="{{source.major.effects}}" document-uuid="{{item.uuid}}"></prose-mirror>{{else}}<div class="editor"><div class="editor-content">{{{enrichedMajorEffects}}}</div></div>{{/if}}
     </div>
     {{/if}}
   </div>
