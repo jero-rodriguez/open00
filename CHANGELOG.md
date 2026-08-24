@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.1](https://github.com/jero-rodriguez/open00/compare/v1.17.0...v1.17.1) (2026-08-24)
+
+
+### Bug Fixes
+
+* add spells to spell  lore ([7bc554d](https://github.com/jero-rodriguez/open00/commit/7bc554de7e6e56a66d55856298f1e2087161cfcb))
+
 ## [1.17.0](https://github.com/jero-rodriguez/open00/compare/v1.16.4...v1.17.0) (2026-08-24)
 
 
