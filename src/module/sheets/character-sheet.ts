@@ -160,10 +160,25 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
   #withPartialActorRender(
     options: foundry.applications.api.ApplicationRenderOptions,
   ): foundry.applications.api.ApplicationRenderOptions {
-    if (options.parts || options.renderContext !== 'updateActor') return options;
+    if (options.parts) return options;
 
-    const parts = getCharacterSheetUpdateParts(options.renderData);
-    return parts ? { ...options, parts } : options;
+    // For actor updates, use field-level partial render
+    if (options.renderContext === 'updateActor') {
+      const parts = getCharacterSheetUpdateParts(options.renderData);
+      return parts ? { ...options, parts } : options;
+    }
+
+    // For item changes (create/delete/update), re-render only the active tab + header
+    if (
+      options.renderContext === 'createItem'
+      || options.renderContext === 'deleteItem'
+      || options.renderContext === 'updateItem'
+    ) {
+      const activeTab = this.tabGroups['primary'] ?? 'overview';
+      return { ...options, parts: ['header', activeTab] };
+    }
+
+    return options;
   }
 
   protected _getTabs(): Record<string, SheetTab> {
@@ -607,8 +622,11 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             };
           });
         const totalEncumbrance = computeTotalEncumbrance(mappedItems);
-        const stats = (system['stats'] as Record<string, number>) ?? {};
-        const brawn = asNumber(stats['brn']);
+        const stats = (system['stats'] as Record<string, { base: number; kin: number; spec: number }>) ?? {};
+        const brawnStat = stats['brn'];
+        const brawn = brawnStat
+          ? asNumber(brawnStat.base) + asNumber(brawnStat.kin) + asNumber(brawnStat.spec)
+          : 0;
         const encumbrance = determineEncumbranceLevel(totalEncumbrance, brawn);
         const encumbrancePercentage = Math.min(
           100,
