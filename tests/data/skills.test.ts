@@ -19,9 +19,13 @@ describe('default character skills', () => {
     ]);
   });
 
-  it('initializes every skill without ranks or item modifiers', () => {
+  it('initializes every skill with the schema-backed item modifier field', () => {
     expect(createDefaultSkills().every(
-      (skill) => skill.rank === 0 && skill.itemModifiers === 0,
+      (skill) => skill.rank === 0 && skill.item === 0,
+    )).toBe(true);
+
+    expect(createDefaultSkills().every(
+      (skill) => !Object.hasOwn(skill, 'itemModifiers'),
     )).toBe(true);
   });
 
