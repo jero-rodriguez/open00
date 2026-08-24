@@ -60,6 +60,23 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     window: { resizable: true },
   };
 
+  /** Wider sheets for types with large tables */
+  static WIDE_TYPES: Set<string> = new Set(['spellLore']);
+
+  override render(
+    options: boolean | foundry.applications.api.ApplicationRenderOptions = {},
+    legacyOptions: foundry.applications.api.ApplicationRenderOptions = {},
+  ): Promise<unknown> {
+    if ((this.constructor as typeof Open00ItemSheet).WIDE_TYPES.has(this.item.type)) {
+      this.position.width = 732;
+    }
+    const parts = this.#getVisibleParts();
+    if (typeof options === 'boolean') {
+      return super.render(options, { ...legacyOptions, parts });
+    }
+    return super.render({ ...options, parts });
+  }
+
   static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
     header: {
       template: `${ITEM_TEMPLATE_ROOT}/item-header.hbs`,
@@ -126,17 +143,6 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       }, {});
   }
 
-  override render(
-    options: boolean | foundry.applications.api.ApplicationRenderOptions = {},
-    legacyOptions: foundry.applications.api.ApplicationRenderOptions = {},
-  ): Promise<unknown> {
-    const parts = this.#getVisibleParts();
-    if (typeof options === 'boolean') {
-      return super.render(options, { ...legacyOptions, parts });
-    }
-    return super.render({ ...options, parts });
-  }
-
   override async _prepareContext(
     options: foundry.applications.api.ApplicationRenderOptions,
   ): Promise<Record<string, unknown>> {
@@ -172,7 +178,27 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   ): Promise<Record<string, unknown>> {
     const tabs = (context['tabs'] as Record<string, SheetTab>) ?? {};
     const tab = tabs[partId];
-    return tab ? { ...context, tab } : { ...context };
+    context = tab ? { ...context, tab } : { ...context };
+
+    // Add armor zones flags for the details template
+    if (partId === 'details' && context['isArmor']) {
+      const system = (context['system'] as Record<string, unknown>) ?? {};
+      const zones = (system['zonesProtected'] as string[] | undefined) ?? [];
+      context['zonesFlags'] = {
+        Head: zones.includes('Head'),
+        Face: zones.includes('Face'),
+        Neck: zones.includes('Neck'),
+        Torso: zones.includes('Torso'),
+        Arms: zones.includes('Arms'),
+        Forearms: zones.includes('Forearms'),
+        Hands: zones.includes('Hands'),
+        Legs: zones.includes('Legs'),
+        LowerLegs: zones.includes('LowerLegs'),
+        ShieldArm: zones.includes('ShieldArm'),
+      };
+    }
+
+    return context;
   }
 
   override async _onRender(

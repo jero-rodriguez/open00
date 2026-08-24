@@ -141,6 +141,7 @@ declare namespace foundry {
         static DEFAULT_OPTIONS: ApplicationConfiguration;
         static PARTS: Record<string, ApplicationPartDefinition>;
         tabGroups: Record<string, string>;
+        position: ApplicationPosition;
         get element(): HTMLElement;
         _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
@@ -165,6 +166,7 @@ declare namespace foundry {
         get actor(): Actor;
         get document(): Actor;
         form: HTMLFormElement | null;
+        _onDropItem(event: DragEvent, data: Record<string, unknown>): Promise<Item[] | false>;
       }
 
       class ItemSheetV2 extends foundry.applications.api.ApplicationV2 {

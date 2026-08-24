@@ -207,6 +207,7 @@ export function createAutoSaveHandler(
    * Triggers on:
    * - blur event (field loses focus)
    * - Enter key press on input/textarea
+   * - change event on checkboxes and selects
    */
   function handleFieldChange(event: Event): void {
     const target = event.target as HTMLElement;
@@ -216,6 +217,37 @@ export function createAutoSaveHandler(
       target instanceof HTMLInputElement ||
       target instanceof HTMLSelectElement
     )) {
+      return;
+    }
+
+    // Handle checkbox changes immediately (they fire 'change', not 'blur')
+    if (target instanceof HTMLInputElement && target.type === 'checkbox') {
+      const fieldName = target.name;
+      if (!fieldName) return;
+
+      // Collect all checked values for checkboxes with the same name (ArrayField pattern)
+      const form = target.closest('form');
+      if (!form) return;
+      const siblings = form.querySelectorAll<HTMLInputElement>(`input[type="checkbox"][name="${fieldName}"]`);
+      if (siblings.length > 1) {
+        // Multi-checkbox (ArrayField): collect checked values into array
+        const checkedValues = Array.from(siblings)
+          .filter((cb) => cb.checked)
+          .map((cb) => cb.value);
+        void actor.update({ [fieldName]: checkedValues });
+      } else {
+        // Single checkbox (BooleanField)
+        void actor.update({ [fieldName]: target.checked });
+      }
+      return;
+    }
+
+    // Handle select changes immediately
+    if (target instanceof HTMLSelectElement && event.type === 'change') {
+      const fieldName = target.name;
+      if (fieldName && target.value !== String(getActorValue(fieldName))) {
+        debouncedPersist(fieldName, target.value, target);
+      }
       return;
     }
 
@@ -276,21 +308,37 @@ export function attachAutoSaveToForm(
   const keydownListeners = new Map<AutoSaveElement, EventListener>();
 
   for (const input of inputs) {
-    input.addEventListener('blur', handler.handleFieldChange);
-    const keydownListener = (event: Event) => {
-      if (event instanceof KeyboardEvent && event.key === 'Enter') {
-        handler.handleFieldChange(event);
-      }
-    };
-    keydownListeners.set(input, keydownListener);
-    input.addEventListener('keydown', keydownListener);
+    if (input instanceof HTMLInputElement && input.type === 'checkbox') {
+      // Checkboxes use 'change' event, not blur
+      input.addEventListener('change', handler.handleFieldChange);
+    } else if (input instanceof HTMLSelectElement) {
+      // Selects use both 'change' and 'blur'
+      input.addEventListener('change', handler.handleFieldChange);
+      input.addEventListener('blur', handler.handleFieldChange);
+    } else {
+      input.addEventListener('blur', handler.handleFieldChange);
+      const keydownListener = (event: Event) => {
+        if (event instanceof KeyboardEvent && event.key === 'Enter') {
+          handler.handleFieldChange(event);
+        }
+      };
+      keydownListeners.set(input, keydownListener);
+      input.addEventListener('keydown', keydownListener);
+    }
   }
 
   return () => {
     for (const input of inputs) {
-      input.removeEventListener('blur', handler.handleFieldChange);
-      const keydownListener = keydownListeners.get(input);
-      if (keydownListener) input.removeEventListener('keydown', keydownListener);
+      if (input instanceof HTMLInputElement && input.type === 'checkbox') {
+        input.removeEventListener('change', handler.handleFieldChange);
+      } else if (input instanceof HTMLSelectElement) {
+        input.removeEventListener('change', handler.handleFieldChange);
+        input.removeEventListener('blur', handler.handleFieldChange);
+      } else {
+        input.removeEventListener('blur', handler.handleFieldChange);
+        const keydownListener = keydownListeners.get(input);
+        if (keydownListener) input.removeEventListener('keydown', keydownListener);
+      }
     }
   };
 }
