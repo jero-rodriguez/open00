@@ -151,7 +151,7 @@
       {{#each specialAbilities}}
       <div class="npc-ability" data-index="{{index}}">
         <input type="text" name="system.specialAbilities.{{index}}.name" value="{{name}}" placeholder="Ability Name" class="ability-name" />
-        {{editor description target=(concat "system.specialAbilities." index ".description") button=true editable=true class="ability-desc"}}
+        {{editor enrichedAbilityDescription target=(concat "system.specialAbilities." index ".description") button=true editable=editable class="ability-desc"}}
       </div>
       {{else}}
       <p class="empty-state">No special abilities defined.</p>

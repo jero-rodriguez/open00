@@ -182,9 +182,38 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const tab = tabs[partId];
     context = tab ? { ...context, tab } : { ...context };
 
+    const system = (context['system'] as Record<string, unknown>) ?? {};
+    const enrichOptions = { async: true, relativeTo: this.item };
+
+    // Enrich editor content for each part that uses {{editor}}
+    if (partId === 'description') {
+      context['enrichedItemDescription'] = await TextEditor.enrichHTML(String(system['description'] ?? ''), enrichOptions);
+      context['enrichedNotes'] = await TextEditor.enrichHTML(String(system['notes'] ?? ''), enrichOptions);
+      context['enrichedPassionsGuidance'] = await TextEditor.enrichHTML(String(system['passionsGuidance'] ?? ''), enrichOptions);
+    }
+
+    if (partId === 'details' && context['isBackground']) {
+      const minor = (system['minor'] as Record<string, unknown>) ?? {};
+      const major = (system['major'] as Record<string, unknown>) ?? {};
+      context['enrichedMinorRequirement'] = await TextEditor.enrichHTML(String(minor['requirement'] ?? ''), enrichOptions);
+      context['enrichedMinorEffects'] = await TextEditor.enrichHTML(String(minor['effects'] ?? ''), enrichOptions);
+      context['enrichedMajorRequirement'] = await TextEditor.enrichHTML(String(major['requirement'] ?? ''), enrichOptions);
+      context['enrichedMajorEffects'] = await TextEditor.enrichHTML(String(major['effects'] ?? ''), enrichOptions);
+    }
+
+    if (partId === 'spells') {
+      const spells = (system['spells'] as Array<Record<string, unknown>>) ?? [];
+      const enrichedSpells = await Promise.all(
+        spells.map(async (spell) => ({
+          ...spell,
+          enrichedSpellDescription: await TextEditor.enrichHTML(String(spell['description'] ?? ''), enrichOptions),
+        })),
+      );
+      context['system'] = { ...system, spells: enrichedSpells };
+    }
+
     // Add armor zones flags for the details template
     if (partId === 'details' && context['isArmor']) {
-      const system = (context['system'] as Record<string, unknown>) ?? {};
       const zones = (system['zonesProtected'] as string[] | undefined) ?? [];
       context['zonesFlags'] = {
         Head: zones.includes('Head'),

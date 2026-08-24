@@ -306,6 +306,11 @@ declare const ChatMessage: {
   }): Promise<unknown>;
 };
 
+// FoundryVTT TextEditor utility
+declare const TextEditor: {
+  enrichHTML(content: string, options?: { async?: boolean; relativeTo?: Actor | Item }): Promise<string>;
+};
+
 // FoundryVTT constants
 declare const CONST: {
   CHAT_MESSAGE_TYPES: {
