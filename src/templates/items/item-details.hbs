@@ -92,6 +92,20 @@
       </select>
     </div>
 
+    <h3 class="section-subtitle">Zones Protected</h3>
+    <div class="field-row field-row--checkboxes">
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="Head" {{#if zonesFlags.Head}}checked{{/if}} /> Head</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="Face" {{#if zonesFlags.Face}}checked{{/if}} /> Face</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="Neck" {{#if zonesFlags.Neck}}checked{{/if}} /> Neck</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="Torso" {{#if zonesFlags.Torso}}checked{{/if}} /> Torso</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="Arms" {{#if zonesFlags.Arms}}checked{{/if}} /> Arms</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="Forearms" {{#if zonesFlags.Forearms}}checked{{/if}} /> Forearms</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="Hands" {{#if zonesFlags.Hands}}checked{{/if}} /> Hands</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="Legs" {{#if zonesFlags.Legs}}checked{{/if}} /> Legs</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="LowerLegs" {{#if zonesFlags.LowerLegs}}checked{{/if}} /> Lower Legs</label>
+      <label class="checkbox-label"><input type="checkbox" name="system.zonesProtected" value="ShieldArm" {{#if zonesFlags.ShieldArm}}checked{{/if}} /> Shield Arm</label>
+    </div>
+
     <h3 class="section-subtitle">Penalties &amp; Bonuses</h3>
     <div class="field-row">
       <label class="field-label">Max SWI to DEF</label>

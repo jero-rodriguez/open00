@@ -89,6 +89,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     window: { resizable: true },
     actions: {
       rollSkill: Open00CharacterSheet.#rollSkill,
+      rollStat: Open00CharacterSheet.#rollStat,
+      rollSave: Open00CharacterSheet.#rollSave,
       openItem: Open00CharacterSheet.#openItem,
       removeItem: Open00CharacterSheet.#removeItem,
       setDrivePoints: Open00CharacterSheet.#setDrivePoints,
@@ -207,6 +209,81 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     return super.close(options);
   }
 
+  override async _onDropItem(
+    event: DragEvent,
+    data: Record<string, unknown>,
+  ): Promise<Item[] | false> {
+    const item = await (Item as unknown as { fromDropData(data: Record<string, unknown>): Promise<Item> }).fromDropData(data);
+    if (!item) return super._onDropItem(event, data);
+
+    const itemType = item.type;
+
+    // For identity items, remove existing item of same type first, then apply modifiers
+    if (itemType === 'kin' || itemType === 'culture' || itemType === 'vocation') {
+      const existing = this.actor.items.find((i: Item) => i.type === itemType);
+      if (existing) await existing.delete();
+
+      const result = await super._onDropItem(event, data);
+      await this.#applyIdentityModifiers();
+      return result;
+    }
+
+    return super._onDropItem(event, data);
+  }
+
+  async #applyIdentityModifiers(): Promise<void> {
+    const updates: Record<string, unknown> = {};
+    const kin = this.actor.items.find((i: Item) => i.type === 'kin');
+    const vocation = this.actor.items.find((i: Item) => i.type === 'vocation');
+    const culture = this.actor.items.find((i: Item) => i.type === 'culture');
+
+    // Apply Kin stat modifiers to system.stats.*.kin
+    if (kin) {
+      const kinData = kin.system as Record<string, unknown>;
+      const statMods = kinData['statModifiers'] as Record<string, number> | undefined;
+      if (statMods) {
+        for (const stat of ['brn', 'swi', 'for', 'wit', 'wsd', 'bea']) {
+          updates[`system.stats.${stat}.kin`] = statMods[stat] ?? 0;
+        }
+      }
+
+      // Set HP max from kin hpBonus + body development rank bonus
+      const kinHpBonus = asNumber(kinData['hpBonus']);
+      const skills = (this.actor.system as Record<string, unknown>)['skills'] as SkillData[] ?? [];
+      const bodySkill = skills.find((s) => s.name === 'Body Development');
+      const bodyRankBonus = bodySkill ? computeRankBonus(asNumber(bodySkill.rank)) : 0;
+      updates['system.hp.max'] = kinHpBonus + bodyRankBonus;
+    }
+
+    // Apply Vocation vocationalBonuses to skill.vocation fields
+    const skills = [...((this.actor.system as Record<string, unknown>)['skills'] as SkillData[] ?? [])];
+
+    if (vocation) {
+      const vocData = vocation.system as Record<string, unknown>;
+      const vocBonuses = (vocData['vocationalBonuses'] as Array<{ skillName: string; bonus: number }>) ?? [];
+      for (let i = 0; i < skills.length; i++) {
+        const match = vocBonuses.find((vb) => vb.skillName === skills[i].name);
+        updates[`system.skills.${i}.vocation`] = match ? match.bonus : 0;
+      }
+    }
+
+    // Apply Culture skillRankAllocations
+    if (culture) {
+      const culData = culture.system as Record<string, unknown>;
+      const rankAllocations = (culData['skillRankAllocations'] as Array<{ skillName: string; ranks: number }>) ?? [];
+      for (let i = 0; i < skills.length; i++) {
+        const match = rankAllocations.find((ra) => ra.skillName === skills[i].name);
+        if (match) {
+          updates[`system.skills.${i}.rank`] = Math.max(skills[i].rank, match.ranks);
+        }
+      }
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await this.actor.update(updates);
+    }
+  }
+
   override async _prepareContext(
     options: foundry.applications.api.ApplicationRenderOptions,
   ): Promise<Record<string, unknown>> {
@@ -300,8 +377,13 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           };
         }
 
-        // Build save rolls with full breakdown (Stat, Kin, Spec, Lvl, Total)
+        // Build save rolls with full breakdown (Stat, Kin, Spec, Lvl, Kin Bonus, Total)
         const level = asNumber(system['level']);
+        const kinItem = this.actor.items.find((item: Item) => item.type === 'kin');
+        const kinData = kinItem ? (kinItem.system as Record<string, unknown>) : null;
+        const kinTsr = asNumber(kinData?.['tsr']);
+        const kinWsr = asNumber(kinData?.['wsr']);
+
         const saveRolls = [
           {
             name: 'OPEN00.Saves.Toughness',
@@ -310,7 +392,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             kin: asNumber(stats['for']?.kin),
             spec: asNumber(stats['for']?.spec),
             level,
-            total: asNumber(stats['for']?.base) + asNumber(stats['for']?.kin) + asNumber(stats['for']?.spec) + level,
+            kinBonus: kinTsr,
+            total: asNumber(stats['for']?.base) + asNumber(stats['for']?.kin) + asNumber(stats['for']?.spec) + level + kinTsr,
           },
           {
             name: 'OPEN00.Saves.Willpower',
@@ -319,7 +402,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             kin: asNumber(stats['wsd']?.kin),
             spec: asNumber(stats['wsd']?.spec),
             level,
-            total: asNumber(stats['wsd']?.base) + asNumber(stats['wsd']?.kin) + asNumber(stats['wsd']?.spec) + level,
+            kinBonus: kinWsr,
+            total: asNumber(stats['wsd']?.base) + asNumber(stats['wsd']?.kin) + asNumber(stats['wsd']?.spec) + level + kinWsr,
           },
         ];
 
@@ -415,18 +499,24 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             };
           });
 
-        const developmentPointsPerLevel = (system['developmentPointsPerLevel'] as number[] | undefined) ?? [];
+        // Compute HP max from Kin hpBonus + Body Development rank bonus
+        const kinItem = this.actor.items.find((item: Item) => item.type === 'kin');
+        const kinHpBonus = kinItem ? asNumber((kinItem.system as Record<string, unknown>)['hpBonus']) : 0;
+        const allSkills = (system['skills'] as SkillData[]) ?? [];
+        const bodySkill = allSkills.find((s) => s.name === 'Body Development');
+        const bodyRankBonus = bodySkill ? computeRankBonus(asNumber(bodySkill.rank)) : 0;
+        const computedHpMax = kinHpBonus + bodyRankBonus;
 
         return {
           ...context,
           defense: system['defense'],
           hp: system['hp'],
+          computedHpMax,
           encumbrance: system['encumbrance'],
           encumbranceLabel: `OPEN00.Equipment.${String(system['encumbrance'] ?? 'Unencumbered')}`,
           weapons,
           armor,
           conditions: [],
-          developmentPointsPerLevel,
         };
       }
 
@@ -600,6 +690,79 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
         <div class="roll-formula">
           <span>${escapeHTML(formatRollDisplay(rollResult))}</span>
           <span>${escapeHTML(statLabel)} ${formatModifier(skillBonus)}</span>
+        </div>
+        <div class="roll-result">
+          <strong>${totalWithBonus}</strong>
+          <span>${escapeHTML(game.i18n.localize(`OPEN00.ActionResolution.${outcome}`))}</span>
+        </div>
+      </div>`;
+
+    void ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: sheet.actor }),
+      content: chatContent,
+    });
+  }
+
+  static #rollStat(event: Event, target: HTMLElement): void {
+    event.preventDefault();
+    const sheet = this as unknown as Open00CharacterSheet;
+    const statKey = target.dataset.statKey ?? '';
+    const statBonus = Number(target.dataset.statBonus);
+    if (!statKey || Number.isNaN(statBonus)) return;
+
+    const statLabel = STAT_NAMES[statKey]
+      ? game.i18n.localize(STAT_NAMES[statKey])
+      : statKey.toUpperCase();
+
+    const rollResult = computeOpenEndedRoll(() => Math.floor(Math.random() * 100) + 1);
+    const totalWithBonus = rollResult.total + statBonus;
+    const outcome = resolveAction(totalWithBonus);
+
+    const chatContent = `
+      <div class="open00-roll-result">
+        <header class="roll-header">
+          <strong>${escapeHTML(statLabel)}</strong>
+          <span class="roll-category">${escapeHTML(game.i18n.localize('OPEN00.Overview.Stats'))}</span>
+        </header>
+        <div class="roll-formula">
+          <span>${escapeHTML(formatRollDisplay(rollResult))}</span>
+          <span>${escapeHTML(statLabel)} ${formatModifier(statBonus)}</span>
+        </div>
+        <div class="roll-result">
+          <strong>${totalWithBonus}</strong>
+          <span>${escapeHTML(game.i18n.localize(`OPEN00.ActionResolution.${outcome}`))}</span>
+        </div>
+      </div>`;
+
+    void ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: sheet.actor }),
+      content: chatContent,
+    });
+  }
+
+  static #rollSave(event: Event, target: HTMLElement): void {
+    event.preventDefault();
+    const sheet = this as unknown as Open00CharacterSheet;
+    const row = target.closest<HTMLElement>('[data-save-name]') ?? target;
+    const saveName = row.dataset.saveName ?? '';
+    const saveBonus = Number(row.dataset.saveBonus);
+    if (!saveName || Number.isNaN(saveBonus)) return;
+
+    const saveLabel = game.i18n.localize(saveName);
+
+    const rollResult = computeOpenEndedRoll(() => Math.floor(Math.random() * 100) + 1);
+    const totalWithBonus = rollResult.total + saveBonus;
+    const outcome = resolveAction(totalWithBonus);
+
+    const chatContent = `
+      <div class="open00-roll-result">
+        <header class="roll-header">
+          <strong>${escapeHTML(saveLabel)}</strong>
+          <span class="roll-category">${escapeHTML(game.i18n.localize('OPEN00.Overview.SaveRolls'))}</span>
+        </header>
+        <div class="roll-formula">
+          <span>${escapeHTML(formatRollDisplay(rollResult))}</span>
+          <span>${escapeHTML(saveLabel)} ${formatModifier(saveBonus)}</span>
         </div>
         <div class="roll-result">
           <strong>${totalWithBonus}</strong>

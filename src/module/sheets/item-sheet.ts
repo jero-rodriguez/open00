@@ -172,7 +172,27 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   ): Promise<Record<string, unknown>> {
     const tabs = (context['tabs'] as Record<string, SheetTab>) ?? {};
     const tab = tabs[partId];
-    return tab ? { ...context, tab } : { ...context };
+    context = tab ? { ...context, tab } : { ...context };
+
+    // Add armor zones flags for the details template
+    if (partId === 'details' && context['isArmor']) {
+      const system = (context['system'] as Record<string, unknown>) ?? {};
+      const zones = (system['zonesProtected'] as string[] | undefined) ?? [];
+      context['zonesFlags'] = {
+        Head: zones.includes('Head'),
+        Face: zones.includes('Face'),
+        Neck: zones.includes('Neck'),
+        Torso: zones.includes('Torso'),
+        Arms: zones.includes('Arms'),
+        Forearms: zones.includes('Forearms'),
+        Hands: zones.includes('Hands'),
+        Legs: zones.includes('Legs'),
+        LowerLegs: zones.includes('LowerLegs'),
+        ShieldArm: zones.includes('ShieldArm'),
+      };
+    }
+
+    return context;
   }
 
   override async _onRender(

@@ -165,6 +165,7 @@ declare namespace foundry {
         get actor(): Actor;
         get document(): Actor;
         form: HTMLFormElement | null;
+        _onDropItem(event: DragEvent, data: Record<string, unknown>): Promise<Item[] | false>;
       }
 
       class ItemSheetV2 extends foundry.applications.api.ApplicationV2 {

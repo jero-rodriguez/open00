@@ -7,7 +7,7 @@
           <input type="number" name="system.hp.value" value="{{hp.value}}" min="0" />
           <span>{{localize "OPEN00.Overview.Current"}}</span>
         </label>
-        <label class="compact-rule-field"><span>{{localize "OPEN00.Combat.TotalHits"}}</span><input type="number" name="system.hp.max" value="{{hp.max}}" min="0" /></label>
+        <label class="compact-rule-field"><span>{{localize "OPEN00.Combat.TotalHits"}}</span><input type="number" name="system.hp.max" value="{{computedHpMax}}" min="0" readonly /></label>
       </div>
     </section>
 
@@ -36,20 +36,6 @@
       {{else}}
       <span class="empty-state compact">{{localize "OPEN00.Combat.NoConditions"}}</span>
       {{/each}}
-    </div>
-  </section>
-
-  <section class="sheet-section">
-    <h2 class="section-title">{{localize "OPEN00.Header.DevelopmentPointsPerLevel"}}</h2>
-    <div class="development-points-row">
-      <div class="development-points-header">
-        <span>{{localize "OPEN00.Header.DevelopmentPoints"}}</span>
-        {{#each developmentPointsPerLevel}}
-        <span class="development-point-value">{{this}}</span>
-        {{else}}
-        <span class="empty-state compact">{{localize "OPEN00.Combat.NoConditions"}}</span>
-        {{/each}}
-      </div>
     </div>
   </section>
 
