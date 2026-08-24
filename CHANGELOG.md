@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.17.9](https://github.com/jero-rodriguez/open00/compare/v1.17.8...v1.17.9) (2026-08-24)
+
+
+### Bug Fixes
+
+* add development points section by skill category ([cc0cfb2](https://github.com/jero-rodriguez/open00/commit/cc0cfb2249531a4b8bce209cf9f08ce64b8a8938))
+* item drop remove all skills ([bea1f6e](https://github.com/jero-rodriguez/open00/commit/bea1f6e641e5cfef2dcdc38c379c2aafe4c29d94))
+* kin apply modifiers ([1fa6b7c](https://github.com/jero-rodriguez/open00/commit/1fa6b7cfcaf10c3fdf3b63afd42d000d025cbad1))
+* rollable attributes are now marked ([5c1dabc](https://github.com/jero-rodriguez/open00/commit/5c1dabc16dd37f68729eabdfd550b43c31ac1597))
+* skill disappear when ranks added or detracted ([708d6bf](https://github.com/jero-rodriguez/open00/commit/708d6bfb52f4114c69e1d4106e5bcb81c5b20c96))
+* wealth level not propagated ([ab6c58c](https://github.com/jero-rodriguez/open00/commit/ab6c58c1a0aa4a4102b8bd0478b103be61c71b52))
+
 ## [1.17.8](https://github.com/jero-rodriguez/open00/compare/v1.17.7...v1.17.8) (2026-08-24)
 
 
