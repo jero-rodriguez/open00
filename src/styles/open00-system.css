@@ -313,6 +313,30 @@
   color: var(--open00-ink);
   background: transparent;
   box-shadow: none;
+  cursor: pointer;
+}
+
+.rules-table .roll-name {
+  padding-left: 7px;
+  justify-content: flex-start;
+  font-size: 17px;
+  font-variant: small-caps;
+  text-align: left;
+}
+
+.rules-table .roll-name-icon {
+  display: none;
+}
+
+.rules-table .roll-name:hover .roll-name-label,
+.rules-table .roll-name:focus-visible .roll-name-label {
+  display: none;
+}
+
+.rules-table .roll-name:hover .roll-name-icon,
+.rules-table .roll-name:focus-visible .roll-name-icon {
+  display: inline-block;
+  margin: 0 auto;
 }
 
 .icon-button {

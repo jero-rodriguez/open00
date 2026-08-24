@@ -156,6 +156,7 @@
   "OPEN00.Overview.Modify": "Modify",
   "OPEN00.Overview.SaveRolls": "Save Rolls",
   "OPEN00.Saves.RollName": "Roll Name",
+  "OPEN00.Saves.RollTooltip": "Click to roll this save",
   "OPEN00.Saves.Stat": "Stat",
   "OPEN00.Saves.Level": "Lvl",
   "OPEN00.Saves.KinBonus": "Kin Bonus",
