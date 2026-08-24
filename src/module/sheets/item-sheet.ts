@@ -60,6 +60,23 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     window: { resizable: true },
   };
 
+  /** Wider sheets for types with large tables */
+  static WIDE_TYPES: Set<string> = new Set(['spellLore']);
+
+  override render(
+    options: boolean | foundry.applications.api.ApplicationRenderOptions = {},
+    legacyOptions: foundry.applications.api.ApplicationRenderOptions = {},
+  ): Promise<unknown> {
+    if ((this.constructor as typeof Open00ItemSheet).WIDE_TYPES.has(this.item.type)) {
+      this.position.width = 732;
+    }
+    const parts = this.#getVisibleParts();
+    if (typeof options === 'boolean') {
+      return super.render(options, { ...legacyOptions, parts });
+    }
+    return super.render({ ...options, parts });
+  }
+
   static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
     header: {
       template: `${ITEM_TEMPLATE_ROOT}/item-header.hbs`,
@@ -124,17 +141,6 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         };
         return tabs;
       }, {});
-  }
-
-  override render(
-    options: boolean | foundry.applications.api.ApplicationRenderOptions = {},
-    legacyOptions: foundry.applications.api.ApplicationRenderOptions = {},
-  ): Promise<unknown> {
-    const parts = this.#getVisibleParts();
-    if (typeof options === 'boolean') {
-      return super.render(options, { ...legacyOptions, parts });
-    }
-    return super.render({ ...options, parts });
   }
 
   override async _prepareContext(

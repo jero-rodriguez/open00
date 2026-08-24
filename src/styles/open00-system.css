@@ -851,7 +851,7 @@
 }
 
 .spell-lore-item-table {
-  grid-template-columns: 28px minmax(100px, 1fr) 58px 58px 68px 24px 28px;
+  grid-template-columns: 36px minmax(120px, 2fr) minmax(60px, 1fr) minmax(60px, 1fr) minmax(70px, 1fr) 32px 32px;
 }
 
 .spell-details {

@@ -141,6 +141,7 @@ declare namespace foundry {
         static DEFAULT_OPTIONS: ApplicationConfiguration;
         static PARTS: Record<string, ApplicationPartDefinition>;
         tabGroups: Record<string, string>;
+        position: ApplicationPosition;
         get element(): HTMLElement;
         _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
