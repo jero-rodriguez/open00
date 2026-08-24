@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.6](https://github.com/jero-rodriguez/open00/compare/v1.17.5...v1.17.6) (2026-08-24)
+
+
+### Bug Fixes
+
+* use prose mirror and fix editor ([053dc78](https://github.com/jero-rodriguez/open00/commit/053dc78376706cc661a1409cb2dcb6167d791f39))
+
 ## [1.17.5](https://github.com/jero-rodriguez/open00/compare/v1.17.4...v1.17.5) (2026-08-24)
 
 
