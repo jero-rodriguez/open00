@@ -1,0 +1,72 @@
+<section class="tab open00-tab-scroll item-type-{{itemType}} {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+  <div class="item-fields">
+    {{#if isWeapon}}
+    <h3 class="section-subtitle">Qualities</h3>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityBackstab" {{#if system.qualityBackstab}}checked{{/if}} />
+      <label>Backstab</label>
+    </div>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityHandAndHalf" {{#if system.qualityHandAndHalf}}checked{{/if}} />
+      <label>Hand and a Half</label>
+    </div>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityHeavy" {{#if system.qualityHeavy}}checked{{/if}} />
+      <label>Heavy</label>
+    </div>
+    <div class="field-row">
+      <label class="field-label">Load Rounds</label>
+      <input type="number" name="system.qualityLoadRounds" value="{{system.qualityLoadRounds}}" min="0" max="5" />
+    </div>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityMartial" {{#if system.qualityMartial}}checked{{/if}} />
+      <label>Martial</label>
+    </div>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityMighty" {{#if system.qualityMighty}}checked{{/if}} />
+      <label>Mighty</label>
+    </div>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityQuickLoad" {{#if system.qualityQuickLoad}}checked{{/if}} />
+      <label>Quick Load</label>
+    </div>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityReach" {{#if system.qualityReach}}checked{{/if}} />
+      <label>Reach</label>
+    </div>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityUnreliable" {{#if system.qualityUnreliable}}checked{{/if}} />
+      <label>Unreliable</label>
+    </div>
+    {{/if}}
+
+    {{#if isArmor}}
+    <h3 class="section-subtitle">Qualities</h3>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityMetal" {{#if system.qualityMetal}}checked{{/if}} />
+      <label>Metal</label>
+    </div>
+    <div class="field-row field-row--checkbox">
+      <input type="checkbox" name="system.qualityRigid" {{#if system.qualityRigid}}checked{{/if}} />
+      <label>Rigid</label>
+    </div>
+    {{/if}}
+
+    {{#if isItemOfPower}}
+    {{#if system.powers.length}}
+    <h3 class="section-subtitle">Powers</h3>
+    <div class="item-array-list">
+      {{#each system.powers}}
+      <div class="array-row">
+        <span class="array-label">Affinity {{this.affinityThreshold}}+</span>
+        <span class="array-value">{{this.description}}</span>
+        {{#if this.bonusType}}
+        <span class="array-extra">({{this.bonusType}} +{{this.bonusValue}})</span>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+    {{/if}}
+    {{/if}}
+  </div>
+</section>
