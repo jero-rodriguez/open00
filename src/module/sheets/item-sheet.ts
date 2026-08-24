@@ -34,7 +34,7 @@ const TYPE_TABS: Record<string, string[]> = {
   armor: ['details', 'qualities', 'commerce', 'description'],
   equipment: ['details', 'commerce', 'description'],
   itemOfPower: ['details', 'qualities', 'commerce', 'description'],
-  spell: ['details', 'description'],
+  spellLore: ['details', 'description'],
   kin: ['details', 'description'],
   culture: ['details', 'description'],
   vocation: ['details', 'description'],
@@ -145,7 +145,6 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       // Type flags for conditional rendering in templates
       isWeapon: itemType === 'weapon',
       isArmor: itemType === 'armor',
-      isSpell: itemType === 'spell',
       isEquipment: itemType === 'equipment',
       isKin: itemType === 'kin',
       isCulture: itemType === 'culture',
@@ -153,6 +152,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       isTrait: itemType === 'trait',
       isItemOfPower: itemType === 'itemOfPower',
       isBackground: itemType === 'background',
+      isSpellLore: itemType === 'spellLore',
       tabs: this._getTabs(),
       options,
     };
