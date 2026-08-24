@@ -69,3 +69,8 @@ export function createDefaultSkills(): SkillData[] {
     item: 0,
   }));
 }
+
+/** Keep the fixed character skill list available when persisted data is missing or empty. */
+export function ensureCharacterSkills(skills: SkillData[] | undefined): SkillData[] {
+  return skills && skills.length > 0 ? skills : createDefaultSkills();
+}

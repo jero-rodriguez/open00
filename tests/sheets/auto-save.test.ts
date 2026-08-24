@@ -22,8 +22,8 @@ describe('Auto-Save Utility', () => {
         passions: { motivation: 'Old motivation' },
         stats: { brn: 10 },
         skills: [
-          { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', itemModifiers: 0 },
-          { name: 'Blades', category: 'Combat', rank: 1, statKey: 'swi', itemModifiers: 5 },
+          { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', item: 0 },
+          { name: 'Blades', category: 'Combat', rank: 1, statKey: 'swi', item: 5 },
         ],
       },
       update: vi.fn(() => Promise.resolve()),
@@ -95,8 +95,8 @@ describe('Auto-Save Utility', () => {
 
     expect(mockActor.update).toHaveBeenCalledWith({
       'system.skills': [
-        { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', itemModifiers: 0 },
-        { name: 'Blades', category: 'Combat', rank: 3, statKey: 'swi', itemModifiers: 5 },
+        { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', item: 0 },
+        { name: 'Blades', category: 'Combat', rank: 3, statKey: 'swi', item: 5 },
       ],
     });
     expect(mockActor.system.skills[1].rank).toBe(1);
@@ -107,12 +107,52 @@ describe('Auto-Save Utility', () => {
   it('should preserve negative item modifiers as numbers', async () => {
     const handler = createAutoSaveHandler(mockActor, { debounceMs: 50 });
 
-    await handler.persistField('system.skills.0.itemModifiers', '-2');
+    await handler.persistField('system.skills.0.item', '-2');
 
     expect(mockActor.update).toHaveBeenCalledWith({
       'system.skills': [
-        { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', itemModifiers: -2 },
-        { name: 'Blades', category: 'Combat', rank: 1, statKey: 'swi', itemModifiers: 5 },
+        { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', item: -2 },
+        { name: 'Blades', category: 'Combat', rank: 1, statKey: 'swi', item: 5 },
+      ],
+    });
+
+    handler.cleanup();
+  });
+
+  it('uses the persisted source when hydrated array entries are not enumerable', async () => {
+    const persistedSkills = mockActor.system.skills.map((skill: Record<string, unknown>) => ({ ...skill }));
+    mockActor._source = { system: { skills: persistedSkills } };
+    mockActor.system.skills = persistedSkills.map((skill: Record<string, unknown>) => {
+      const hydrated = {};
+      for (const [key, value] of Object.entries(skill)) {
+        Object.defineProperty(hydrated, key, { value, enumerable: false, writable: true });
+      }
+      return hydrated;
+    });
+    const handler = createAutoSaveHandler(mockActor, { debounceMs: 50 });
+
+    await handler.persistField('system.skills.1.rank', '3');
+
+    expect(mockActor.update).toHaveBeenCalledWith({
+      'system.skills': [
+        { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', item: 0 },
+        { name: 'Blades', category: 'Combat', rank: 3, statKey: 'swi', item: 5 },
+      ],
+    });
+
+    handler.cleanup();
+  });
+
+  it('uses restored hydrated skills when the persisted source array is empty', async () => {
+    mockActor._source = { system: { skills: [] } };
+    const handler = createAutoSaveHandler(mockActor, { debounceMs: 50 });
+
+    await handler.persistField('system.skills.1.rank', '3');
+
+    expect(mockActor.update).toHaveBeenCalledWith({
+      'system.skills': [
+        { name: 'Armor', category: 'Armor', rank: 0, statKey: 'brn', item: 0 },
+        { name: 'Blades', category: 'Combat', rank: 3, statKey: 'swi', item: 5 },
       ],
     });
 

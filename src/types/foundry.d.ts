@@ -88,6 +88,7 @@ declare namespace foundry {
   namespace abstract {
     class TypeDataModel {
       static defineSchema(): Record<string, foundry.data.fields.DataField>;
+      prepareBaseData?(): void;
       prepareDerivedData?(): void;
     }
   }

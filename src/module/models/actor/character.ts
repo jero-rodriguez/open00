@@ -6,7 +6,7 @@
  */
 
 import { computeRankBonus } from '../../engine/rank-bonus.js';
-import { createDefaultSkills } from '../../data/skills.js';
+import { createDefaultSkills, ensureCharacterSkills, type SkillData } from '../../data/skills.js';
 
 const { SchemaField, NumberField, StringField, HTMLField, ArrayField } = foundry.data.fields;
 
@@ -24,6 +24,11 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
 
   /** Stat values with base, kin, and spec modifiers */
   stats!: Record<StatKey, { base: number; kin: number; spec: number }>;
+  skills!: SkillData[];
+
+  override prepareBaseData(): void {
+    this.skills = ensureCharacterSkills(this.skills);
+  }
 
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
@@ -170,7 +175,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     // (e.g., when an Item drop triggers Actor.reset before schema hydration completes).
     if (!this.stats) return;
 
-    const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; vocation: number; kin: number; spec: number; item: number }> }).skills;
+    const skills = this.skills;
     if (!skills) return;
 
     for (const skill of skills) {
