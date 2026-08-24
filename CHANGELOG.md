@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.7](https://github.com/jero-rodriguez/open00/compare/v1.17.6...v1.17.7) (2026-08-24)
+
+
+### Bug Fixes
+
+* text area descrition fixing ([6d014ee](https://github.com/jero-rodriguez/open00/commit/6d014ee717bf6e4bfbe3b83f651dc159a6040b80))
+
 ## [1.17.6](https://github.com/jero-rodriguez/open00/compare/v1.17.5...v1.17.6) (2026-08-24)
 
 
