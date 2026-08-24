@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.2](https://github.com/jero-rodriguez/open00/compare/v1.17.1...v1.17.2) (2026-08-24)
+
+
+### Bug Fixes
+
+* spells table formatable and editalbe ([759e409](https://github.com/jero-rodriguez/open00/commit/759e4096910036b6cbba5c084dde8c35a6650529))
+
 ## [1.17.1](https://github.com/jero-rodriguez/open00/compare/v1.17.0...v1.17.1) (2026-08-24)
 
 
