@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.5](https://github.com/jero-rodriguez/open00/compare/v1.17.4...v1.17.5) (2026-08-24)
+
+
+### Bug Fixes
+
+* prosmirror editor not working ([aeb05b4](https://github.com/jero-rodriguez/open00/commit/aeb05b41f27dc16865f83c3e731e7adde425ad9b))
+
 ## [1.17.4](https://github.com/jero-rodriguez/open00/compare/v1.17.3...v1.17.4) (2026-08-24)
 
 
