@@ -166,6 +166,7 @@ declare namespace foundry {
         get actor(): Actor;
         get document(): Actor;
         form: HTMLFormElement | null;
+        _prepareContext(options: foundry.applications.api.ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _onDropItem(event: DragEvent, data: Record<string, unknown>): Promise<Item[] | false>;
       }
 
@@ -175,6 +176,7 @@ declare namespace foundry {
         get item(): Item;
         get document(): Item;
         form: HTMLFormElement | null;
+        _prepareContext(options: foundry.applications.api.ApplicationRenderOptions): Promise<Record<string, unknown>>;
       }
     }
   }

@@ -110,6 +110,7 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
   override async _prepareContext(
     options: foundry.applications.api.ApplicationRenderOptions,
   ): Promise<Record<string, unknown>> {
+    const baseContext = await super._prepareContext(options);
     const system = this.actor.system as Record<string, unknown>;
 
     // Core stat block fields
@@ -186,6 +187,7 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     }));
 
     return {
+      ...baseContext,
       actor: this.actor,
       system,
       name: this.actor.name,
