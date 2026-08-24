@@ -850,6 +850,66 @@
   grid-template-columns: minmax(125px, 1.7fr) 55px 120px repeat(6, 61px) minmax(90px, 1.2fr) 30px;
 }
 
+.spell-lore-item-table {
+  grid-template-columns: 60px minmax(150px, 1.7fr) 80px 80px 90px 50px 30px;
+}
+
+.spell-details {
+  border-bottom: 1px solid rgba(89, 99, 106, 0.35);
+}
+
+.spell-details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.spell-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.spell-details > summary::marker {
+  content: '';
+}
+
+.spell-details > summary:hover {
+  background: rgba(80, 90, 98, 0.05);
+}
+
+.spell-details[open] > summary {
+  border-bottom: 1px dashed rgba(89, 99, 106, 0.3);
+}
+
+.spell-description {
+  padding: 8px 12px 10px;
+  background: rgba(80, 90, 98, 0.04);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+.spell-description textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 6px 8px;
+  border: 1px solid var(--open00-line);
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--open00-ink);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.spell-description textarea:focus {
+  background: var(--open00-focus);
+  box-shadow: none;
+}
+
+.spell-details .item-row {
+  border-bottom: 0;
+}
+
 .weapons-table {
   grid-template-columns: minmax(125px, 1.7fr) 48px 65px 85px 48px 72px 58px 72px 72px 55px minmax(100px, 1.2fr) 30px;
 }
