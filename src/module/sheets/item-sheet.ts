@@ -34,7 +34,8 @@ const TYPE_TABS: Record<string, string[]> = {
   armor: ['details', 'qualities', 'commerce', 'description'],
   equipment: ['details', 'commerce', 'description'],
   itemOfPower: ['details', 'qualities', 'commerce', 'description'],
-  spellLore: ['details', 'description'],
+  spell: ['details', 'description'],
+  spellLore: ['details', 'spells', 'description'],
   kin: ['details', 'description'],
   culture: ['details', 'description'],
   vocation: ['details', 'description'],
@@ -45,6 +46,7 @@ const TYPE_TABS: Record<string, string[]> = {
 /** All possible tab definitions */
 const ALL_TABS: SheetTabDefinition[] = [
   { tab: 'details', label: 'OPEN00.ItemTabs.Details' },
+  { tab: 'spells', label: 'OPEN00.ItemTabs.Spells' },
   { tab: 'qualities', label: 'OPEN00.ItemTabs.Qualities' },
   { tab: 'commerce', label: 'OPEN00.ItemTabs.Commerce' },
   { tab: 'description', label: 'OPEN00.ItemTabs.Description' },
@@ -84,6 +86,11 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     description: {
       container: { classes: ['tab-body'], id: 'tabs' },
       template: `${ITEM_TEMPLATE_ROOT}/item-description.hbs`,
+      scrollable: ['.open00-tab-scroll'],
+    },
+    spells: {
+      container: { classes: ['tab-body'], id: 'tabs' },
+      template: `${ITEM_TEMPLATE_ROOT}/item-spells.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
   };
@@ -152,6 +159,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       isTrait: itemType === 'trait',
       isItemOfPower: itemType === 'itemOfPower',
       isBackground: itemType === 'background',
+      isSpell: itemType === 'spell',
       isSpellLore: itemType === 'spellLore',
       tabs: this._getTabs(),
       options,
@@ -182,6 +190,74 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     this.#detachAutoSave = this.form
       ? attachAutoSaveToForm(this.form, this.#autoSaveHandler)
       : null;
+
+    // Enable drag-and-drop on spellLore sheets for receiving spell items
+    if (this.item.type === 'spellLore') {
+      this.#setupSpellLoreDropZone();
+    }
+  }
+
+  /** Set up drag-and-drop zone for receiving spell Items on a SpellLore sheet. */
+  #setupSpellLoreDropZone(): void {
+    const el = this.element;
+    if (!el) return;
+
+    el.addEventListener('dragover', (event: DragEvent) => {
+      event.preventDefault();
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
+    });
+
+    el.addEventListener('drop', async (event: DragEvent) => {
+      event.preventDefault();
+      const rawData = event.dataTransfer?.getData('text/plain');
+      if (!rawData) return;
+
+      let dropData: { type?: string; uuid?: string };
+      try {
+        dropData = JSON.parse(rawData);
+      } catch {
+        return;
+      }
+
+      if (dropData.type !== 'Item' || !dropData.uuid) return;
+
+      const droppedItem = await (fromUuid(dropData.uuid) as Promise<Item | null>);
+      if (!droppedItem || droppedItem.type !== 'spell') return;
+
+      const spellSystem = droppedItem.system as Record<string, unknown>;
+      const currentSpells = ((this.item.system as Record<string, unknown>)['spells'] as unknown[]) ?? [];
+
+      const newSpell = {
+        name: droppedItem.name,
+        weave: spellSystem['weave'] ?? 1,
+        range: spellSystem['range'] ?? '',
+        duration: spellSystem['duration'] ?? '',
+        areaOfEffect: spellSystem['areaOfEffect'] ?? '',
+        description: spellSystem['description'] ?? '',
+        grantsSaveRoll: spellSystem['grantsSaveRoll'] ?? false,
+        isInstantaneous: spellSystem['isInstantaneous'] ?? false,
+        isAttackSpell: spellSystem['isAttackSpell'] ?? false,
+        attackType: spellSystem['attackType'] ?? '',
+        resonanceType: spellSystem['resonanceType'] ?? 'other',
+        failureSeverity: spellSystem['failureSeverity'] ?? 10,
+        warpingOptions: spellSystem['warpingOptions'] ?? [],
+      };
+
+      await this.item.update({ 'system.spells': [...currentSpells, newSpell] });
+    });
+
+    // Wire up remove-spell buttons
+    el.querySelectorAll<HTMLElement>('[data-action="removeSpell"]').forEach((button: HTMLElement) => {
+      button.addEventListener('click', async (event: Event) => {
+        const target = (event.currentTarget as HTMLElement);
+        const index = Number(target.dataset['spellIndex']);
+        if (Number.isNaN(index)) return;
+
+        const currentSpells = [...(((this.item.system as Record<string, unknown>)['spells'] as unknown[]) ?? [])];
+        currentSpells.splice(index, 1);
+        await this.item.update({ 'system.spells': currentSpells });
+      });
+    });
   }
 
   async close(options?: Record<string, unknown>): Promise<void> {

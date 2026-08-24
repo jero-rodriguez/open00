@@ -14,6 +14,7 @@ import { NpcDataModel } from './module/models/actor/npc.js';
 // Item data models
 import { WeaponDataModel } from './module/models/item/weapon.js';
 import { ArmorDataModel } from './module/models/item/armor.js';
+import { SpellDataModel } from './module/models/item/spell.js';
 import { SpellLoreDataModel } from './module/models/item/spell-lore.js';
 import { EquipmentDataModel } from './module/models/item/equipment.js';
 import { KinDataModel } from './module/models/item/kin.js';
@@ -39,6 +40,7 @@ Hooks.once('init', () => {
   CONFIG.Item.dataModels = {
     weapon: WeaponDataModel,
     armor: ArmorDataModel,
+    spell: SpellDataModel,
     spellLore: SpellLoreDataModel,
     equipment: EquipmentDataModel,
     kin: KinDataModel,

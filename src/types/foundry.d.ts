@@ -141,6 +141,7 @@ declare namespace foundry {
         static DEFAULT_OPTIONS: ApplicationConfiguration;
         static PARTS: Record<string, ApplicationPartDefinition>;
         tabGroups: Record<string, string>;
+        get element(): HTMLElement;
         _prepareContext(options: ApplicationRenderOptions): Promise<Record<string, unknown>>;
         _preparePartContext(partId: string, context: Record<string, unknown>): Promise<Record<string, unknown>>;
         _onRender(context: Record<string, unknown>, options: ApplicationRenderOptions): Promise<void>;
@@ -277,6 +278,9 @@ declare const game: {
   };
   actors: Collection<Actor>;
 };
+
+/** Resolve a UUID to a Document */
+declare function fromUuid(uuid: string): Promise<Actor | Item | null>;
 
 // FoundryVTT Roll class
 declare class Roll {
