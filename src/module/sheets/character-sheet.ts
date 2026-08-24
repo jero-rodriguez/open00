@@ -342,9 +342,14 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           };
         });
 
+        const vocationItem = this.actor.items.find((item: Item) => item.type === 'vocation');
+        const vocationDevelopmentPoints = vocationItem
+          ? ((vocationItem.system as Record<string, unknown>)['developmentPoints'] as Record<string, unknown> | undefined)
+          : undefined;
         const skillCategories = SKILL_CATEGORIES.map((category) => ({
           id: category,
           label: `OPEN00.Skills.Categories.${category}`,
+          developmentPoints: asNumber(vocationDevelopmentPoints?.[category.toLowerCase()]),
           skills: skillDetails.filter((skill) => skill.category === category),
         })).filter((category) => category.skills.length > 0);
 

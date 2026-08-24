@@ -665,12 +665,30 @@
 }
 
 .skill-category > h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin: 8px 0 0;
   padding: 6px 5px 2px;
   border-bottom: 3px double var(--open00-ink);
   font-size: 19px;
   font-variant: small-caps;
   line-height: 22px;
+}
+
+.development-points-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--open00-ink);
+  border-radius: 50%;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  font-variant: normal;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .skill-row {

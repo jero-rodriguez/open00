@@ -171,7 +171,10 @@
 
       {{#each skillCategories}}
       <section class="skill-category">
-        <h3>{{localize label}}</h3>
+        <h3>
+          <span>{{localize label}}</span>
+          <span class="development-points-circle" title="Development Points" aria-label="Development Points: {{developmentPoints}}">{{developmentPoints}}</span>
+        </h3>
         {{#each skills}}
         <div class="skills-table skill-row">
           <button type="button" class="skill-name roll-link" data-action="rollSkill" data-skill-name="{{name}}" data-skill-bonus="{{totalBonus}}" data-stat-key="{{statKey}}" data-category="{{../id}}" title="{{localize 'OPEN00.Skills.RollTooltip'}}">{{name}}</button>
