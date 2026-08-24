@@ -2,15 +2,15 @@
   <div class="item-fields">
     {{#if isWeapon}}
     <h3 class="section-subtitle">Notes</h3>
-    {{editor system.notes target="system.notes" button=true editable=true class="item-description-sm"}}
+    {{editor enrichedNotes target="system.notes" button=true editable=editable class="item-description-sm"}}
     {{/if}}
 
     {{#if isCulture}}
     <h3 class="section-subtitle">Passions Guidance</h3>
-    {{editor system.passionsGuidance target="system.passionsGuidance" button=true editable=true class="item-description"}}
+    {{editor enrichedPassionsGuidance target="system.passionsGuidance" button=true editable=editable class="item-description"}}
     {{/if}}
 
     <h3 class="section-subtitle">Description</h3>
-    {{editor system.description target="system.description" button=true editable=true class="item-description"}}
+    {{editor enrichedItemDescription target="system.description" button=true editable=editable class="item-description"}}
   </div>
 </section>

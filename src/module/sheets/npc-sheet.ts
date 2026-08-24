@@ -178,13 +178,15 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     const uncategorizedSkills = skillsWithIndex.filter((skill) => skill.category === '');
 
     // Special abilities
-    const specialAbilities = (
-      (system['specialAbilities'] as NpcSpecialAbility[] | undefined) ?? []
-    ).map((ability, index) => ({
-      index,
-      name: ability.name,
-      description: ability.description,
-    }));
+    const specialAbilities = await Promise.all(
+      ((system['specialAbilities'] as NpcSpecialAbility[] | undefined) ?? [])
+        .map(async (ability, index) => ({
+          index,
+          name: ability.name,
+          description: ability.description,
+          enrichedAbilityDescription: await TextEditor.enrichHTML(String(ability.description ?? ''), { async: true, relativeTo: this.actor }),
+        })),
+    );
 
     return {
       ...baseContext,
