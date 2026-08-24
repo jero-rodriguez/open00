@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0](https://github.com/jero-rodriguez/open00/compare/v1.16.4...v1.17.0) (2026-08-24)
+
+
+### Features
+
+* magic redesign ([c5e7b4e](https://github.com/jero-rodriguez/open00/commit/c5e7b4e3fd57ba6533cee917a11320fc73e8de92))
+
 ## [1.16.4](https://github.com/jero-rodriguez/open00/compare/v1.16.3...v1.16.4) (2026-08-24)
 
 
