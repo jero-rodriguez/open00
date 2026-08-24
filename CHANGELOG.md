@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.4](https://github.com/jero-rodriguez/open00/compare/v1.16.3...v1.16.4) (2026-08-24)
+
+
+### Bug Fixes
+
+* create a tabbed item sheet ([7621974](https://github.com/jero-rodriguez/open00/commit/7621974c14d5827ff7bc0a01944212f7f4b99877))
+
 ## [1.16.3](https://github.com/jero-rodriguez/open00/compare/v1.16.2...v1.16.3) (2026-08-22)
 
 
