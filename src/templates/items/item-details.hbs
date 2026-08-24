@@ -119,17 +119,9 @@
     </div>
     {{/if}}
 
-    {{#if isSpell}}
+    {{#if isSpellLore}}
     <div class="field-row">
-      <label class="field-label">Weave Number</label>
-      <input type="number" name="system.weaveNumber" value="{{system.weaveNumber}}" min="1" max="10" />
-    </div>
-    <div class="field-row">
-      <label class="field-label">Spell Lore</label>
-      <input type="text" name="system.spellLore" value="{{system.spellLore}}" />
-    </div>
-    <div class="field-row">
-      <label class="field-label">Stat Key</label>
+      <label class="field-label">Governing Stat</label>
       <select name="system.statKey">
         <option value="brn" {{#if (eq system.statKey "brn")}}selected{{/if}}>BRN</option>
         <option value="swi" {{#if (eq system.statKey "swi")}}selected{{/if}}>SWI</option>
@@ -140,45 +132,28 @@
       </select>
     </div>
     <div class="field-row">
-      <label class="field-label">Range</label>
-      <input type="text" name="system.range" value="{{system.range}}" />
-    </div>
-    <div class="field-row">
-      <label class="field-label">Duration</label>
-      <input type="text" name="system.duration" value="{{system.duration}}" />
-    </div>
-    <div class="field-row">
-      <label class="field-label">Area of Effect</label>
-      <input type="text" name="system.areaOfEffect" value="{{system.areaOfEffect}}" />
-    </div>
-    <div class="field-row field-row--checkbox">
-      <input type="checkbox" name="system.grantsSaveRoll" {{#if system.grantsSaveRoll}}checked{{/if}} />
-      <label>Grants Save Roll</label>
-    </div>
-    <div class="field-row field-row--checkbox">
-      <input type="checkbox" name="system.isInstantaneous" {{#if system.isInstantaneous}}checked{{/if}} />
-      <label>Instantaneous</label>
-    </div>
-    <div class="field-row field-row--checkbox">
-      <input type="checkbox" name="system.isAttackSpell" {{#if system.isAttackSpell}}checked{{/if}} />
-      <label>Attack Spell</label>
-    </div>
-    <div class="field-row">
-      <label class="field-label">Attack Spell Type</label>
-      <select name="system.attackSpellType">
-        <option value="" {{#if (eq system.attackSpellType "")}}selected{{/if}}>None</option>
-        <option value="Bolt" {{#if (eq system.attackSpellType "Bolt")}}selected{{/if}}>Bolt</option>
-        <option value="Area" {{#if (eq system.attackSpellType "Area")}}selected{{/if}}>Area</option>
+      <label class="field-label">Access Category</label>
+      <select name="system.category">
+        <option value="common" {{#if (eq system.category "common")}}selected{{/if}}>Common</option>
+        <option value="vocational" {{#if (eq system.category "vocational")}}selected{{/if}}>Vocational</option>
+        <option value="kin" {{#if (eq system.category "kin")}}selected{{/if}}>Kin</option>
       </select>
     </div>
 
-    {{#if system.warpingOptions.length}}
-    <h3 class="section-subtitle">Warping Options</h3>
-    <div class="item-array-list">
-      {{#each system.warpingOptions}}
-      <div class="array-row">
-        <span class="array-label">+{{this.weaveCost}} Weave{{#if this.repeatable}} (repeatable){{/if}}</span>
-        <span class="array-value">{{this.description}}</span>
+    {{#if system.spells.length}}
+    <h3 class="section-subtitle">Spells</h3>
+    <div class="spell-lore-table">
+      <div class="spell-lore-table-heading">
+        <span>Weave</span><span>Spell</span><span>Range</span><span>AoE</span><span>Duration</span><span>Save</span>
+      </div>
+      {{#each system.spells}}
+      <div class="spell-lore-table-row">
+        <span>{{this.weave}}</span>
+        <span>{{this.name}}{{#if this.isInstantaneous}}*{{/if}}</span>
+        <span>{{this.range}}</span>
+        <span>{{this.areaOfEffect}}</span>
+        <span>{{this.duration}}</span>
+        <span>{{#if this.grantsSaveRoll}}Y{{else}}N{{/if}}</span>
       </div>
       {{/each}}
     </div>

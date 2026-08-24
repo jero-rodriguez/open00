@@ -430,56 +430,73 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       }
 
       case 'magic': {
-        const spellItems = this.actor.items
-          .filter((item: Item) => item.type === 'spell')
+        const stats = (system['stats'] as Record<string, { base: number; kin: number; spec: number }>) ?? {};
+        const skills = (system['skills'] as SkillData[]) ?? [];
+        const level = asNumber(system['level']);
+
+        // Build lore context from owned spellLore items
+        const spellLores = this.actor.items
+          .filter((item: Item) => item.type === 'spellLore')
           .map((item: Item) => {
             const data = item.system as Record<string, unknown>;
-            const weaveNumber = asNumber(data['weaveNumber'], 1);
+            const statKey = String(data['statKey'] ?? 'wit');
+            const category = String(data['category'] ?? 'common');
+            const spells = (data['spells'] as Array<{
+              name: string; weave: number; range: string; duration: string;
+              areaOfEffect: string; grantsSaveRoll: boolean; isInstantaneous: boolean;
+            }>) ?? [];
+
+            // Find the matching skill entry (Spells category, same name as the lore)
+            const skill = skills.find((s) => s.name === item.name && s.category === 'Spells');
+            const ranks = asNumber(skill?.rank);
+
+            // Compute casting bonus from the lore's governing stat
+            const stat = stats[statKey];
+            const statBonus = stat
+              ? asNumber(stat.base) + asNumber(stat.kin) + asNumber(stat.spec)
+              : 0;
+            const rankBonus = skill ? computeRankBonus(ranks) : 0;
+            const vocation = asNumber(skill?.vocation);
+            const kin = asNumber(skill?.kin);
+            const spec = asNumber(skill?.spec);
+            const itemMod = asNumber(skill?.item);
+            const castingBonus = statBonus + rankBonus + vocation + kin + spec + itemMod;
+
+            // Determine max castable Weave based on category and level
+            const isCommonOnly = category === 'common';
+            const maxKnownWeave = ranks;
+            const maxCastableWeave = isCommonOnly
+              ? Math.min(maxKnownWeave, 5, level)
+              : Math.min(maxKnownWeave, level);
+
+            // Filter spells the character knows (weave ≤ ranks) and mark castability
+            const knownSpells = spells
+              .filter((spell) => spell.weave <= ranks)
+              .sort((a, b) => a.weave - b.weave)
+              .map((spell) => ({
+                ...spell,
+                mpCost: spell.weave,
+                canCast: spell.weave <= maxCastableWeave,
+              }));
+
             return {
               id: item.id,
-              img: item.img,
               name: item.name,
-              weaveNumber,
-              spellLore: String(data['spellLore'] ?? ''),
-              range: data['range'] ?? '',
-              duration: data['duration'] ?? '',
-              areaOfEffect: data['areaOfEffect'] ?? '',
-              grantsSaveRoll: Boolean(data['grantsSaveRoll']),
-              mpCost: weaveNumber,
+              statKey,
+              category,
+              ranks,
+              castingBonus: formatModifier(castingBonus),
+              maxCastableWeave,
+              spells: knownSpells,
+              spellCount: knownSpells.length,
             };
           });
-        const stats = (system['stats'] as Record<string, number>) ?? {};
-        const skills = (system['skills'] as SkillData[]) ?? [];
-        const loreMap = new Map<string, typeof spellItems>();
 
-        for (const spell of spellItems) {
-          const loreName = spell.spellLore || game.i18n.localize('OPEN00.Magic.UnknownLore');
-          loreMap.set(loreName, [...(loreMap.get(loreName) ?? []), spell]);
-        }
-
-        const spellsByLore = Array.from(loreMap.entries()).map(([loreName, spells]) => {
-          const castingSkill = skills.find((skill) => skill.name === loreName)
-            ?? skills.find((skill) => skill.category === 'Spells');
-          const castingBonus = castingSkill
-            ? asNumber(stats[castingSkill.statKey])
-              + computeRankBonus(asNumber(castingSkill.rank))
-              + asNumber(castingSkill.vocation)
-              + asNumber(castingSkill.kin)
-              + asNumber(castingSkill.spec)
-              + asNumber(castingSkill.item)
-            : 0;
-          return {
-            loreName,
-            castingBonus: formatModifier(castingBonus),
-            spells: [...spells].sort((a, b) => a.weaveNumber - b.weaveNumber),
-          };
-        });
-
-        return { ...context, mp: system['mp'], spellsByLore };
+        return { ...context, mp: system['mp'], level, spellLores };
       }
 
       case 'equipment': {
-        const carriedTypes = ['equipment', 'weapon', 'armor', 'spell', 'itemOfPower'];
+        const carriedTypes = ['equipment', 'weapon', 'armor', 'itemOfPower'];
         const mappedItems = this.actor.items
           .filter((item: Item) => carriedTypes.includes(item.type))
           .map((item: Item) => {
