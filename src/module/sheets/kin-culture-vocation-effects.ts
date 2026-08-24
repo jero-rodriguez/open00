@@ -52,5 +52,10 @@ export function deriveKinCultureVocationEffects(
     }
   }
 
+  if (identities.kin || identities.culture) {
+    updates['system.wealth'] = asNumber(identities.kin?.['startingWealth'])
+      + asNumber(identities.culture?.['startingWealth']);
+  }
+
   return updates;
 }

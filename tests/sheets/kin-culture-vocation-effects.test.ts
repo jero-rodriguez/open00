@@ -23,4 +23,16 @@ describe('deriveKinCultureVocationEffects', () => {
       'system.hp.max': 55,
     });
   });
+
+  it('combines Kin and Culture starting Wealth on the character', () => {
+    const updates = deriveKinCultureVocationEffects(
+      { skills: [] },
+      {
+        kin: { startingWealth: 1 },
+        culture: { startingWealth: 2 },
+      },
+    );
+
+    expect(updates['system.wealth']).toBe(3);
+  });
 });
