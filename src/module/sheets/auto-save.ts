@@ -39,6 +39,8 @@ function cloneFormData(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(cloneFormData);
 
   if (value && typeof value === 'object') {
+    const toObject = (value as { toObject?: () => unknown }).toObject;
+    if (typeof toObject === 'function') return cloneFormData(toObject.call(value));
     return Object.fromEntries(
       Object.entries(value).map(([key, entry]) => [key, cloneFormData(entry)]),
     );
@@ -104,6 +106,13 @@ export function createAutoSaveHandler(
     return value;
   }
 
+  /** Read persisted plain data rather than hydrated DataModel instances. */
+  function getActorSourceValue(fieldPath: string): unknown {
+    const source = (actor as unknown as { _source?: Record<string, unknown> })._source;
+    if (!source) return undefined;
+    return getNestedValue(source, fieldPath.split('.'));
+  }
+
   /**
    * Build a safe document update for a form field.
    *
@@ -122,7 +131,10 @@ export function createAutoSaveHandler(
 
       if (Array.isArray(value) && index < parts.length - 1) {
         const arrayPath = parts.slice(0, index + 1).join('.');
-        const replacement = cloneFormData(value);
+        const sourceArray = getActorSourceValue(arrayPath);
+        const replacement = cloneFormData(
+          Array.isArray(sourceArray) && sourceArray.length === value.length ? sourceArray : value,
+        );
         const nestedParts = parts.slice(index + 1);
         const currentValue = getNestedValue(value, nestedParts);
         setNestedValue(replacement, nestedParts, coerceFormValue(currentValue, newValue));

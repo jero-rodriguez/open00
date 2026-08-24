@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_SKILL_DEFINITIONS,
   createDefaultSkills,
+  ensureCharacterSkills,
 } from '../../src/module/data/skills.js';
 
 describe('default character skills', () => {
@@ -19,9 +20,13 @@ describe('default character skills', () => {
     ]);
   });
 
-  it('initializes every skill without ranks or item modifiers', () => {
+  it('initializes every skill with the schema-backed item modifier field', () => {
     expect(createDefaultSkills().every(
-      (skill) => skill.rank === 0 && skill.itemModifiers === 0,
+      (skill) => skill.rank === 0 && skill.item === 0,
+    )).toBe(true);
+
+    expect(createDefaultSkills().every(
+      (skill) => !Object.hasOwn(skill, 'itemModifiers'),
     )).toBe(true);
   });
 
@@ -33,5 +38,17 @@ describe('default character skills', () => {
 
     expect(second[0]!.rank).toBe(0);
     expect(DEFAULT_SKILL_DEFINITIONS[0]).not.toHaveProperty('rank');
+  });
+});
+
+describe('ensureCharacterSkills', () => {
+  it('restores the fixed skill list when persisted skills are empty', () => {
+    expect(ensureCharacterSkills([])).toEqual(createDefaultSkills());
+  });
+
+  it('preserves an existing populated skill list', () => {
+    const skills = createDefaultSkills();
+    skills[0]!.rank = 3;
+    expect(ensureCharacterSkills(skills)).toBe(skills);
   });
 });

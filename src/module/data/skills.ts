@@ -19,7 +19,7 @@ export interface SkillData {
   vocation: number;
   kin: number;
   spec: number;
-  itemModifiers: number;
+  item: number;
 }
 
 type SkillDefinition = Pick<SkillData, 'name' | 'category' | 'statKey'>;
@@ -66,6 +66,11 @@ export function createDefaultSkills(): SkillData[] {
     vocation: 0,
     kin: 0,
     spec: 0,
-    itemModifiers: 0,
+    item: 0,
   }));
+}
+
+/** Keep the fixed character skill list available when persisted data is missing or empty. */
+export function ensureCharacterSkills(skills: SkillData[] | undefined): SkillData[] {
+  return skills && skills.length > 0 ? skills : createDefaultSkills();
 }
