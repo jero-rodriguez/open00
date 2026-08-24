@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.8](https://github.com/jero-rodriguez/open00/compare/v1.17.7...v1.17.8) (2026-08-24)
+
+
+### Bug Fixes
+
+* deprecate TextEditor ([c6e455f](https://github.com/jero-rodriguez/open00/commit/c6e455f40b319a5a5cd7f9c73ce34d33c1a676ad))
+* prosemirror broken ([7fc8c4d](https://github.com/jero-rodriguez/open00/commit/7fc8c4d526544521f275d9d5a276a7731fa3c15a))
+
 ## [1.17.7](https://github.com/jero-rodriguez/open00/compare/v1.17.6...v1.17.7) (2026-08-24)
 
 
