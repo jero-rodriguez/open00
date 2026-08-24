@@ -139,25 +139,69 @@
         <option value="kin" {{#if (eq system.category "kin")}}selected{{/if}}>Kin</option>
       </select>
     </div>
-
-    {{#if system.spells.length}}
-    <h3 class="section-subtitle">Spells</h3>
-    <div class="spell-lore-table">
-      <div class="spell-lore-table-heading">
-        <span>Weave</span><span>Spell</span><span>Range</span><span>AoE</span><span>Duration</span><span>Save</span>
-      </div>
-      {{#each system.spells}}
-      <div class="spell-lore-table-row">
-        <span>{{this.weave}}</span>
-        <span>{{this.name}}{{#if this.isInstantaneous}}*{{/if}}</span>
-        <span>{{this.range}}</span>
-        <span>{{this.areaOfEffect}}</span>
-        <span>{{this.duration}}</span>
-        <span>{{#if this.grantsSaveRoll}}Y{{else}}N{{/if}}</span>
-      </div>
-      {{/each}}
-    </div>
     {{/if}}
+
+    {{#if isSpell}}
+    <div class="field-row">
+      <label class="field-label">Weave</label>
+      <input type="number" name="system.weave" value="{{system.weave}}" min="1" max="10" />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Range</label>
+      <input type="text" name="system.range" value="{{system.range}}" />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Duration</label>
+      <input type="text" name="system.duration" value="{{system.duration}}" />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Area of Effect</label>
+      <input type="text" name="system.areaOfEffect" value="{{system.areaOfEffect}}" />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Grants Save Roll</label>
+      <input type="checkbox" name="system.grantsSaveRoll" {{#if system.grantsSaveRoll}}checked{{/if}} />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Instantaneous</label>
+      <input type="checkbox" name="system.isInstantaneous" {{#if system.isInstantaneous}}checked{{/if}} />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Attack Spell</label>
+      <input type="checkbox" name="system.isAttackSpell" {{#if system.isAttackSpell}}checked{{/if}} />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Attack Type</label>
+      <select name="system.attackType">
+        <option value="" {{#if (eq system.attackType "")}}selected{{/if}}>None</option>
+        <option value="bolt" {{#if (eq system.attackType "bolt")}}selected{{/if}}>Bolt</option>
+        <option value="area" {{#if (eq system.attackType "area")}}selected{{/if}}>Area</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <label class="field-label">Resonance Type</label>
+      <select name="system.resonanceType">
+        <option value="healing" {{#if (eq system.resonanceType "healing")}}selected{{/if}}>Healing</option>
+        <option value="spirit" {{#if (eq system.resonanceType "spirit")}}selected{{/if}}>Spirit</option>
+        <option value="light" {{#if (eq system.resonanceType "light")}}selected{{/if}}>Light</option>
+        <option value="natural" {{#if (eq system.resonanceType "natural")}}selected{{/if}}>Natural</option>
+        <option value="elven" {{#if (eq system.resonanceType "elven")}}selected{{/if}}>Elven</option>
+        <option value="illusory" {{#if (eq system.resonanceType "illusory")}}selected{{/if}}>Illusory</option>
+        <option value="attack" {{#if (eq system.resonanceType "attack")}}selected{{/if}}>Attack</option>
+        <option value="dark" {{#if (eq system.resonanceType "dark")}}selected{{/if}}>Dark</option>
+        <option value="other" {{#if (eq system.resonanceType "other")}}selected{{/if}}>Other</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <label class="field-label">Failure Severity</label>
+      <select name="system.failureSeverity">
+        <option value="0" {{#if (eq system.failureSeverity 0)}}selected{{/if}}>0 (Safest)</option>
+        <option value="10" {{#if (eq system.failureSeverity 10)}}selected{{/if}}>10</option>
+        <option value="20" {{#if (eq system.failureSeverity 20)}}selected{{/if}}>20</option>
+        <option value="30" {{#if (eq system.failureSeverity 30)}}selected{{/if}}>30</option>
+        <option value="50" {{#if (eq system.failureSeverity 50)}}selected{{/if}}>50 (Most Dangerous)</option>
+      </select>
+    </div>
     {{/if}}
 
     {{#if isEquipment}}
