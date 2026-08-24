@@ -166,7 +166,12 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   override prepareDerivedData(): void {
     this.skillTotals = new Map();
 
+    // Guard: stats or skills may be undefined during intermediate data preparation
+    // (e.g., when an Item drop triggers Actor.reset before schema hydration completes).
+    if (!this.stats) return;
+
     const skills = (this as unknown as { skills: Array<{ name: string; statKey: string; rank: number; vocation: number; kin: number; spec: number; item: number }> }).skills;
+    if (!skills) return;
 
     for (const skill of skills) {
       // If statKey is empty, the skill has no stat component (e.g., "Armor")
@@ -195,8 +200,8 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
    * Get the total value for a stat (base + kin + spec).
    */
   getStatTotal(statKey: StatKey): number {
-    return asFiniteNumber(this.stats[statKey].base) +
-           asFiniteNumber(this.stats[statKey].kin) +
-           asFiniteNumber(this.stats[statKey].spec);
+    const stat = this.stats?.[statKey];
+    if (!stat) return 0;
+    return asFiniteNumber(stat.base) + asFiniteNumber(stat.kin) + asFiniteNumber(stat.spec);
   }
 }
