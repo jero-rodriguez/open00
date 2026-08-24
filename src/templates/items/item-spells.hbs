@@ -18,7 +18,7 @@
         </span>
       </summary>
       <div class="spell-description">
-        {{#if ../editable}}<prose-mirror name="system.spells.{{@index}}.description" value="{{this.description}}" document-uuid="{{../item.uuid}}"></prose-mirror>{{else}}<div class="editor"><div class="editor-content">{{{this.enrichedSpellDescription}}}</div></div>{{/if}}
+        {{#if ../editable}}<prose-mirror name="system.spells.{{@index}}.description" value="{{this.description}}"></prose-mirror>{{else}}<div class="editor"><div class="editor-content">{{{this.enrichedSpellDescription}}}</div></div>{{/if}}
       </div>
     </details>
     {{/each}}
