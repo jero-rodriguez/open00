@@ -185,7 +185,7 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
           index,
           name: ability.name,
           description: ability.description,
-          enrichedAbilityDescription: await TextEditor.enrichHTML(String(ability.description ?? ''), { async: true, relativeTo: this.actor }),
+          enrichedAbilityDescription: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(ability.description ?? ''), { async: true, relativeTo: this.actor }),
         })),
     );
 

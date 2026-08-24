@@ -3,7 +3,7 @@
     {{#if isWeapon}}
     <h3 class="section-subtitle">Notes</h3>
     {{#if editable}}
-    <prose-mirror name="system.notes" value="{{source.notes}}" document-uuid="{{item.uuid}}"></prose-mirror>
+    <prose-mirror name="system.notes" value="{{source.notes}}"></prose-mirror>
     {{else}}
     <div class="editor"><div class="editor-content">{{{enrichedNotes}}}</div></div>
     {{/if}}
@@ -12,7 +12,7 @@
     {{#if isCulture}}
     <h3 class="section-subtitle">Passions Guidance</h3>
     {{#if editable}}
-    <prose-mirror name="system.passionsGuidance" value="{{source.passionsGuidance}}" document-uuid="{{item.uuid}}"></prose-mirror>
+    <prose-mirror name="system.passionsGuidance" value="{{source.passionsGuidance}}"></prose-mirror>
     {{else}}
     <div class="editor"><div class="editor-content">{{{enrichedPassionsGuidance}}}</div></div>
     {{/if}}
@@ -20,7 +20,7 @@
 
     <h3 class="section-subtitle">Description</h3>
     {{#if editable}}
-    <prose-mirror name="system.description" value="{{source.description}}" document-uuid="{{item.uuid}}"></prose-mirror>
+    <prose-mirror name="system.description" value="{{source.description}}"></prose-mirror>
     {{else}}
     <div class="editor"><div class="editor-content">{{{enrichedItemDescription}}}</div></div>
     {{/if}}

@@ -42,7 +42,7 @@
     <div class="sheet-section text-section">
       <span class="section-title">{{localize "OPEN00.Biography.BiographyText"}}</span>
       {{#if editable}}
-      <prose-mirror name="system.biography" value="{{source.biography}}" document-uuid="{{actor.uuid}}"></prose-mirror>
+      <prose-mirror name="system.biography" value="{{source.biography}}"></prose-mirror>
       {{else}}
       <div class="editor"><div class="editor-content">{{{enrichedBiography}}}</div></div>
       {{/if}}
@@ -50,7 +50,7 @@
     <div class="sheet-section text-section">
       <span class="section-title">{{localize "OPEN00.Biography.Appearance"}}</span>
       {{#if editable}}
-      <prose-mirror name="system.appearance" value="{{source.appearance}}" document-uuid="{{actor.uuid}}"></prose-mirror>
+      <prose-mirror name="system.appearance" value="{{source.appearance}}"></prose-mirror>
       {{else}}
       <div class="editor"><div class="editor-content">{{{enrichedAppearance}}}</div></div>
       {{/if}}
@@ -58,7 +58,7 @@
     <div class="sheet-section text-section full-width">
       <span class="section-title">{{localize "OPEN00.Biography.BackgroundNotes"}}</span>
       {{#if editable}}
-      <prose-mirror name="system.backgroundNotes" value="{{source.backgroundNotes}}" document-uuid="{{actor.uuid}}"></prose-mirror>
+      <prose-mirror name="system.backgroundNotes" value="{{source.backgroundNotes}}"></prose-mirror>
       {{else}}
       <div class="editor"><div class="editor-content">{{{enrichedBackgroundNotes}}}</div></div>
       {{/if}}
