@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.17.12](https://github.com/jero-rodriguez/open00/compare/v1.17.11...v1.17.12) (2026-08-25)
+
+
+### Bug Fixes
+
+* kin propagation modifiers ([3284ebd](https://github.com/jero-rodriguez/open00/commit/3284ebdca4463140ba611de174541dac746985ed))
+* propagate culture modifiers ([c63f90c](https://github.com/jero-rodriguez/open00/commit/c63f90c4680d8e67e6e81efd75ac0791b3cac6ec))
+* stats and roll save fix when rolling ([74b1985](https://github.com/jero-rodriguez/open00/commit/74b19855b0ed18260716343aeeb93803c50537b6))
+* unit testing failures ([978bcfd](https://github.com/jero-rodriguez/open00/commit/978bcfd6664365f2e431d8bde88de34a4513baed))
+
 ## [1.17.11](https://github.com/jero-rodriguez/open00/compare/v1.17.10...v1.17.11) (2026-08-25)
 
 

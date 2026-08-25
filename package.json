@@ -1,6 +1,6 @@
 {
   "name": "open00-system",
-  "version": "1.17.11",
+  "version": "1.17.12",
   "description": "Open 00 game system for FoundryVTT v14",
   "type": "module",
   "engines": {
