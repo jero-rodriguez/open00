@@ -252,10 +252,18 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     const kin = this.actor.items.find((item: Item) => item.type === 'kin');
     const vocation = this.actor.items.find((item: Item) => item.type === 'vocation');
     const culture = this.actor.items.find((item: Item) => item.type === 'culture');
+
+    // Use toObject() on system data to get plain objects that bracket-access works on reliably
+    const toPlain = (item: Item | undefined): Record<string, unknown> | undefined => {
+      if (!item) return undefined;
+      const sys = item.system as unknown as { toObject?: () => Record<string, unknown> };
+      return typeof sys?.toObject === 'function' ? sys.toObject() : (item.system as Record<string, unknown>);
+    };
+
     const updates = deriveKinCultureVocationEffects(this.actor.system as Record<string, unknown>, {
-      kin: kin?.system as Record<string, unknown> | undefined,
-      vocation: vocation?.system as Record<string, unknown> | undefined,
-      culture: culture?.system as Record<string, unknown> | undefined,
+      kin: toPlain(kin),
+      vocation: toPlain(vocation),
+      culture: toPlain(culture),
     });
 
     if (Object.keys(updates).length > 0) {
@@ -811,17 +819,18 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     const system = this.actor.system as Record<string, unknown>;
     const clearUpdates = clearAllIdentityEffects(system);
 
+    // Use toObject() on system data to get plain objects for reliable bracket access
+    const toPlain = (item: Item | undefined): Record<string, unknown> | undefined => {
+      if (!item) return undefined;
+      const sys = item.system as unknown as { toObject?: () => Record<string, unknown> };
+      return typeof sys?.toObject === 'function' ? sys.toObject() : (item.system as Record<string, unknown>);
+    };
+
     // Re-derive effects from remaining identity items (excluding the one just deleted)
     const remaining = {
-      kin: type !== 'kin'
-        ? (this.actor.items.find((i: Item) => i.type === 'kin')?.system as Record<string, unknown> | undefined)
-        : undefined,
-      culture: type !== 'culture'
-        ? (this.actor.items.find((i: Item) => i.type === 'culture')?.system as Record<string, unknown> | undefined)
-        : undefined,
-      vocation: type !== 'vocation'
-        ? (this.actor.items.find((i: Item) => i.type === 'vocation')?.system as Record<string, unknown> | undefined)
-        : undefined,
+      kin: type !== 'kin' ? toPlain(this.actor.items.find((i: Item) => i.type === 'kin')) : undefined,
+      culture: type !== 'culture' ? toPlain(this.actor.items.find((i: Item) => i.type === 'culture')) : undefined,
+      vocation: type !== 'vocation' ? toPlain(this.actor.items.find((i: Item) => i.type === 'vocation')) : undefined,
     };
     const reapplyUpdates = deriveKinCultureVocationEffects(system, remaining);
 
