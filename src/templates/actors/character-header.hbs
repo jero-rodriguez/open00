@@ -28,6 +28,7 @@
       <div class="lined-field item-identity" data-item-id="{{identity.kin.id}}">
         {{#if identity.kin}}
         <button type="button" class="identity-item-link" data-action="openItem" data-item-id="{{identity.kin.id}}">{{identity.kin.name}}</button>
+        <button type="button" class="icon-button danger identity-remove" data-action="removeItem" data-item-id="{{identity.kin.id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button>
         {{else}}
         <span class="identity-placeholder">{{localize "OPEN00.Header.DropKin"}}</span>
         {{/if}}
@@ -36,6 +37,7 @@
       <div class="lined-field item-identity" data-item-id="{{identity.culture.id}}">
         {{#if identity.culture}}
         <button type="button" class="identity-item-link" data-action="openItem" data-item-id="{{identity.culture.id}}">{{identity.culture.name}}</button>
+        <button type="button" class="icon-button danger identity-remove" data-action="removeItem" data-item-id="{{identity.culture.id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button>
         {{else}}
         <span class="identity-placeholder">{{localize "OPEN00.Header.DropCulture"}}</span>
         {{/if}}
@@ -44,6 +46,7 @@
       <div class="lined-field item-identity" data-item-id="{{identity.vocation.id}}">
         {{#if identity.vocation}}
         <button type="button" class="identity-item-link" data-action="openItem" data-item-id="{{identity.vocation.id}}">{{identity.vocation.name}}</button>
+        <button type="button" class="icon-button danger identity-remove" data-action="removeItem" data-item-id="{{identity.vocation.id}}" title="{{localize 'OPEN00.Actions.Remove'}}"><i class="fas fa-trash" aria-hidden="true"></i></button>
         {{else}}
         <span class="identity-placeholder">{{localize "OPEN00.Header.DropVocation"}}</span>
         {{/if}}

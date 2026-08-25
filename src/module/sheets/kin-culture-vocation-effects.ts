@@ -18,6 +18,40 @@ function asNumber(value: unknown): number {
   return Number.isFinite(numericValue) ? numericValue : 0;
 }
 
+/**
+ * Returns actor update paths that zero out ALL identity-derived fields
+ * (stats.*.kin, hp.max, wealth, skills.*.vocation, skills.*.rank).
+ * Intended to be applied first, then `deriveKinCultureVocationEffects`
+ * re-applies the effects of whichever identities remain on the actor.
+ */
+export function clearAllIdentityEffects(
+  actorSystem: Record<string, unknown>,
+): Record<string, unknown> {
+  const updates: Record<string, unknown> = {};
+  const skills = (actorSystem['skills'] as SkillData[] | undefined) ?? [];
+
+  // Zero kin stat modifiers
+  for (const stat of ['brn', 'swi', 'for', 'wit', 'wsd', 'bea']) {
+    updates[`system.stats.${stat}.kin`] = 0;
+  }
+
+  // Reset HP max to just body rank bonus (no kin contribution)
+  const bodySkill = skills.find((skill) => skill.name === 'Body Development');
+  const bodyRankBonus = bodySkill ? computeRankBonus(asNumber(bodySkill.rank)) : 0;
+  updates['system.hp.max'] = bodyRankBonus;
+
+  // Zero wealth (kin + culture contribution)
+  updates['system.wealth'] = 0;
+
+  // Zero vocation bonuses and cultural rank allocations on each skill
+  for (let index = 0; index < skills.length; index++) {
+    updates[`system.skills.${index}.vocation`] = 0;
+    updates[`system.skills.${index}.rank`] = 0;
+  }
+
+  return updates;
+}
+
 export function deriveKinCultureVocationEffects(
   actorSystem: Record<string, unknown>,
   identities: KinCultureVocation,
