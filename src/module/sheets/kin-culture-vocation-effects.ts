@@ -36,7 +36,7 @@ export function clearAllIdentityEffects(
   }
 
   // Reset HP max to just body rank bonus (no kin contribution)
-  const bodySkill = skills.find((skill) => skill.name === 'Body Development');
+  const bodySkill = skills.find((skill) => skill.name === 'Body');
   const bodyRankBonus = bodySkill ? computeRankBonus(asNumber(bodySkill.rank)) : 0;
   updates['system.hp.max'] = bodyRankBonus;
 
@@ -65,7 +65,7 @@ export function deriveKinCultureVocationEffects(
       updates[`system.stats.${stat}.kin`] = asNumber(statModifiers?.[stat]);
     }
 
-    const bodySkill = skills.find((skill) => skill.name === 'Body Development');
+    const bodySkill = skills.find((skill) => skill.name === 'Body');
     const bodyRankBonus = bodySkill ? computeRankBonus(asNumber(bodySkill.rank)) : 0;
     updates['system.hp.max'] = asNumber(identities.kin['hpBonus']) + bodyRankBonus;
   }

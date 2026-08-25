@@ -4,7 +4,7 @@ import { deriveKinCultureVocationEffects } from '../../src/module/sheets/kin-cul
 describe('deriveKinCultureVocationEffects', () => {
   it('applies all kin stat modifiers and HP from the dropped kin data', () => {
     const updates = deriveKinCultureVocationEffects(
-      { skills: [{ name: 'Body Development', rank: 3 }] },
+      { skills: [{ name: 'Body', rank: 3 }] },
       {
         kin: {
           statModifiers: { brn: 5, swi: -5, for: 10, wit: 0, wsd: 3, bea: -2 },

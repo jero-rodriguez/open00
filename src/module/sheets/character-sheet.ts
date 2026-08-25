@@ -248,14 +248,10 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     return super._onDropItem(event, data);
   }
 
-  async #applyIdentityEffects(createdItems: Item[] = []): Promise<void> {
-    const identityDocument = (type: string): Item | undefined => (
-      createdItems.find((item) => item.type === type)
-      ?? this.actor.items.find((item: Item) => item.type === type)
-    );
-    const kin = identityDocument('kin');
-    const vocation = identityDocument('vocation');
-    const culture = identityDocument('culture');
+  async #applyIdentityEffects(_createdItems: Item[] = []): Promise<void> {
+    const kin = this.actor.items.find((item: Item) => item.type === 'kin');
+    const vocation = this.actor.items.find((item: Item) => item.type === 'vocation');
+    const culture = this.actor.items.find((item: Item) => item.type === 'culture');
     const updates = deriveKinCultureVocationEffects(this.actor.system as Record<string, unknown>, {
       kin: kin?.system as Record<string, unknown> | undefined,
       vocation: vocation?.system as Record<string, unknown> | undefined,

@@ -59,7 +59,14 @@ function setNestedValue(root: unknown, parts: string[], value: unknown): void {
       return;
     }
 
-    target = (target as Record<string, unknown>)[part] as Record<string, unknown> | unknown[];
+    let next = (target as Record<string, unknown>)[part] as Record<string, unknown> | unknown[] | undefined;
+    if (next === null || next === undefined) {
+      // Create intermediate container: use array if next segment is numeric, else object
+      const nextPart = parts[index + 1];
+      next = /^\d+$/.test(nextPart) ? [] : {};
+      (target as Record<string, unknown>)[part] = next;
+    }
+    target = next;
   }
 }
 
@@ -121,7 +128,7 @@ export function createAutoSaveHandler(
    * cloned copy containing the edited value instead of updating the indexed
    * leaf directly.
    */
-  function buildDocumentUpdate(fieldName: string, newValue: string): Record<string, unknown> {
+  function buildDocumentUpdate(fieldName: string, newValue: string, element?: HTMLElement): Record<string, unknown> {
     const parts = fieldName.split('.');
     let value: unknown = actor;
 
@@ -131,6 +138,17 @@ export function createAutoSaveHandler(
 
       if (Array.isArray(value) && index < parts.length - 1) {
         const arrayPath = parts.slice(0, index + 1).join('.');
+
+        // If the persisted array is empty or shorter than what the form renders,
+        // collect the full array state from all form inputs sharing this array path.
+        const form = element?.closest('form');
+        if (form && value.length === 0) {
+          const replacement = collectArrayFromForm(form, arrayPath);
+          if (replacement.length > 0) {
+            return { [arrayPath]: replacement };
+          }
+        }
+
         const sourceArray = getActorSourceValue(arrayPath);
         const replacement = cloneFormData(
           Array.isArray(sourceArray) && sourceArray.length === value.length ? sourceArray : value,
@@ -146,9 +164,51 @@ export function createAutoSaveHandler(
   }
 
   /**
+   * Collect a full array value from all form inputs that share a common array path prefix.
+   * For example, given prefix "system.skillRankAllocations", collects all inputs named
+   * "system.skillRankAllocations.N.fieldName" and builds the array structure.
+   */
+  function collectArrayFromForm(form: HTMLFormElement, arrayPath: string): unknown[] {
+    const prefix = `${arrayPath}.`;
+    const inputs = form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+      `[name^="${prefix}"]`,
+    );
+    const result: Record<number, Record<string, unknown>> = {};
+
+    for (const input of inputs) {
+      const suffix = input.name.slice(prefix.length);
+      const dotIndex = suffix.indexOf('.');
+      if (dotIndex === -1) continue;
+
+      const arrayIndex = Number(suffix.slice(0, dotIndex));
+      if (!Number.isFinite(arrayIndex)) continue;
+
+      const fieldKey = suffix.slice(dotIndex + 1);
+      if (!result[arrayIndex]) result[arrayIndex] = {};
+
+      const rawValue = input.value;
+      // Coerce number inputs to numbers
+      if (input.type === 'number') {
+        const num = Number(rawValue);
+        result[arrayIndex][fieldKey] = Number.isFinite(num) ? num : 0;
+      } else {
+        result[arrayIndex][fieldKey] = rawValue;
+      }
+    }
+
+    // Convert sparse object to dense array
+    const maxIndex = Math.max(-1, ...Object.keys(result).map(Number));
+    const array: unknown[] = [];
+    for (let i = 0; i <= maxIndex; i++) {
+      array.push(result[i] ?? {});
+    }
+    return array;
+  }
+
+  /**
    * Persist a field change to the actor document
    */
-  async function persistField(fieldName: string, newValue: string): Promise<void> {
+  async function persistField(fieldName: string, newValue: string, element?: HTMLElement): Promise<void> {
     try {
       // Store the current (old) value before attempting update
       const fieldState = fieldStates.get(fieldName) || {
@@ -157,7 +217,7 @@ export function createAutoSaveHandler(
       fieldStates.set(fieldName, fieldState);
 
       // Perform the update
-      await actor.update(buildDocumentUpdate(fieldName, newValue));
+      await actor.update(buildDocumentUpdate(fieldName, newValue, element));
 
       // Update the saved value on success
       fieldState.lastSavedValue = newValue;
@@ -207,7 +267,7 @@ export function createAutoSaveHandler(
     // Set a new debounce timer (Requirement 8.10 - 500ms)
     fieldState.debounceTimer = setTimeout(() => {
       fieldState.debounceTimer = undefined;
-      persistField(fieldName, newValue).catch(() => {
+      persistField(fieldName, newValue, element).catch(() => {
         // Error already handled in persistField
       });
     }, debounceMs);
@@ -276,7 +336,7 @@ export function createAutoSaveHandler(
           clearTimeout(fieldState.debounceTimer);
           fieldState.debounceTimer = undefined;
         }
-        persistField(fieldName, target.value).catch(() => {});
+        persistField(fieldName, target.value, target).catch(() => {});
       }
     } else if (event instanceof KeyboardEvent && event.key === 'Enter') {
       // Don't trigger auto-save on Enter for textareas (allow Shift+Enter for multiline)
