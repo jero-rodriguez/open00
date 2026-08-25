@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.10](https://github.com/jero-rodriguez/open00/compare/v1.17.9...v1.17.10) (2026-08-25)
+
+
+### Bug Fixes
+
+* use colors and styles from foundry ([959d435](https://github.com/jero-rodriguez/open00/commit/959d435c94138f5194261b6a34220f911ad875bd))
+
 ## [1.17.9](https://github.com/jero-rodriguez/open00/compare/v1.17.8...v1.17.9) (2026-08-24)
 
 
