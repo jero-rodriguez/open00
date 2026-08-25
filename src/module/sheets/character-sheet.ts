@@ -88,7 +88,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     tag: 'form',
     position: { width: 1080, height: 800 },
     window: { resizable: true },
-    form: { submitOnChange: true },
+    form: { submitOnChange: false },
     actions: {
       rollSkill: Open00CharacterSheet.#rollSkill,
       rollStat: Open00CharacterSheet.#rollStat,

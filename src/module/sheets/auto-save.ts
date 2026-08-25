@@ -267,7 +267,16 @@ export function createAutoSaveHandler(
     if (event.type === 'blur') {
       const fieldName = target.name;
       if (fieldName && target.value !== String(getActorValue(fieldName))) {
-        debouncedPersist(fieldName, target.value, target);
+        // Persist immediately on blur (no debounce) to prevent re-render races
+        // where a partial render could overwrite the input with stale actor data.
+        const fieldState = fieldStates.get(fieldName) || { lastSavedValue: getActorValue(fieldName) };
+        fieldStates.set(fieldName, fieldState);
+        fieldState.currentElement = target;
+        if (fieldState.debounceTimer) {
+          clearTimeout(fieldState.debounceTimer);
+          fieldState.debounceTimer = undefined;
+        }
+        persistField(fieldName, target.value).catch(() => {});
       }
     } else if (event instanceof KeyboardEvent && event.key === 'Enter') {
       // Don't trigger auto-save on Enter for textareas (allow Shift+Enter for multiline)
