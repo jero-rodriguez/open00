@@ -13,7 +13,7 @@ import { determineEncumbranceLevel, computeTotalEncumbrance } from '../engine/en
 import { getActiveBonuses } from '../engine/affinity.js';
 import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
 import { getCharacterSheetUpdateParts } from './partial-render.js';
-import { deriveKinCultureVocationEffects } from './kin-culture-vocation-effects.js';
+import { deriveKinCultureVocationEffects, clearAllIdentityEffects } from './kin-culture-vocation-effects.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -88,7 +88,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     tag: 'form',
     position: { width: 1080, height: 800 },
     window: { resizable: true },
-    form: { submitOnChange: true },
+    form: { submitOnChange: false },
     actions: {
       rollSkill: Open00CharacterSheet.#rollSkill,
       rollStat: Open00CharacterSheet.#rollStat,
@@ -790,7 +790,50 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     const item = itemId
       ? sheet.actor.items.find((candidate: Item) => candidate.id === itemId)
       : sheet.actor.items.find((candidate: Item) => candidate.type === itemType);
-    if (item) void item.delete();
+    if (!item) return;
+
+    const type = item.type;
+
+    // Identity items require bonus cleanup before deletion
+    if (type === 'kin' || type === 'culture' || type === 'vocation') {
+      void sheet.#removeIdentityItem(item, type);
+      return;
+    }
+
+    void item.delete();
+  }
+
+  /**
+   * Remove a kin, culture, or vocation item from the actor, zeroing out all
+   * identity-derived bonuses and then re-applying effects from whichever
+   * identity items remain attached.
+   */
+  async #removeIdentityItem(item: Item, type: string): Promise<void> {
+    await item.delete();
+
+    // Zero all identity-derived fields first
+    const system = this.actor.system as Record<string, unknown>;
+    const clearUpdates = clearAllIdentityEffects(system);
+
+    // Re-derive effects from remaining identity items (excluding the one just deleted)
+    const remaining = {
+      kin: type !== 'kin'
+        ? (this.actor.items.find((i: Item) => i.type === 'kin')?.system as Record<string, unknown> | undefined)
+        : undefined,
+      culture: type !== 'culture'
+        ? (this.actor.items.find((i: Item) => i.type === 'culture')?.system as Record<string, unknown> | undefined)
+        : undefined,
+      vocation: type !== 'vocation'
+        ? (this.actor.items.find((i: Item) => i.type === 'vocation')?.system as Record<string, unknown> | undefined)
+        : undefined,
+    };
+    const reapplyUpdates = deriveKinCultureVocationEffects(system, remaining);
+
+    // Merge: clear first, then overlay remaining effects
+    const finalUpdates = { ...clearUpdates, ...reapplyUpdates };
+    if (Object.keys(finalUpdates).length > 0) {
+      await this.actor.update(finalUpdates);
+    }
   }
 
   static #setDrivePoints(event: Event, target: HTMLElement): void {

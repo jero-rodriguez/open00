@@ -10,6 +10,7 @@
  */
 
 import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
+import { DEFAULT_SKILL_DEFINITIONS } from '../data/skills.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -229,6 +230,19 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         LowerLegs: zones.includes('LowerLegs'),
         ShieldArm: zones.includes('ShieldArm'),
       };
+    }
+
+    // Build culture skill allocation data for the editable table
+    if (partId === 'details' && context['isCulture']) {
+      const existingAllocations = (system['skillRankAllocations'] as Array<{ skillName: string; ranks: number }>) ?? [];
+      context['cultureSkillAllocations'] = DEFAULT_SKILL_DEFINITIONS.map((skill, index) => {
+        const match = existingAllocations.find((a) => a.skillName === skill.name);
+        return {
+          skillName: skill.name,
+          ranks: match?.ranks ?? 0,
+          index,
+        };
+      });
     }
 
     return context;

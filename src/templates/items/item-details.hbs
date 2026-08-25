@@ -316,17 +316,16 @@
       <input type="number" name="system.spellLoreRanks" value="{{system.spellLoreRanks}}" min="0" max="3" />
     </div>
 
-    {{#if system.skillRankAllocations.length}}
     <h3 class="section-subtitle">Skill Rank Allocations</h3>
-    <div class="item-array-list">
-      {{#each system.skillRankAllocations}}
-      <div class="array-row">
-        <span class="array-label">{{this.skillName}}</span>
-        <span class="array-value">{{this.ranks}}</span>
+    <div class="skill-allocations-table">
+      {{#each cultureSkillAllocations}}
+      <div class="field-row field-row--compact">
+        <label class="field-label">{{this.skillName}}</label>
+        <input type="number" name="system.skillRankAllocations.{{this.index}}.ranks" value="{{this.ranks}}" min="0" max="5" />
+        <input type="hidden" name="system.skillRankAllocations.{{this.index}}.skillName" value="{{this.skillName}}" />
       </div>
       {{/each}}
     </div>
-    {{/if}}
 
     {{#if system.availableSpellLores.length}}
     <h3 class="section-subtitle">Available Spell Lores</h3>
