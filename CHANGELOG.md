@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.17.11](https://github.com/jero-rodriguez/open00/compare/v1.17.10...v1.17.11) (2026-08-25)
+
+
+### Bug Fixes
+
+* add skill allocation by culture ([8eeb23e](https://github.com/jero-rodriguez/open00/commit/8eeb23ed7a20fc81279f93cf8b5c1c0027c06ec0))
+* remove kin, culture and vocation ([59d63ab](https://github.com/jero-rodriguez/open00/commit/59d63abbf03909e6dbac8cbb4a7456d6b4cbc198))
+* stats modify to zero when on change ([283f99a](https://github.com/jero-rodriguez/open00/commit/283f99a69e9430538ed888af2f83eb2df3943386))
+
 ## [1.17.10](https://github.com/jero-rodriguez/open00/compare/v1.17.9...v1.17.10) (2026-08-25)
 
 
