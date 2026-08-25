@@ -59,7 +59,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     tag: 'form',
     position: { width: 560, height: 520 },
     window: { resizable: true },
-    form: { submitOnChange: true },
+    form: { submitOnChange: false },
   };
 
   /** Wider sheets for types with large tables */

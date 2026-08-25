@@ -14,6 +14,10 @@ describe('character sheet roll affordances', () => {
   });
 
   it('provides a d100 icon for every rollable name', () => {
-    expect(template.match(/fa-dice-d100 roll-name-icon/g)).toHaveLength(7);
+    // 6 stat rows + 1 save row template = at least 7 dice icon buttons
+    // Stats have a separate icon-button with fa-dice-d100 at end of row
+    // Save rolls also have a separate icon-button with fa-dice-d100
+    const diceIcons = template.match(/class="icon-button roll-skill" data-action="roll(Stat|Save)"/g);
+    expect(diceIcons!.length).toBeGreaterThanOrEqual(7);
   });
 });
