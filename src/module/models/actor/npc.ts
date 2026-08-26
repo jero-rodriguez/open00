@@ -13,6 +13,9 @@ const { SchemaField, NumberField, StringField, HTMLField, BooleanField, ArrayFie
 export class NpcDataModel extends foundry.abstract.TypeDataModel {
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
+      // Schema version for migration tracking
+      schemaVersion: new NumberField({ integer: true, min: 0, initial: 2 }),
+
       // Level (0–50, default 1) — Req 2.1
       level: new NumberField({ integer: true, min: 0, max: 50, initial: 1 }),
 
@@ -88,5 +91,30 @@ export class NpcDataModel extends foundry.abstract.TypeDataModel {
         { max: 20 },
       ),
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Data Migration — strips any derived keys that might exist in NPC data.
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Forward-only migration for NPC documents.
+   * NPCs have minimal derived state, but we defensively strip any keys
+   * that might have leaked into the persisted data.
+   *
+   * Idempotent: no-ops if schemaVersion >= 2.
+   */
+  static override migrateData(source: Record<string, unknown>): Record<string, unknown> {
+    if (typeof source.schemaVersion === 'number' && source.schemaVersion >= 2) {
+      return super.migrateData(source);
+    }
+
+    // Defensive: strip any derived top-level keys that shouldn't be persisted
+    delete source.encumbrance;
+
+    // Bump schema version
+    source.schemaVersion = 2;
+
+    return super.migrateData(source);
   }
 }

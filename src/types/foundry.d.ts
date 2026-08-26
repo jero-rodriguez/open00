@@ -30,6 +30,7 @@ declare global {
       // eslint-disable-next-line @typescript-eslint/no-empty-object-type
       class TypeDataModel {
         static defineSchema(): Record<string, foundry.data.fields.DataField>;
+        static migrateData(source: Record<string, unknown>): Record<string, unknown>;
         prepareBaseData?(): void;
         prepareDerivedData?(): void;
         parent?: any;
@@ -202,7 +203,16 @@ declare global {
     system: Record<string, unknown>;
     items: Collection<Item>;
     update(data: Record<string, unknown>): Promise<this>;
+    createEmbeddedDocuments(type: string, data: Record<string, unknown>[]): Promise<Item[]>;
     prepareDerivedData(): void;
+    _onCreateDescendantDocuments(
+      parent: any,
+      collection: string,
+      documents: Item[],
+      data: Record<string, unknown>[],
+      options: Record<string, unknown>,
+      userId: string,
+    ): void;
   }
 
   class Item {

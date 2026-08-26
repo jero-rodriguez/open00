@@ -18,7 +18,21 @@ import {
   type SkillRecord,
 } from '../../data/skills.js';
 
-const { SchemaField, NumberField, StringField, HTMLField, ArrayField } = foundry.data.fields;
+// ---------------------------------------------------------------------------
+// Migration helpers
+// ---------------------------------------------------------------------------
+
+/** Reverse map: display name → canonical SkillId for legacy array migration. */
+const NAME_TO_SKILL_ID: ReadonlyMap<string, SkillId> = new Map(
+  SKILL_ID_LIST.map((id) => [DEFAULT_SKILL_DEFINITIONS[id].name.toLowerCase(), id]),
+);
+
+/** Keys that are DERIVED and must be stripped from persisted source data. */
+const DERIVED_STAT_KEYS = ['kin'] as const;
+const DERIVED_SKILL_KEYS = ['vocation', 'kin', 'item'] as const;
+const DERIVED_TOP_LEVEL_KEYS = ['defense', 'encumbrance'] as const;
+
+const { SchemaField, NumberField, StringField, HTMLField, ArrayField, BooleanField } = foundry.data.fields;
 
 /** Stat key identifiers matching the schema. */
 export type StatKey = 'brn' | 'swi' | 'for' | 'wit' | 'wsd' | 'bea';
@@ -86,6 +100,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   skills!: Record<SkillId, SkillRecord>;
   soulDamage!: number;
   schemaVersion!: number;
+  seeded!: boolean;
 
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
@@ -161,6 +176,10 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       // Character Level
       level: new NumberField({ integer: true, min: 0, initial: 0 }),
 
+      // Whether identity seeding (wealth + cultural skill ranks) has already run.
+      // Once true, subsequent identity item additions do NOT re-seed.
+      seeded: new BooleanField({ initial: false }),
+
       // Development Points Per Level history
       developmentPointsPerLevel: new ArrayField(
         new NumberField({ integer: true, min: 0, initial: 0 }),
@@ -191,6 +210,102 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       // Background notes
       backgroundNotes: new HTMLField({ initial: '' }),
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Data Migration — converts any 1.x source to v2 schema on document load.
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Forward-only migration from 1.x schema to v2.
+   *
+   * - Converts legacy skills array → keyed record (matching name to canonical id)
+   * - Strips DERIVED fields (stats.*.kin, hp.max, mp.max, defense, encumbrance,
+   *   skills.*.vocation, skills.*.kin, skills.*.item)
+   * - Preserves PLAYER-OWNED fields (wealth, rank, spec, stats.*.base, stats.*.spec, hp.value)
+   * - Removes rank-30 cap (values preserved as-is)
+   * - Bumps schemaVersion to 2
+   *
+   * Idempotent: no-ops if schemaVersion >= 2.
+   */
+  static override migrateData(source: Record<string, unknown>): Record<string, unknown> {
+    // Already migrated — idempotent
+    if (typeof source.schemaVersion === 'number' && source.schemaVersion >= 2) {
+      return super.migrateData(source);
+    }
+
+    // --- Skills: array → keyed record ---
+    const rawSkills = source.skills;
+    if (Array.isArray(rawSkills)) {
+      const keyed: Record<string, { rank: number; spec: number }> = {};
+
+      for (const entry of rawSkills) {
+        if (!entry || typeof entry !== 'object') continue;
+        const name = (entry as Record<string, unknown>).name;
+        if (typeof name !== 'string') continue;
+
+        const id = NAME_TO_SKILL_ID.get(name.toLowerCase());
+        if (!id) continue; // Unknown skill name — skip (shouldn't happen)
+
+        const rank = typeof (entry as any).rank === 'number' ? (entry as any).rank : 0;
+        const spec = typeof (entry as any).spec === 'number' ? (entry as any).spec : 0;
+        keyed[id] = { rank, spec };
+      }
+
+      // Fill any missing skills with defaults
+      for (const id of SKILL_ID_LIST) {
+        if (!keyed[id]) {
+          keyed[id] = { rank: 0, spec: 0 };
+        }
+      }
+
+      source.skills = keyed;
+    } else if (rawSkills && typeof rawSkills === 'object' && !Array.isArray(rawSkills)) {
+      // Already a keyed record — strip derived keys from each skill entry
+      const record = rawSkills as Record<string, Record<string, unknown>>;
+      for (const id of Object.keys(record)) {
+        if (record[id] && typeof record[id] === 'object') {
+          for (const key of DERIVED_SKILL_KEYS) {
+            delete record[id][key];
+          }
+        }
+      }
+    }
+
+    // --- Stats: strip derived 'kin' key from each stat ---
+    const rawStats = source.stats;
+    if (rawStats && typeof rawStats === 'object') {
+      const stats = rawStats as Record<string, Record<string, unknown>>;
+      for (const statKey of Object.keys(stats)) {
+        if (stats[statKey] && typeof stats[statKey] === 'object') {
+          for (const key of DERIVED_STAT_KEYS) {
+            delete stats[statKey][key];
+          }
+        }
+      }
+    }
+
+    // --- HP: strip derived 'max' key ---
+    const rawHp = source.hp;
+    if (rawHp && typeof rawHp === 'object') {
+      delete (rawHp as Record<string, unknown>).max;
+    }
+
+    // --- MP: strip derived 'max' key ---
+    const rawMp = source.mp;
+    if (rawMp && typeof rawMp === 'object') {
+      delete (rawMp as Record<string, unknown>).max;
+    }
+
+    // --- Top-level derived keys ---
+    for (const key of DERIVED_TOP_LEVEL_KEYS) {
+      delete source[key];
+    }
+
+    // --- Bump schema version ---
+    source.schemaVersion = 2;
+
+    return super.migrateData(source);
   }
 
   // ---------------------------------------------------------------------------
