@@ -6,7 +6,13 @@ Last updated: 2026-08-26
 
 ## Sources scanned
 
-- ~/.kiro/skills
+- .agents/skills
+- /home/jerorodriguez/.agents/skills
+- /home/jerorodriguez/.config/opencode/skills
+- /home/jerorodriguez/.gemini/skills
+- /home/jerorodriguez/.gemini/antigravity-cli/skills
+- /home/jerorodriguez/.codex/skills
+- /home/jerorodriguez/.kiro/skills
 
 ## Contract
 
@@ -18,21 +24,38 @@ Last updated: 2026-08-26
 
 | Skill | Trigger / description | Scope | Path |
 | --- | --- | --- | --- |
-| `branch-pr` | Create Gentle AI pull requests with issue-first checks. Trigger: creating, opening, or preparing PRs for review. | user | `~/.kiro/skills/branch-pr/SKILL.md` |
-| `chained-pr` | Trigger: PRs over 400 lines, stacked PRs, review slices. Split oversized changes into chained PRs that protect review focus. | user | `~/.kiro/skills/chained-pr/SKILL.md` |
-| `cognitive-doc-design` | Design docs that reduce cognitive load. Trigger: writing guides, READMEs, RFCs, onboarding, architecture, or review-facing docs. | user | `~/.kiro/skills/cognitive-doc-design/SKILL.md` |
-| `comment-writer` | Write warm, direct collaboration comments. Trigger: PR feedback, issue replies, reviews, Slack messages, or GitHub comments. | user | `~/.kiro/skills/comment-writer/SKILL.md` |
-| `gentle-ai-bench` | Trigger: bench, journey, journeys, driven mode, gentle-ai-bench, journey corpus, j-numbers, bench axis. Author and verify gentle-ai bench journeys; go test ./bench never proves driven execution. | user | `~/.kiro/skills/gentle-ai-bench/SKILL.md` |
-| `go-testing` | Trigger: Go tests, go test coverage, Bubbletea teatest, golden files. Apply focused Go testing patterns. | user | `~/.kiro/skills/go-testing/SKILL.md` |
-| `issue-creation` | Create and triage GitHub issues from repository evidence. Trigger: issue creation, bug reports, feature requests, or issue approval. | user | `~/.kiro/skills/issue-creation/SKILL.md` |
-| `judgment-day` | Trigger: judgment day, dual review, adversarial review, juzgar. Run explicit blind dual review with at most two scoped fix/re-judgment rounds. | user | `~/.kiro/skills/judgment-day/SKILL.md` |
-| `rdd-defect-workflow` | Trigger: RDD, receipt-driven development, review authority, receipt/lineage, correction/recovery, delivery gate/kill switch, bounded review defects. Guide work. | user | `~/.kiro/skills/rdd-defect-workflow/SKILL.md` |
-| `refactor` | Surgical code refactoring to improve maintainability without changing behavior. Trigger: extracting functions, renaming, breaking down god functions, design patterns. | user | `~/.kiro/skills/refactor/SKILL.md` |
-| `skill-creator` | Trigger: new skills, agent instructions, documenting AI usage patterns. Create LLM-first skills with valid frontmatter. | user | `~/.kiro/skills/skill-creator/SKILL.md` |
-| `skill-improver` | Trigger: improve skills, audit skills, refactor skills, skill quality. Audit and upgrade existing LLM-first skills. | user | `~/.kiro/skills/skill-improver/SKILL.md` |
-| `skill-registry` | Trigger: update skills, skill registry, actualizar skills, after skill changes. Index available skills by trigger and path. | user | `~/.kiro/skills/skill-registry/SKILL.md` |
-| `systemic-issue-triage` | Trigger: new issue, bug report, triage, backlog, issue flood, community report, root cause, dead-end, blocked user. Attack issues by root class, never one-by-one; fixes must shrink the system, not grow it. | user | `~/.kiro/skills/systemic-issue-triage/SKILL.md` |
-| `work-unit-commits` | Plan commits as reviewable work units. Trigger: implementation, commit splitting, chained PRs, or keeping tests and docs with code. | user | `~/.kiro/skills/work-unit-commits/SKILL.md` |
+| `branch-pr` | Create Gentle AI pull requests with issue-first checks. Trigger: creating, opening, or preparing PRs for review. | user | `/home/jerorodriguez/.agents/skills/branch-pr/SKILL.md` |
+| `chained-pr` | Trigger: PRs over 400 lines, stacked PRs, review slices. Split oversized changes into chained PRs that protect review focus. | user | `/home/jerorodriguez/.agents/skills/chained-pr/SKILL.md` |
+| `cognitive-doc-design` | Design docs that reduce cognitive load. Trigger: writing guides, READMEs, RFCs, onboarding, architecture, or review-facing docs. | user | `/home/jerorodriguez/.agents/skills/cognitive-doc-design/SKILL.md` |
+| `comment-writer` | Write warm, direct collaboration comments. Trigger: PR feedback, issue replies, reviews, Slack messages, or GitHub comments. | user | `/home/jerorodriguez/.agents/skills/comment-writer/SKILL.md` |
+| `foundry-system-development` | Trigger: FoundryVTT TypeScript, data model, document, sheet, manifest, hook, system entry point. Apply the open00 Foundry v14 development reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/foundry-system-development/SKILL.md` |
+| `gentle-ai-bench` | Trigger: bench, journey, journeys, driven mode, gentle-ai-bench, journey corpus, j-numbers, bench axis. Author and verify gentle-ai bench journeys; go test ./bench never proves driven execution. | user | `/home/jerorodriguez/.agents/skills/gentle-ai-bench/SKILL.md` |
+| `go-testing` | Trigger: Go tests, go test coverage, Bubbletea teatest, golden files. Apply focused Go testing patterns. | user | `/home/jerorodriguez/.agents/skills/go-testing/SKILL.md` |
+| `issue-creation` | Create and triage GitHub issues from repository evidence. Trigger: issue creation, bug reports, feature requests, or issue approval. | user | `/home/jerorodriguez/.agents/skills/issue-creation/SKILL.md` |
+| `java-concurrency` | Master Java concurrency - threads, executors, locks, CompletableFuture, virtual threads | user | `/home/jerorodriguez/.agents/skills/java-concurrency/SKILL.md` |
+| `java-fundamentals` | Master core Java programming - syntax, OOP, collections, streams, and exception handling | user | `/home/jerorodriguez/.agents/skills/java-fundamentals/SKILL.md` |
+| `java-jpa-hibernate` | Master JPA/Hibernate - entity design, queries, transactions, performance optimization | user | `/home/jerorodriguez/.agents/skills/java-jpa-hibernate/SKILL.md` |
+| `java-maven` | Master Apache Maven - POM configuration, plugins, lifecycle, dependency management | user | `/home/jerorodriguez/.agents/skills/java-maven/SKILL.md` |
+| `java-microservices` | Build microservices - Spring Cloud, service mesh, event-driven, resilience patterns | user | `/home/jerorodriguez/.agents/skills/java-microservices/SKILL.md` |
+| `java-spring-boot` | Build production Spring Boot applications - REST APIs, Security, Data, Actuator | user | `/home/jerorodriguez/.agents/skills/java-spring-boot/SKILL.md` |
+| `java-springboot` | Get best practices for developing applications with Spring Boot. | user | `/home/jerorodriguez/.agents/skills/java-springboot/SKILL.md` |
+| `judgment-day` | Trigger: judgment day, dual review, adversarial review, juzgar. Run explicit blind dual review with at most two scoped fix/re-judgment rounds. | user | `/home/jerorodriguez/.agents/skills/judgment-day/SKILL.md` |
+| `rdd-defect-workflow` | Trigger: RDD, receipt-driven development, review authority, receipt/lineage, correction/recovery, delivery gate/kill switch, bounded review defects. Guide work. | user | `/home/jerorodriguez/.agents/skills/rdd-defect-workflow/SKILL.md` |
+| `refactor` | Surgical code refactoring to improve maintainability without changing behavior. Covers extracting functions, renaming variables, breaking down god functions, improving type safety, eliminating code smells, and applying design patterns. Less drastic than repo-rebuilder; use for gradual improvements. | user | `/home/jerorodriguez/.agents/skills/refactor/SKILL.md` |
+| `roll20-sheet-design` | Trigger: character sheet UI, Handlebars template, CSS, layout, Roll20 parity, visual styling. Apply the open00 Roll20 sheet design reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/roll20-sheet-design/SKILL.md` |
+| `skill-creator` | Trigger: new skills, agent instructions, documenting AI usage patterns. Create LLM-first skills with valid frontmatter. | user | `/home/jerorodriguez/.agents/skills/skill-creator/SKILL.md` |
+| `skill-improver` | Trigger: improve skills, audit skills, refactor skills, skill quality. Audit and upgrade existing LLM-first skills. | user | `/home/jerorodriguez/.agents/skills/skill-improver/SKILL.md` |
+| `systemic-issue-triage` | Trigger: new issue, bug report, triage, backlog, issue flood, community report, root cause, dead-end, blocked user. Attack issues by root class, never one-by-one; fixes must shrink the system, not grow it. | user | `/home/jerorodriguez/.agents/skills/systemic-issue-triage/SKILL.md` |
+| `vsd-bestiary` | Trigger: VsD creature, bestiary, monster, NPC stat block, creature attack, creature ability. Apply the open00 bestiary reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-bestiary/SKILL.md` |
+| `vsd-character` | Trigger: VsD character creation, kin, culture, vocation, stats, skills, background options, advancement. Apply the open00 character reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-character/SKILL.md` |
+| `vsd-combat` | Trigger: VsD combat, tactical round, initiative, attack, parry, defense, critical, damage, condition. Apply the open00 combat reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-combat/SKILL.md` |
+| `vsd-core-rules` | Trigger: VsD dice, d100, action roll, difficulty, save roll, skill roll, resistance, general engine mechanics. Apply the open00 core-rules reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-core-rules/SKILL.md` |
+| `vsd-equipment` | Trigger: VsD equipment, wealth, weapon, armor, shield, gear, item property, attack table. Apply the open00 equipment reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-equipment/SKILL.md` |
+| `vsd-gm-darkmaster` | Trigger: VsD GM tools, opponent creation, Darkmaster, battle, war, reward, experience, campaign. Apply the open00 GM reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-gm-darkmaster/SKILL.md` |
+| `vsd-grimoire` | Trigger: VsD spell data, spell effect, spell parameter, spell lore, weave list, grimoire. Apply the open00 spell and lore reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-grimoire/SKILL.md` |
+| `vsd-magic` | Trigger: VsD casting, magic points, spell lore, weave, warping, resonance, spell failure, overcasting. Apply the open00 magic-system reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-magic/SKILL.md` |
+| `vsd-travel-healing` | Trigger: VsD travel, encumbrance, hazard, chase, foraging, injury, healing, poison, disease, herb. Apply the open00 travel and healing reference. | project | `/home/jerorodriguez/workspace-personal/open00/.agents/skills/vsd-travel-healing/SKILL.md` |
+| `work-unit-commits` | Plan commits as reviewable work units. Trigger: implementation, commit splitting, chained PRs, or keeping tests and docs with code. | user | `/home/jerorodriguez/.agents/skills/work-unit-commits/SKILL.md` |
 
 ## Loading protocol
 

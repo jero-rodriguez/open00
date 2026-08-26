@@ -144,3 +144,5 @@ vite.config.ts.timestamp-*
 
 # AI agent tooling (local index cache)
 .codegraph/
+# Local AI runtime state
+.atl/
