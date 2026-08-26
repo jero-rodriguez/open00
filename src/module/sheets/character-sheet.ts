@@ -248,17 +248,23 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     return super._onDropItem(event, data);
   }
 
-  async #applyIdentityEffects(_createdItems: Item[] = []): Promise<void> {
-    const kin = this.actor.items.find((item: Item) => item.type === 'kin');
-    const vocation = this.actor.items.find((item: Item) => item.type === 'vocation');
-    const culture = this.actor.items.find((item: Item) => item.type === 'culture');
-
+  async #applyIdentityEffects(createdItems: Item[] = []): Promise<void> {
     // Use toObject() on system data to get plain objects that bracket-access works on reliably
     const toPlain = (item: Item | undefined): Record<string, unknown> | undefined => {
       if (!item) return undefined;
       const sys = item.system as unknown as { toObject?: () => Record<string, unknown> };
       return typeof sys?.toObject === 'function' ? sys.toObject() : (item.system as Record<string, unknown>);
     };
+
+    // Prefer freshly-created items (guaranteed to have hydrated data),
+    // fall back to actor.items for identity types not in the created batch.
+    const findIdentity = (type: string): Item | undefined =>
+      createdItems.find((i: Item) => i.type === type) ??
+      this.actor.items.find((item: Item) => item.type === type);
+
+    const kin = findIdentity('kin');
+    const vocation = findIdentity('vocation');
+    const culture = findIdentity('culture');
 
     const updates = deriveKinCultureVocationEffects(this.actor.system as Record<string, unknown>, {
       kin: toPlain(kin),

@@ -160,7 +160,9 @@ export function createAutoSaveHandler(
       }
     }
 
-    return { [fieldName]: coerceFormValue(getActorValue(fieldName), newValue) };
+    // Use source value for type coercion (plain object, no DataModel proxies)
+    const currentValue = getActorSourceValue(fieldName) ?? getActorValue(fieldName);
+    return { [fieldName]: coerceFormValue(currentValue, newValue) };
   }
 
   /**
