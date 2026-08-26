@@ -17,6 +17,11 @@ function copyDir(src: string, dest: string) {
   }
 }
 
+/** Copy externally supplied combat-table JSON into the shipped system data directory. */
+export function copyStaticData(sourceRoot = 'src', outputRoot = 'dist'): void {
+  copyDir(resolve(sourceRoot, 'data'), resolve(outputRoot, 'data'));
+}
+
 /** Recursively find all .ts files (excluding .d.ts) in a directory */
 function findTsFiles(dir: string): string[] {
   const results: string[] = [];
@@ -42,6 +47,7 @@ function foundryAssets() {
       copyDir(resolve('src/lang'), resolve('dist/lang'));
       copyDir(resolve('src/templates'), resolve('dist/templates'));
       copyDir(resolve('src/styles'), resolve('dist/styles'));
+      copyStaticData();
     },
   };
 }
