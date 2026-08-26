@@ -4,13 +4,13 @@ inclusion: always
 
 # Verification Rules for This Project
 
-## Pure Engine Code (src/engine/)
+## Pure Engine Code (src/module/engine/)
 
-For files in `src/engine/` and their tests in `tests/engine/`:
+For files in `src/module/engine/` and their tests in `tests/engine/`:
 - Run `npm test` (vitest --run) to verify correctness
 - These modules have zero FoundryVTT imports and are fully testable
 
-## FoundryVTT-Dependent Code (src/models/, src/sheets/, src/vsd-system.ts)
+## FoundryVTT-Dependent Code (src/module/models/, src/module/sheets/, src/open00-system.ts)
 
 For TypeDataModels, Sheets, and the system entry point:
 - **Only verify with `tsc --noEmit`** — this confirms type correctness

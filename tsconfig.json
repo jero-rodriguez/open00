@@ -12,11 +12,13 @@
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "src",
+    "types": [],
     "paths": {
-      "@engine/*": ["./src/engine/*"],
-      "@models/*": ["./src/models/*"],
-      "@sheets/*": ["./src/sheets/*"],
-      "@data/*": ["./src/data/*"]
+      "@engine/*": ["./src/module/engine/*"],
+      "@models/*": ["./src/module/models/*"],
+      "@sheets/*": ["./src/module/sheets/*"],
+      "@data/*": ["./src/module/data/*"],
+      "@documents/*": ["./src/module/documents/*"]
     }
   },
   "include": [
