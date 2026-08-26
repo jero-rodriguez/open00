@@ -1,4 +1,9 @@
-/** The fixed skills printed on the Against the Darkmaster character sheet. */
+/**
+ * Canonical skill definitions for the Against the Darkmaster character sheet.
+ *
+ * Each skill has a stable kebab-case id used as the key in the persisted
+ * keyed SchemaField record on CharacterDataModel.
+ */
 
 export type SkillCategory =
   | 'Armor'
@@ -11,6 +16,93 @@ export type SkillCategory =
 
 export type SkillStatKey = '' | 'brn' | 'swi' | 'for' | 'wit' | 'wsd' | 'bea';
 
+/**
+ * The 22 canonical skill ids. Keyed records on CharacterDataModel use these
+ * as property names. Order matches the printed character sheet.
+ */
+export const SKILL_IDS = Object.freeze({
+  armor: 'armor',
+  blades: 'blades',
+  blunt: 'blunt',
+  ranged: 'ranged',
+  polearms: 'polearms',
+  brawl: 'brawl',
+  athletics: 'athletics',
+  ride: 'ride',
+  hunting: 'hunting',
+  nature: 'nature',
+  wandering: 'wandering',
+  acrobatics: 'acrobatics',
+  stealth: 'stealth',
+  'locks-traps': 'locks-traps',
+  perception: 'perception',
+  deceive: 'deceive',
+  arcana: 'arcana',
+  charisma: 'charisma',
+  cultures: 'cultures',
+  healer: 'healer',
+  'songs-tales': 'songs-tales',
+  body: 'body',
+} as const);
+
+/** Union type of all canonical skill ids. */
+export type SkillId = keyof typeof SKILL_IDS;
+
+/** All skill ids as an ordered array (matches printed sheet order). */
+export const SKILL_ID_LIST: readonly SkillId[] = Object.keys(SKILL_IDS) as SkillId[];
+
+export interface SkillDefinition {
+  id: SkillId;
+  name: string;
+  category: SkillCategory;
+  statKey: SkillStatKey;
+}
+
+/**
+ * Persisted skill data for a single skill on a character.
+ * Only player-owned / seeded fields are stored; derived bonuses
+ * (vocation, kin, item) are computed in prepareDerivedData.
+ */
+export interface SkillRecord {
+  rank: number;
+  spec: number;
+}
+
+/**
+ * Canonical skill definitions keyed by SkillId.
+ * Use this to look up display name, category, and governing stat.
+ */
+export const DEFAULT_SKILL_DEFINITIONS: Readonly<Record<SkillId, SkillDefinition>> = Object.freeze({
+  armor: { id: 'armor', name: 'Armor', category: 'Armor', statKey: '' },
+  blades: { id: 'blades', name: 'Blades', category: 'Combat', statKey: 'brn' },
+  blunt: { id: 'blunt', name: 'Blunt', category: 'Combat', statKey: 'brn' },
+  ranged: { id: 'ranged', name: 'Ranged', category: 'Combat', statKey: 'swi' },
+  polearms: { id: 'polearms', name: 'Polearms', category: 'Combat', statKey: 'brn' },
+  brawl: { id: 'brawl', name: 'Brawl', category: 'Combat', statKey: 'brn' },
+  athletics: { id: 'athletics', name: 'Athletics', category: 'Adventuring', statKey: 'brn' },
+  ride: { id: 'ride', name: 'Ride', category: 'Adventuring', statKey: 'swi' },
+  hunting: { id: 'hunting', name: 'Hunting', category: 'Adventuring', statKey: 'wit' },
+  nature: { id: 'nature', name: 'Nature', category: 'Adventuring', statKey: 'wsd' },
+  wandering: { id: 'wandering', name: 'Wandering', category: 'Adventuring', statKey: 'wsd' },
+  acrobatics: { id: 'acrobatics', name: 'Acrobatics', category: 'Roguery', statKey: 'swi' },
+  stealth: { id: 'stealth', name: 'Stealth', category: 'Roguery', statKey: 'swi' },
+  'locks-traps': { id: 'locks-traps', name: 'Locks & Traps', category: 'Roguery', statKey: 'wit' },
+  perception: { id: 'perception', name: 'Perception', category: 'Roguery', statKey: 'wsd' },
+  deceive: { id: 'deceive', name: 'Deceive', category: 'Roguery', statKey: 'wit' },
+  arcana: { id: 'arcana', name: 'Arcana', category: 'Lore', statKey: 'wit' },
+  charisma: { id: 'charisma', name: 'Charisma', category: 'Lore', statKey: 'bea' },
+  cultures: { id: 'cultures', name: 'Cultures', category: 'Lore', statKey: 'wit' },
+  healer: { id: 'healer', name: 'Healer', category: 'Lore', statKey: 'wsd' },
+  'songs-tales': { id: 'songs-tales', name: 'Songs & Tales', category: 'Lore', statKey: 'bea' },
+  body: { id: 'body', name: 'Body', category: 'Body', statKey: 'for' },
+});
+
+// ---------------------------------------------------------------------------
+// Legacy compatibility — used by existing tests and the ready-hook migration.
+// TODO(v2-slice-4): Remove once migrateData replaces the ready-hook.
+// ---------------------------------------------------------------------------
+
+/** @deprecated Use DEFAULT_SKILL_DEFINITIONS keyed record instead. */
 export interface SkillData {
   name: string;
   category: SkillCategory;
@@ -22,55 +114,24 @@ export interface SkillData {
   item: number;
 }
 
-type SkillDefinition = Pick<SkillData, 'name' | 'category' | 'statKey'>;
-
-/**
- * Spell Lores are not included here: each lore is a separate, character-specific
- * skill and its associated stat varies by lore.
- */
-export const DEFAULT_SKILL_DEFINITIONS: readonly SkillDefinition[] = [
-  { name: 'Armor', category: 'Armor', statKey: '' },
-
-  { name: 'Blades', category: 'Combat', statKey: 'brn' },
-  { name: 'Blunt', category: 'Combat', statKey: 'brn' },
-  { name: 'Ranged', category: 'Combat', statKey: 'swi' },
-  { name: 'Polearms', category: 'Combat', statKey: 'brn' },
-  { name: 'Brawl', category: 'Combat', statKey: 'brn' },
-
-  { name: 'Athletics', category: 'Adventuring', statKey: 'brn' },
-  { name: 'Ride', category: 'Adventuring', statKey: 'swi' },
-  { name: 'Hunting', category: 'Adventuring', statKey: 'wit' },
-  { name: 'Nature', category: 'Adventuring', statKey: 'wsd' },
-  { name: 'Wandering', category: 'Adventuring', statKey: 'wsd' },
-
-  { name: 'Acrobatics', category: 'Roguery', statKey: 'swi' },
-  { name: 'Stealth', category: 'Roguery', statKey: 'swi' },
-  { name: 'Locks & Traps', category: 'Roguery', statKey: 'wit' },
-  { name: 'Perception', category: 'Roguery', statKey: 'wsd' },
-  { name: 'Deceive', category: 'Roguery', statKey: 'wit' },
-
-  { name: 'Arcana', category: 'Lore', statKey: 'wit' },
-  { name: 'Charisma', category: 'Lore', statKey: 'bea' },
-  { name: 'Cultures', category: 'Lore', statKey: 'wit' },
-  { name: 'Healer', category: 'Lore', statKey: 'wsd' },
-  { name: 'Songs & Tales', category: 'Lore', statKey: 'bea' },
-
-  { name: 'Body', category: 'Body', statKey: 'for' },
-];
-
-/** Return fresh mutable skill records suitable for persistence on an Actor. */
+/** @deprecated Use SKILL_ID_LIST + DEFAULT_SKILL_DEFINITIONS instead. */
 export function createDefaultSkills(): SkillData[] {
-  return DEFAULT_SKILL_DEFINITIONS.map((skill) => ({
-    ...skill,
-    rank: 0,
-    vocation: 0,
-    kin: 0,
-    spec: 0,
-    item: 0,
-  }));
+  return SKILL_ID_LIST.map((id) => {
+    const def = DEFAULT_SKILL_DEFINITIONS[id];
+    return {
+      name: def.name,
+      category: def.category,
+      statKey: def.statKey,
+      rank: 0,
+      vocation: 0,
+      kin: 0,
+      spec: 0,
+      item: 0,
+    };
+  });
 }
 
-/** Keep the fixed character skill list available when persisted data is missing or empty. */
+/** @deprecated Legacy helper. */
 export function ensureCharacterSkills(skills: SkillData[] | undefined): SkillData[] {
   return skills && skills.length > 0 ? skills : createDefaultSkills();
 }

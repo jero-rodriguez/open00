@@ -13,7 +13,12 @@ import { determineEncumbranceLevel, computeTotalEncumbrance } from '../engine/en
 import { getActiveBonuses } from '../engine/affinity.js';
 import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
 import { getCharacterSheetUpdateParts } from './partial-render.js';
-import { deriveKinCultureVocationEffects, clearAllIdentityEffects } from './kin-culture-vocation-effects.js';
+// TODO(v2-slice-3): Remove these stubs — identity effects now handled by prepareDerivedData + seeding.
+const deriveKinCultureVocationEffects = (
+  _system: Record<string, unknown>,
+  _identities: Record<string, unknown>,
+): Record<string, unknown> => ({});
+const clearAllIdentityEffects = (_system: Record<string, unknown>): Record<string, unknown> => ({});
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;

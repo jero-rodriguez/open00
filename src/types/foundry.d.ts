@@ -202,6 +202,7 @@ declare global {
     system: Record<string, unknown>;
     items: Collection<Item>;
     update(data: Record<string, unknown>): Promise<this>;
+    prepareDerivedData(): void;
   }
 
   class Item {
@@ -273,10 +274,12 @@ declare global {
 
   const CONFIG: {
     Actor: {
+      documentClass: typeof Actor;
       dataModels: Record<string, any>;
       trackableAttributes: Record<string, { bar: string[]; value: string[] }>;
     };
     Item: {
+      documentClass: typeof Item;
       dataModels: Record<string, any>;
     };
   };

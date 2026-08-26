@@ -1,113 +1,158 @@
 /**
  * CharacterDataModel — TypeDataModel for the Open 00 Player Character Actor type.
  *
- * Defines the persisted schema for stats, vitals (HP/MP/Drive Points),
- * defense, encumbrance level, and wealth.
+ * Defines the PERSISTED schema only. Derived values (hp.max, mp.max, defense,
+ * encumbrance, skill totals, stat kin bonuses, vocation/item bonuses) are
+ * computed in prepareDerivedData() and never stored in the database.
+ *
+ * Skills use a keyed SchemaField record (one field per canonical SkillId)
+ * instead of an ArrayField. Each skill stores only player-owned data:
+ * rank and spec bonus.
  */
 
 import { computeRankBonus } from '../../engine/rank-bonus.js';
-import { createDefaultSkills, ensureCharacterSkills, type SkillData } from '../../data/skills.js';
+import {
+  SKILL_ID_LIST,
+  DEFAULT_SKILL_DEFINITIONS,
+  type SkillId,
+  type SkillRecord,
+} from '../../data/skills.js';
 
 const { SchemaField, NumberField, StringField, HTMLField, ArrayField } = foundry.data.fields;
 
-/** Stat key identifiers matching the schema */
-type StatKey = 'brn' | 'swi' | 'for' | 'wit' | 'wsd' | 'bea';
+/** Stat key identifiers matching the schema. */
+export type StatKey = 'brn' | 'swi' | 'for' | 'wit' | 'wsd' | 'bea';
 
-function asFiniteNumber(value: unknown): number {
-  const numericValue = typeof value === 'string' && value.trim() === '' ? NaN : Number(value);
-  return Number.isFinite(numericValue) ? numericValue : 0;
+// ---------------------------------------------------------------------------
+// Helper: build the keyed skills SchemaField at define-time.
+// ---------------------------------------------------------------------------
+function buildSkillsSchema(): foundry.data.fields.DataField {
+  const fields: Record<string, foundry.data.fields.DataField> = {};
+  for (const id of SKILL_ID_LIST) {
+    fields[id] = new SchemaField({
+      rank: new NumberField({ integer: true, min: 0, initial: 0 }),
+      spec: new NumberField({ integer: true, initial: 0 }),
+    });
+  }
+  return new SchemaField(fields);
+}
+
+// ---------------------------------------------------------------------------
+// Derived-data shape (not persisted, populated in prepareDerivedData).
+// ---------------------------------------------------------------------------
+
+export interface DerivedSkillData {
+  rank: number;
+  spec: number;
+  /** Bonus from kin traits (DERIVED). */
+  kin: number;
+  /** Bonus from vocation (DERIVED). */
+  vocation: number;
+  /** Bonus from equipped items (DERIVED). */
+  item: number;
+  /** Total skill bonus = stat + rankBonus + kin + vocation + spec + item. */
+  total: number;
 }
 
 export class CharacterDataModel extends foundry.abstract.TypeDataModel {
-  /** Derived skill totals computed in prepareDerivedData(). Keyed by skill name. */
-  skillTotals: Map<string, number> = new Map();
+  // -- Derived properties (computed, not persisted) --------------------------
 
-  /** Stat values with base, kin, and spec modifiers */
-  stats!: Record<StatKey, { base: number; kin: number; spec: number }>;
-  skills!: SkillData[];
+  /** Derived skill totals and breakdowns, keyed by SkillId. */
+  derivedSkills!: Record<SkillId, DerivedSkillData>;
 
-  override prepareBaseData(): void {
-    this.skills = ensureCharacterSkills(this.skills);
-  }
+  /** Derived HP max (full Body Skill Bonus, capped by Kin maxHp, reduced by soulDamage). */
+  hpMax!: number;
+
+  /** Derived MP max. */
+  mpMax!: number;
+
+  /** Derived defense value. */
+  derivedDefense!: number;
+
+  /** Derived encumbrance level. */
+  derivedEncumbrance!: string;
+
+  // -- Schema fields (type annotations for access) ---------------------------
+
+  stats!: Record<StatKey, { base: number; spec: number }>;
+  hp!: { value: number };
+  mp!: { value: number };
+  drivePoints!: { value: number; max: number };
+  wealth!: number;
+  passions!: { nature: string; allegiance: string; motivation: string };
+  heroicPath!: string;
+  experience!: { total: number; dp: number };
+  level!: number;
+  skills!: Record<SkillId, SkillRecord>;
+  soulDamage!: number;
+  schemaVersion!: number;
 
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
-      // Six stats: each has base, kin, spec modifiers that sum to total bonus
-      // value = base + kin + spec (signed integer, -50 to +100)
+      // Schema version for migration tracking
+      schemaVersion: new NumberField({ integer: true, min: 0, initial: 2 }),
+
+      // Six stats: each has base and spec modifiers (kin is DERIVED from owned Kin Item)
       stats: new SchemaField({
         brn: new SchemaField({
           base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
           spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
         }),
         swi: new SchemaField({
           base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
           spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
         }),
         for: new SchemaField({
           base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
           spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
         }),
         wit: new SchemaField({
           base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
           spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
         }),
         wsd: new SchemaField({
           base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
           spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
         }),
         bea: new SchemaField({
           base: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
-          kin: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
           spec: new NumberField({ integer: true, min: -50, max: 100, initial: 0 }),
         }),
       }),
 
-      // Hit Points
+      // Hit Points — only current value is persisted; max is derived
       hp: new SchemaField({
-        value: new NumberField({ integer: true, min: 0, initial: 0 }),
-        max: new NumberField({ integer: true, min: 0, initial: 0 }),
+        value: new NumberField({ integer: true, initial: 0 }),
       }),
 
-      // Magic Points
+      // Magic Points — only current value is persisted; max is derived
       mp: new SchemaField({
         value: new NumberField({ integer: true, min: 0, initial: 0 }),
-        max: new NumberField({ integer: true, min: 0, initial: 0 }),
       }),
 
-      // Drive Points
+      // Drive Points — value is current pool, max is persisted (default 5)
       drivePoints: new SchemaField({
-        value: new NumberField({ integer: true, min: 0, initial: 0 }),
+        value: new NumberField({ integer: true, min: 0, initial: 1 }),
         max: new NumberField({ integer: true, min: 0, initial: 5 }),
       }),
 
-      // Defense
-      defense: new NumberField({ integer: true, initial: 0 }),
+      // Soul Damage — reduces HP max; player-owned, starts at 0
+      soulDamage: new NumberField({ integer: true, min: 0, initial: 0 }),
 
-      // Encumbrance level (qualitative)
-      encumbrance: new StringField({
-        initial: 'Unencumbered',
-        choices: ['Unencumbered', 'LightlyEncumbered', 'Encumbered', 'HeavilyEncumbered', 'OverEncumbered'] as const,
-      }),
-
-      // Wealth level (0-5)
+      // Wealth level (seeded from Kin + Culture + Background, then player-owned)
       wealth: new NumberField({ integer: true, min: 0, max: 5, initial: 0 }),
 
-      // Passions: Nature, Allegiance, Motivation (Req 1.7)
+      // Passions: Nature, Allegiance, Motivation
       passions: new SchemaField({
         nature: new StringField({ initial: '' }),
         allegiance: new StringField({ initial: '' }),
         motivation: new StringField({ initial: '' }),
       }),
 
-      // Heroic Path (Req 1.9)
+      // Heroic Path
       heroicPath: new StringField({ initial: '' }),
 
-      // Experience and Development Points (Req 1.10)
+      // Experience and Development Points
       experience: new SchemaField({
         total: new NumberField({ integer: true, min: 0, initial: 0 }),
         dp: new NumberField({ integer: true, min: 0, initial: 0 }),
@@ -116,97 +161,104 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       // Character Level
       level: new NumberField({ integer: true, min: 0, initial: 0 }),
 
-      // Development Points Per Level (array tracking DP earned at each level)
+      // Development Points Per Level history
       developmentPointsPerLevel: new ArrayField(
         new NumberField({ integer: true, min: 0, initial: 0 }),
         { initial: [] },
       ),
 
-      // Skills array (Req 1.11, 1.12)
-      skills: new ArrayField(
-        new SchemaField({
-          name: new StringField({ required: true, initial: '' }),
-          category: new StringField({ required: true, initial: '' }),
-          rank: new NumberField({ integer: true, min: 0, max: 30, initial: 0 }),
-          statKey: new StringField({ required: true, initial: '' }),
-          vocation: new NumberField({ integer: true, initial: 0 }),
-          kin: new NumberField({ integer: true, initial: 0 }),
-          spec: new NumberField({ integer: true, initial: 0 }),
-          item: new NumberField({ integer: true, initial: 0 }),
-        }),
-        { initial: createDefaultSkills() },
-      ),
+      // Skills — keyed record by canonical SkillId; only rank + spec are persisted
+      skills: buildSkillsSchema(),
 
-      // Special Abilities (free-form text entries shown on the Overview tab)
+      // Special Abilities (free-form text entries)
       specialAbilities: new ArrayField(
         new StringField({ initial: '' }),
         { initial: [] },
       ),
 
-      // Known Languages (free-form text entries shown on the Overview tab)
+      // Known Languages
       knownLanguages: new ArrayField(
         new StringField({ initial: '' }),
         { initial: [] },
       ),
 
-      // Biography (Req 8.9)
+      // Biography
       biography: new HTMLField({ initial: '' }),
 
-      // Appearance (Req 8.9)
+      // Appearance
       appearance: new HTMLField({ initial: '' }),
 
-      // Background notes (Req 8.9)
+      // Background notes
       backgroundNotes: new HTMLField({ initial: '' }),
     };
   }
 
+  // ---------------------------------------------------------------------------
+  // Derived data computation (skeleton — full formulas in Slice 8)
+  // ---------------------------------------------------------------------------
+
   /**
-   * Compute derived data for the character.
+   * Compute all derived data for the character.
    *
-   * Populates `skillTotals` map with totalBonus for each skill:
-   *   totalBonus = statValue + computeRankBonus(rank) + vocation + kin + spec + item
-   *
-   * Requirements: 1.12, 1.13
+   * TODO(v2-slice-8): Implement full formulas for:
+   *   - hp.max (Body Skill Bonus, capped by Kin maxHp, reduced by soulDamage)
+   *   - mp.max
+   *   - defense (SWI total + armor/shield)
+   *   - encumbrance level
+   *   - stat kin bonuses (from owned Kin Item traits)
+   *   - skill vocation/kin/item bonuses
+   *   - SR Level Bonus, TSR/WSR
    */
   override prepareDerivedData(): void {
-    this.skillTotals = new Map();
+    this._computeDerivedSkills();
+    this._computeDerivedVitals();
+  }
 
-    // Guard: stats or skills may be undefined during intermediate data preparation
-    // (e.g., when an Item drop triggers Actor.reset before schema hydration completes).
-    if (!this.stats) return;
+  private _computeDerivedSkills(): void {
+    const derived = {} as Record<SkillId, DerivedSkillData>;
 
-    const skills = this.skills;
-    if (!skills) return;
+    for (const id of SKILL_ID_LIST) {
+      const skill = this.skills?.[id];
+      const rank = skill?.rank ?? 0;
+      const spec = skill?.spec ?? 0;
 
-    for (const skill of skills) {
-      // If statKey is empty, the skill has no stat component (e.g., "Armor")
-      if (!skill.statKey || skill.statKey.trim() === '') {
-        const rankBonus = computeRankBonus(asFiniteNumber(skill.rank));
-        const totalBonus = rankBonus + asFiniteNumber(skill.vocation) + asFiniteNumber(skill.kin) + asFiniteNumber(skill.spec) + asFiniteNumber(skill.item);
-        this.skillTotals.set(skill.name, totalBonus);
-        continue;
-      }
+      // Stat contribution
+      const def = DEFAULT_SKILL_DEFINITIONS[id];
+      const statTotal = def.statKey ? this.getStatTotal(def.statKey as StatKey) : 0;
 
-      const stat = this.stats[skill.statKey as StatKey];
-      if (!stat) {
-        this.skillTotals.set(skill.name, 0);
-        continue;
-      }
-      const statValue = asFiniteNumber(stat.base) +
-                        asFiniteNumber(stat.kin) +
-                        asFiniteNumber(stat.spec);
-      const rankBonus = computeRankBonus(asFiniteNumber(skill.rank));
-      const totalBonus = statValue + rankBonus + asFiniteNumber(skill.vocation) + asFiniteNumber(skill.kin) + asFiniteNumber(skill.spec) + asFiniteNumber(skill.item);
-      this.skillTotals.set(skill.name, totalBonus);
+      // Rank bonus from engine
+      const rankBonus = computeRankBonus(rank);
+
+      // Derived bonuses (skeleton — populated in Slice 8 from owned Items)
+      const kin = 0;
+      const vocation = 0;
+      const item = 0;
+
+      const total = statTotal + rankBonus + kin + vocation + spec + item;
+
+      derived[id] = { rank, spec, kin, vocation, item, total };
     }
+
+    this.derivedSkills = derived;
+  }
+
+  private _computeDerivedVitals(): void {
+    // Skeleton — full formulas in Slice 8
+    // hp.max = full Body Skill Bonus, capped by Kin maxHp, reduced by soulDamage
+    const bodyTotal = this.derivedSkills?.body?.total ?? 0;
+    this.hpMax = Math.max(0, bodyTotal - (this.soulDamage ?? 0));
+    this.mpMax = 0;
+    this.derivedDefense = 0;
+    this.derivedEncumbrance = 'Unencumbered';
   }
 
   /**
-   * Get the total value for a stat (base + kin + spec).
+   * Get the total value for a stat (base + spec).
+   * Kin bonus will be added in Slice 8 when derived from owned Kin Item.
    */
   getStatTotal(statKey: StatKey): number {
     const stat = this.stats?.[statKey];
     if (!stat) return 0;
-    return asFiniteNumber(stat.base) + asFiniteNumber(stat.kin) + asFiniteNumber(stat.spec);
+    return (stat.base ?? 0) + (stat.spec ?? 0);
   }
 }
