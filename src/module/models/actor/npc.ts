@@ -75,7 +75,7 @@ export class NpcDataModel extends foundry.abstract.TypeDataModel {
           name: new StringField({ max: 80, initial: '' }),
           bonus: new NumberField({ integer: true, initial: 0 }),
           category: new StringField({
-            choices: ['Rog', 'Adv', 'Lor', ''] as const,
+            choices: ['CMB', 'Rog', 'Adv', 'Lor', ''] as const,
             initial: '',
           }),
         }),

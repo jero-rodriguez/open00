@@ -6,7 +6,7 @@
         <input type="number" name="system.mp.value" value="{{mp.value}}" min="0" />
         <span>{{localize "OPEN00.Overview.Current"}}</span>
       </label>
-      <label class="compact-rule-field"><span>{{localize "OPEN00.Overview.Max"}}</span><input type="number" name="system.mp.max" value="{{mp.max}}" min="0" /></label>
+      <label class="compact-rule-field"><span>{{localize "OPEN00.Overview.Max"}}</span><span class="computed-cell">{{mpMax}}</span></label>
       <p class="magic-level-info">{{localize "OPEN00.Magic.Level"}}: {{level}}</p>
     </aside>
 

@@ -1,38 +1,64 @@
 /**
- * Drive Points management for Open 00.
+ * Drive Points engine for Open 00.
  *
  * Pure function module — zero imports from FoundryVTT.
  *
- * Drive Points fuel Passion invocations and are awarded/removed by the GM.
- * All operations clamp the resulting value to [0, max].
+ * VsD v1.5 Rules (vsd-core-rules.md §Drive):
+ * - Range: 0-5. Starts at 1.
+ * - Gained by following Passions into danger/drama (group decision).
+ * - Spending: +10 per Drive Point spent.
+ * - NO +30 invokePassion mechanic.
  */
 
+/** Starting Drive Points for a new character. */
+export const DRIVE_INITIAL = 1;
+
+/** Maximum Drive Points a character can hold. */
+export const DRIVE_MAX = 5;
+
+/** Bonus granted per Drive Point spent (+10 per point). */
+export const DRIVE_BONUS_PER_POINT = 10;
+
 /**
- * Modify current Drive Points by a delta value (positive for award, negative for spend).
- * The result is clamped to the range [0, max].
+ * Spend Drive Points for a bonus.
  *
- * @param current - Current Drive Points (in [0, max])
- * @param max - Maximum Drive Points (>= 0)
- * @param delta - Amount to add (positive) or remove (negative)
- * @returns The new current Drive Points value, clamped to [0, max]
+ * @param current - Current Drive Points (0-5)
+ * @param amount - Number of points to spend (positive integer)
+ * @returns Object with remaining points and bonus, or error
  */
-export function modifyDrivePoints(current: number, max: number, delta: number): number {
-  const result = current + delta;
-  return Math.max(0, Math.min(max, result));
+export function spendDrive(
+  current: number,
+  amount: number
+): { remaining: number; bonus: number } | { error: string } {
+  if (!Number.isInteger(amount) || amount < 0) {
+    return { error: 'invalid spend amount' };
+  }
+  if (amount > current) {
+    return { error: 'insufficient drive points' };
+  }
+  return {
+    remaining: current - amount,
+    bonus: amount * DRIVE_BONUS_PER_POINT,
+  };
 }
 
 /**
- * Invoke a Passion by spending 1 Drive Point.
- *
- * If the character has at least 1 Drive Point, deducts 1 and returns a +30 bonus.
- * If current is 0, returns an error indicating insufficient Drive Points.
+ * Award (or remove) Drive Points, clamping to [0, DRIVE_MAX].
  *
  * @param current - Current Drive Points
- * @returns Object with newCurrent and bonus on success, or error string on failure
+ * @param delta - Amount to add (positive) or remove (negative)
+ * @returns New Drive Points value, clamped to [0, 5]
  */
-export function invokePassion(current: number): { newCurrent: number; bonus: number } | { error: string } {
-  if (current <= 0) {
-    return { error: 'insufficient drive points' };
-  }
-  return { newCurrent: current - 1, bonus: 30 };
+export function awardDrive(current: number, delta: number): number {
+  return Math.max(0, Math.min(DRIVE_MAX, current + delta));
+}
+
+/**
+ * Compute the total bonus from spending a given number of Drive Points.
+ *
+ * @param pointsSpent - Number of Drive Points being spent
+ * @returns The bonus value (+10 per point)
+ */
+export function computeDriveBonus(pointsSpent: number): number {
+  return pointsSpent * DRIVE_BONUS_PER_POINT;
 }
