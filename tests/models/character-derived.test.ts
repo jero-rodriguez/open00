@@ -141,7 +141,8 @@ describe('CharacterDataModel — prepareDerivedData', () => {
     const bodySkill = model.skills.body;
     expect(bodySkill).toEqual({ rank: 5, spec: 0 });
 
-    // hp should not have a 'max' property (it's derived as hpMax)
-    expect((model.hp as any).max).toBeUndefined();
+    // hp.max is a derived mirror of hpMax (exposed for Foundry token bar tracking)
+    // It must NOT be persisted in the schema — only set during prepareDerivedData
+    expect((model.hp as any).max).toBe(model.hpMax);
   });
 });
