@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0](https://github.com/jero-rodriguez/open00/compare/v1.18.0...v1.19.0) (2026-08-26)
+
+
+### Features
+
+* **models:** slice 2 — document subclasses + schema reshape ([5baecb6](https://github.com/jero-rodriguez/open00/commit/5baecb6a762a0a0546bdda0a45fa241d7e0f8a8f))
+
 ## [1.18.0](https://github.com/jero-rodriguez/open00/compare/v1.17.13...v1.18.0) (2026-08-26)
 
 
