@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.13](https://github.com/jero-rodriguez/open00/compare/v1.17.12...v1.17.13) (2026-08-26)
+
+
+### Bug Fixes
+
+* stats not correctly updated or managed ([010c3a5](https://github.com/jero-rodriguez/open00/commit/010c3a5798f439d105641b044ff32c38c34678a6))
+
 ## [1.17.12](https://github.com/jero-rodriguez/open00/compare/v1.17.11...v1.17.12) (2026-08-25)
 
 
