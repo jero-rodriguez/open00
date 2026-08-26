@@ -305,6 +305,18 @@ declare global {
 
   function fromUuid(uuid: string): Promise<Actor | Item | null>;
 
+  /**
+   * BRIDGE: FormDataExtended
+   * TODO(v2-slice-3): Remove once fvtt-types exposes the native FormDataExtended class.
+   *
+   * Foundry's FormDataExtended wraps a submitted form and exposes .object
+   * with dot-path keys mapped to their typed values.
+   */
+  class FormDataExtended {
+    constructor(form: HTMLFormElement, options?: Record<string, unknown>);
+    readonly object: Record<string, unknown>;
+  }
+
   class Roll {
     constructor(formula: string);
     evaluate(): Promise<void>;

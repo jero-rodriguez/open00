@@ -15,11 +15,10 @@ import {
   type ArmorCategory,
   type AttackTableData,
 } from '../engine/attack-tables.js';
-import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
-const NPC_TEMPLATE_ROOT = `systems/${game.system?.id ?? 'open00'}/templates/actors`;
+const NPC_TEMPLATE_ROOT = 'systems/open00/templates/actors';
 
 /** Valid armor categories for attack table resolution */
 const VALID_ARMOR_CATEGORIES: readonly string[] = ['NA', 'LA', 'MA', 'HA'];
@@ -93,14 +92,11 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     tag: 'form',
     position: { width: 700, height: 720 },
     window: { resizable: true },
-    form: { submitOnChange: true },
+    form: { handler: Open00NpcSheet.#processFormData, submitOnChange: true },
     actions: {
       rollAttack: Open00NpcSheet.#rollAttack,
     },
   };
-
-  #autoSaveHandler: ReturnType<typeof createAutoSaveHandler> | null = null;
-  #detachAutoSave: (() => void) | null = null;
 
   static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
     body: {
@@ -225,24 +221,32 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     options: foundry.applications.api.ApplicationRenderOptions,
   ): Promise<void> {
     await super._onRender(context, options);
-
-    this.#autoSaveHandler ??= createAutoSaveHandler(this.actor, {
-      debounceMs: 500,
-      onError: (error: Error) => console.error('Open00NpcSheet autosave failed:', error),
-    });
-
-    this.#detachAutoSave?.();
-    this.#detachAutoSave = this.form
-      ? attachAutoSaveToForm(this.form, this.#autoSaveHandler)
-      : null;
+    // Form submission now handled by native submitOnChange + #processFormData
   }
 
   async close(options?: Record<string, unknown>): Promise<void> {
-    this.#detachAutoSave?.();
-    this.#detachAutoSave = null;
-    this.#autoSaveHandler?.cleanup();
-    this.#autoSaveHandler = null;
     return super.close(options);
+  }
+
+  /**
+   * Native form handler for ApplicationV2.
+   * Processes form data submitted via submitOnChange and persists via actor.update().
+   */
+  static async #processFormData(
+    _event: SubmitEvent,
+    _form: HTMLFormElement,
+    formData: FormDataExtended,
+  ): Promise<void> {
+    const sheet = (this as unknown as Open00NpcSheet);
+    const updates: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(formData.object)) {
+      updates[key] = value;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await sheet.actor.update(updates);
+    }
   }
 
   /**
