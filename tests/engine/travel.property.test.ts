@@ -1,169 +1,174 @@
-// Feature: open00-system, Property 17: Travel Duration Computation
+// Feature: open00-system — Travel Distance Computation (VsD v1.5)
+// Source: vsd-travel-healing.md §Overland Movement table
 import { describe, it, expect } from 'vitest';
-import * as fc from 'fast-check';
-import { computeTravelDuration, TravelPace } from '../../src/module/engine/travel';
+import {
+  computeDailyTravel,
+  type TravelEncumbranceLevel,
+  type TerrainType,
+  type TravelMode,
+} from '../../src/module/engine/travel';
 
 /**
- * Validates: Requirements 18.3
+ * VsD v1.5 Overland Movement Table (km/day):
  *
- * Property 17: Travel Duration Computation
- * For any distance, pace, terrain modifier, and party movement rate:
- * - Duration formula: (distanceMiles * terrainModifier) / (partyMovementRate * paceMultiplier)
- * - Faster paces (ForcedMarch > Fast > Normal > Careful) yield shorter durations
- * - Terrain difficulty and movement rate inversely affect duration
- * - Duration is always positive for positive inputs
+ * | Encumbrance       | Normal foot | Normal mount | Rough foot | Rough mount | Arduous foot | Arduous mount |
+ * |-------------------|-------------|--------------|------------|-------------|--------------|---------------|
+ * | Up to Lightly     |     50      |      95      |     30     |      40     |      15      |       8       |
+ * | Encumbered        |     30      |      65      |     15     |      25     |       8      |       8       |
+ * | Heavily           |     15      |      30      |      8     |      15     |       3      |       0       |
+ * | Over              |      0      |       0      |      0     |       0     |       0      |       0       |
  */
-describe('Travel Functions – Property 17: Travel Duration Computation', () => {
-  const positiveNumber = fc.integer({ min: 1, max: 1000 });
-  const travelPaces: TravelPace[] = ['Careful', 'Normal', 'Fast', 'ForcedMarch'];
 
-  it('returns positive duration for positive inputs', () => {
-    fc.assert(
-      fc.property(positiveNumber, positiveNumber, positiveNumber, positiveNumber, (dist, terrain, rate, dummy) => {
-        const pace: TravelPace = travelPaces[dummy % 4];
-        const result = computeTravelDuration(dist, pace, terrain, rate);
-        expect(result).toBeGreaterThan(0);
-      }),
-      { numRuns: 100 },
-    );
+describe('computeDailyTravel – VsD v1.5 Overland Movement Table', () => {
+  describe('Up to Lightly Encumbered', () => {
+    const encumbrance: TravelEncumbranceLevel = 'UpToLightly';
+
+    it('Normal terrain, foot = 50 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Normal', 'foot')).toBe(50);
+    });
+
+    it('Normal terrain, mount = 95 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Normal', 'mount')).toBe(95);
+    });
+
+    it('Rough terrain, foot = 30 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Rough', 'foot')).toBe(30);
+    });
+
+    it('Rough terrain, mount = 40 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Rough', 'mount')).toBe(40);
+    });
+
+    it('Arduous terrain, foot = 15 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Arduous', 'foot')).toBe(15);
+    });
+
+    it('Arduous terrain, mount = 8 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Arduous', 'mount')).toBe(8);
+    });
   });
 
-  it('implements correct formula: (distance * terrain) / (rate * paceMultiplier)', () => {
-    const distance = 100;
-    const terrainModifier = 1.5;
-    const partyMovementRate = 10;
+  describe('Encumbered', () => {
+    const encumbrance: TravelEncumbranceLevel = 'Encumbered';
 
-    const resultNormal = computeTravelDuration(distance, 'Normal', terrainModifier, partyMovementRate);
-    // Normal pace = 1.0x, so (100 * 1.5) / (10 * 1.0) = 15
-    expect(resultNormal).toBeCloseTo(15);
+    it('Normal terrain, foot = 30 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Normal', 'foot')).toBe(30);
+    });
 
-    const resultFast = computeTravelDuration(distance, 'Fast', terrainModifier, partyMovementRate);
-    // Fast pace = 1.5x, so (100 * 1.5) / (10 * 1.5) = 10
-    expect(resultFast).toBeCloseTo(10);
+    it('Normal terrain, mount = 65 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Normal', 'mount')).toBe(65);
+    });
 
-    const resultCareful = computeTravelDuration(distance, 'Careful', terrainModifier, partyMovementRate);
-    // Careful pace = 0.5x, so (100 * 1.5) / (10 * 0.5) = 30
-    expect(resultCareful).toBeCloseTo(30);
+    it('Rough terrain, foot = 15 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Rough', 'foot')).toBe(15);
+    });
+
+    it('Rough terrain, mount = 25 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Rough', 'mount')).toBe(25);
+    });
+
+    it('Arduous terrain, foot = 8 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Arduous', 'foot')).toBe(8);
+    });
+
+    it('Arduous terrain, mount = 8 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Arduous', 'mount')).toBe(8);
+    });
   });
 
-  it('faster paces yield shorter durations (monotonicity)', () => {
-    const distance = 100;
-    const terrainModifier = 1.0;
-    const partyMovementRate = 10;
+  describe('Heavily Encumbered', () => {
+    const encumbrance: TravelEncumbranceLevel = 'Heavily';
 
-    const durationCareful = computeTravelDuration(distance, 'Careful', terrainModifier, partyMovementRate);
-    const durationNormal = computeTravelDuration(distance, 'Normal', terrainModifier, partyMovementRate);
-    const durationFast = computeTravelDuration(distance, 'Fast', terrainModifier, partyMovementRate);
-    const durationForcedMarch = computeTravelDuration(
-      distance,
-      'ForcedMarch',
-      terrainModifier,
-      partyMovementRate
-    );
+    it('Normal terrain, foot = 15 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Normal', 'foot')).toBe(15);
+    });
 
-    // Careful > Normal > Fast > ForcedMarch
-    expect(durationCareful).toBeGreaterThan(durationNormal);
-    expect(durationNormal).toBeGreaterThan(durationFast);
-    expect(durationFast).toBeGreaterThan(durationForcedMarch);
+    it('Normal terrain, mount = 30 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Normal', 'mount')).toBe(30);
+    });
+
+    it('Rough terrain, foot = 8 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Rough', 'foot')).toBe(8);
+    });
+
+    it('Rough terrain, mount = 15 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Rough', 'mount')).toBe(15);
+    });
+
+    it('Arduous terrain, foot = 3 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Arduous', 'foot')).toBe(3);
+    });
+
+    it('Arduous terrain, mount = 0 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Arduous', 'mount')).toBe(0);
+    });
   });
 
-  it('increasing distance increases duration proportionally', () => {
-    fc.assert(
-      fc.property(
-        fc.integer({ min: 1, max: 500 }),
-        fc.integer({ min: 1, max: 5 }),
-        fc.integer({ min: 1, max: 20 }),
-        (distance, terrainMultiplier, rate) => {
-          const result1 = computeTravelDuration(distance, 'Normal', terrainMultiplier, rate);
-          const result2 = computeTravelDuration(distance * 2, 'Normal', terrainMultiplier, rate);
+  describe('Over Encumbered', () => {
+    const encumbrance: TravelEncumbranceLevel = 'Over';
 
-          // Double distance doubles duration
-          expect(result2).toBeCloseTo(result1 * 2, 5);
-        },
-      ),
-      { numRuns: 100 },
-    );
+    it('Normal terrain, foot = 0 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Normal', 'foot')).toBe(0);
+    });
+
+    it('Normal terrain, mount = 0 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Normal', 'mount')).toBe(0);
+    });
+
+    it('Rough terrain, foot = 0 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Rough', 'foot')).toBe(0);
+    });
+
+    it('Rough terrain, mount = 0 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Rough', 'mount')).toBe(0);
+    });
+
+    it('Arduous terrain, foot = 0 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Arduous', 'foot')).toBe(0);
+    });
+
+    it('Arduous terrain, mount = 0 km/day', () => {
+      expect(computeDailyTravel(encumbrance, 'Arduous', 'mount')).toBe(0);
+    });
   });
 
-  it('increasing terrain modifier increases duration proportionally', () => {
-    fc.assert(
-      fc.property(
-        fc.integer({ min: 1, max: 500 }),
-        fc.integer({ min: 1, max: 5 }),
-        fc.integer({ min: 1, max: 20 }),
-        (distance, terrain, rate) => {
-          const result1 = computeTravelDuration(distance, 'Normal', terrain, rate);
-          const result2 = computeTravelDuration(distance, 'Normal', terrain * 2, rate);
+  describe('Exhaustive table coverage', () => {
+    const EXPECTED_TABLE: Record<TravelEncumbranceLevel, Record<TerrainType, Record<TravelMode, number>>> = {
+      UpToLightly: {
+        Normal: { foot: 50, mount: 95 },
+        Rough: { foot: 30, mount: 40 },
+        Arduous: { foot: 15, mount: 8 },
+      },
+      Encumbered: {
+        Normal: { foot: 30, mount: 65 },
+        Rough: { foot: 15, mount: 25 },
+        Arduous: { foot: 8, mount: 8 },
+      },
+      Heavily: {
+        Normal: { foot: 15, mount: 30 },
+        Rough: { foot: 8, mount: 15 },
+        Arduous: { foot: 3, mount: 0 },
+      },
+      Over: {
+        Normal: { foot: 0, mount: 0 },
+        Rough: { foot: 0, mount: 0 },
+        Arduous: { foot: 0, mount: 0 },
+      },
+    };
 
-          // Double terrain doubles duration
-          expect(result2).toBeCloseTo(result1 * 2, 5);
-        },
-      ),
-      { numRuns: 100 },
-    );
-  });
-
-  it('increasing party movement rate decreases duration inversely', () => {
-    fc.assert(
-      fc.property(
-        fc.integer({ min: 1, max: 500 }),
-        fc.integer({ min: 1, max: 5 }),
-        fc.integer({ min: 1, max: 10 }),
-        (distance, terrain, rate) => {
-          const result1 = computeTravelDuration(distance, 'Normal', terrain, rate);
-          const result2 = computeTravelDuration(distance, 'Normal', terrain, rate * 2);
-
-          // Double rate halves duration
-          expect(result2).toBeCloseTo(result1 / 2, 5);
-        },
-      ),
-      { numRuns: 100 },
-    );
-  });
-
-  it('pace multipliers are correctly applied: Careful 0.5x, Normal 1.0x, Fast 1.5x, ForcedMarch 2.0x', () => {
-    const distance = 100;
-    const terrain = 1.0;
-    const rate = 10;
-
-    const careful = computeTravelDuration(distance, 'Careful', terrain, rate);
-    const normal = computeTravelDuration(distance, 'Normal', terrain, rate);
-    const fast = computeTravelDuration(distance, 'Fast', terrain, rate);
-    const forcedMarch = computeTravelDuration(distance, 'ForcedMarch', terrain, rate);
-
-    // Verify multipliers: careful = normal * 2, fast = normal * (2/3), etc.
-    expect(careful).toBeCloseTo(normal * 2, 5);
-    expect(fast).toBeCloseTo(normal * (2 / 3), 5);
-    expect(forcedMarch).toBeCloseTo(normal / 2, 5);
-  });
-
-  it('fractional inputs (terrain modifier as decimal) work correctly', () => {
-    const result = computeTravelDuration(100, 'Normal', 0.5, 10);
-    // (100 * 0.5) / (10 * 1.0) = 5
-    expect(result).toBeCloseTo(5, 5);
-  });
-
-  it('small values produce small durations', () => {
-    const result = computeTravelDuration(1, 'ForcedMarch', 1, 10);
-    // (1 * 1) / (10 * 2.0) = 0.05
-    expect(result).toBeCloseTo(0.05, 5);
-  });
-
-  it('large values produce large durations', () => {
-    const result = computeTravelDuration(1000, 'Careful', 2, 1);
-    // (1000 * 2) / (1 * 0.5) = 4000
-    expect(result).toBeCloseTo(4000, 5);
-  });
-
-  it('specific example: long journey in difficult terrain at normal pace', () => {
-    const result = computeTravelDuration(500, 'Normal', 1.5, 5);
-    // (500 * 1.5) / (5 * 1.0) = 150 hours
-    expect(result).toBeCloseTo(150, 5);
-  });
-
-  it('specific example: short journey in easy terrain at fast pace', () => {
-    const result = computeTravelDuration(50, 'Fast', 0.75, 20);
-    // (50 * 0.75) / (20 * 1.5) = 37.5 / 30 = 1.25 hours
-    expect(result).toBeCloseTo(1.25, 5);
+    it('all 24 cells match the VsD v1.5 table', () => {
+      for (const [enc, terrains] of Object.entries(EXPECTED_TABLE)) {
+        for (const [terrain, modes] of Object.entries(terrains)) {
+          for (const [mode, expected] of Object.entries(modes)) {
+            const result = computeDailyTravel(
+              enc as TravelEncumbranceLevel,
+              terrain as TerrainType,
+              mode as TravelMode,
+            );
+            expect(result, `${enc}/${terrain}/${mode}`).toBe(expected);
+          }
+        }
+      }
+    });
   });
 });
