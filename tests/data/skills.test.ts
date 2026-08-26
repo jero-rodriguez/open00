@@ -37,7 +37,8 @@ describe('default character skills', () => {
     first[0]!.rank = 3;
 
     expect(second[0]!.rank).toBe(0);
-    expect(DEFAULT_SKILL_DEFINITIONS[0]).not.toHaveProperty('rank');
+    // DEFAULT_SKILL_DEFINITIONS is now a frozen keyed record — verify immutability
+    expect(DEFAULT_SKILL_DEFINITIONS.armor).not.toHaveProperty('rank');
   });
 });
 

@@ -7,6 +7,10 @@
  * Reference: https://foundryvtt.com/article/system-development/
  */
 
+// Document subclasses
+import { Open00Actor } from './module/documents/open00-actor.js';
+import { Open00Item } from './module/documents/open00-item.js';
+
 // Actor data models
 import { CharacterDataModel } from './module/models/actor/character.js';
 import { NpcDataModel } from './module/models/actor/npc.js';
@@ -31,6 +35,10 @@ import { Open00NpcSheet } from './module/sheets/npc-sheet.js';
 import { Open00ItemSheet } from './module/sheets/item-sheet.js';
 
 Hooks.once('init', () => {
+  // Register custom document classes
+  CONFIG.Actor.documentClass = Open00Actor as any;
+  CONFIG.Item.documentClass = Open00Item as any;
+
   // Configure System Data Models
   CONFIG.Actor.dataModels = {
     character: CharacterDataModel,
@@ -55,11 +63,11 @@ Hooks.once('init', () => {
   CONFIG.Actor.trackableAttributes = {
     character: {
       bar: ['hp', 'mp'],
-      value: ['drivePoints.current'],
+      value: ['drivePoints.value'],
     },
     npc: {
-      bar: ['hp'],
-      value: ['level'],
+      bar: [],
+      value: ['hp', 'level'],
     },
   };
 

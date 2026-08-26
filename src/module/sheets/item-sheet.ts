@@ -10,7 +10,7 @@
  */
 
 import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
-import { DEFAULT_SKILL_DEFINITIONS } from '../data/skills.js';
+import { DEFAULT_SKILL_DEFINITIONS, SKILL_ID_LIST } from '../data/skills.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -235,7 +235,8 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     // Build culture skill allocation data for the editable table
     if (partId === 'details' && context['isCulture']) {
       const existingAllocations = (system['skillRankAllocations'] as Array<{ skillName: string; ranks: number }>) ?? [];
-      context['cultureSkillAllocations'] = DEFAULT_SKILL_DEFINITIONS.map((skill, index) => {
+      context['cultureSkillAllocations'] = SKILL_ID_LIST.map((id, index) => {
+        const skill = DEFAULT_SKILL_DEFINITIONS[id];
         const match = existingAllocations.find((a) => a.skillName === skill.name);
         return {
           skillName: skill.name,
