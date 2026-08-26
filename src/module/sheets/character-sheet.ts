@@ -11,6 +11,12 @@ import { computeRankBonus } from '../engine/rank-bonus.js';
 import { resolveAction } from '../engine/action-resolution.js';
 import { determineEncumbranceLevel, computeTotalEncumbrance } from '../engine/encumbrance.js';
 import { getActiveBonuses } from '../engine/affinity.js';
+import {
+  SKILL_ID_LIST,
+  DEFAULT_SKILL_DEFINITIONS,
+  type SkillId,
+} from '../data/skills.js';
+import type { DerivedSkillData } from '../models/actor/character.js';
 // TODO(v2-slice-4): Remove these stubs — identity effects now handled by prepareDerivedData + seeding.
 const deriveKinCultureVocationEffects = (
   _system: Record<string, unknown>,
@@ -22,17 +28,6 @@ const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
 
 const ACTOR_TEMPLATE_ROOT = 'systems/open00/templates/actors';
-
-interface SkillData {
-  name: string;
-  category: string;
-  rank: number;
-  statKey: string;
-  vocation: number;
-  kin: number;
-  spec: number;
-  item: number;
-}
 
 interface SheetTabDefinition {
   tab: string;
@@ -336,23 +331,36 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
     switch (partId) {
       case 'overview': {
-        const skills = (system['skills'] as SkillData[]) ?? [];
+        const skillsRecord = (system['skills'] as Record<string, { rank: number; spec: number }>) ?? {};
+        const dataModel = (this.actor as unknown as { system: { derivedSkills?: Record<string, DerivedSkillData> } }).system;
+        const derivedSkills = dataModel.derivedSkills ?? {};
         const stats = (system['stats'] as Record<string, { base: number; kin: number; spec: number }>) ?? {};
-        const skillDetails = skills.map((skill, index) => {
-          const statBase = asNumber(stats[skill.statKey]?.base);
-          const statKin = asNumber(stats[skill.statKey]?.kin);
-          const statSpec = asNumber(stats[skill.statKey]?.spec);
+        const skillDetails = SKILL_ID_LIST.map((id, index) => {
+          const def = DEFAULT_SKILL_DEFINITIONS[id];
+          const persisted = skillsRecord[id] ?? { rank: 0, spec: 0 };
+          const derived = derivedSkills[id];
+          const statBase = asNumber(stats[def.statKey]?.base);
+          const statKin = asNumber(stats[def.statKey]?.kin);
+          const statSpec = asNumber(stats[def.statKey]?.spec);
           const statBonus = statBase + statKin + statSpec;
-          const rankBonus = computeRankBonus(asNumber(skill.rank));
-          const vocation = asNumber(skill.vocation);
-          const kin = asNumber(skill.kin);
-          const spec = asNumber(skill.spec);
-          const item = asNumber(skill.item);
+          const rankBonus = computeRankBonus(asNumber(persisted.rank));
+          const vocation = asNumber(derived?.vocation);
+          const kin = asNumber(derived?.kin);
+          const spec = asNumber(persisted.spec);
+          const item = asNumber(derived?.item);
           const totalBonus = statBonus + rankBonus + vocation + kin + spec + item;
           return {
-            ...skill,
+            id,
+            name: def.name,
+            category: def.category,
+            statKey: def.statKey,
+            rank: persisted.rank,
+            vocation,
+            kin,
+            spec,
+            item,
             index,
-            statLabel: STAT_NAMES[skill.statKey] ?? skill.statKey,
+            statLabel: STAT_NAMES[def.statKey] ?? def.statKey,
             statBonusDisplay: formatModifier(statBonus),
             rankBonusDisplay: formatModifier(rankBonus),
             vocationDisplay: formatModifier(vocation),
@@ -515,9 +523,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
         // Compute HP max from Kin hpBonus + Body Development rank bonus
         const kinItem = this.actor.items.find((item: Item) => item.type === 'kin');
         const kinHpBonus = kinItem ? asNumber((kinItem.system as Record<string, unknown>)['hpBonus']) : 0;
-        const allSkills = (system['skills'] as SkillData[]) ?? [];
-        const bodySkill = allSkills.find((s) => s.name === 'Body Development');
-        const bodyRankBonus = bodySkill ? computeRankBonus(asNumber(bodySkill.rank)) : 0;
+        const bodySkillRecord = (system['skills'] as Record<string, { rank: number }>)?.['body'];
+        const bodyRankBonus = bodySkillRecord ? computeRankBonus(asNumber(bodySkillRecord.rank)) : 0;
         const computedHpMax = kinHpBonus + bodyRankBonus;
 
         return {
@@ -535,7 +542,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
       case 'magic': {
         const stats = (system['stats'] as Record<string, { base: number; kin: number; spec: number }>) ?? {};
-        const skills = (system['skills'] as SkillData[]) ?? [];
+        const skillsRecord = (system['skills'] as Record<string, { rank: number; spec: number }>) ?? {};
+        const magicDerivedSkills = ((this.actor as unknown as { system: { derivedSkills?: Record<string, DerivedSkillData> } }).system).derivedSkills ?? {};
         const level = asNumber(system['level']);
 
         // Build lore context from owned spellLore items
@@ -550,20 +558,23 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
               areaOfEffect: string; grantsSaveRoll: boolean; isInstantaneous: boolean;
             }>) ?? [];
 
-            // Find the matching skill entry (Spells category, same name as the lore)
-            const skill = skills.find((s) => s.name === item.name && s.category === 'Spells');
-            const ranks = asNumber(skill?.rank);
+            // Find the matching skill entry by lore name → canonical id lookup
+            // Spell lores may not map to a canonical skill; use the keyed record if found
+            const loreId = item.name?.toLowerCase().replace(/\s+/g, '-') as SkillId | undefined;
+            const skillPersisted = loreId ? skillsRecord[loreId] : undefined;
+            const skillDerived = loreId ? magicDerivedSkills[loreId] : undefined;
+            const ranks = asNumber(skillPersisted?.rank);
 
             // Compute casting bonus from the lore's governing stat
             const stat = stats[statKey];
             const statBonus = stat
               ? asNumber(stat.base) + asNumber(stat.kin) + asNumber(stat.spec)
               : 0;
-            const rankBonus = skill ? computeRankBonus(ranks) : 0;
-            const vocation = asNumber(skill?.vocation);
-            const kin = asNumber(skill?.kin);
-            const spec = asNumber(skill?.spec);
-            const itemMod = asNumber(skill?.item);
+            const rankBonus = skillPersisted ? computeRankBonus(ranks) : 0;
+            const vocation = asNumber(skillDerived?.vocation);
+            const kin = asNumber(skillDerived?.kin);
+            const spec = asNumber(skillPersisted?.spec);
+            const itemMod = asNumber(skillDerived?.item);
             const castingBonus = statBonus + rankBonus + vocation + kin + spec + itemMod;
 
             // Determine max castable Weave based on category and level
