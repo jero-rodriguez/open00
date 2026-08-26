@@ -5,12 +5,39 @@
  * creature stat block format: level, rank, hit points, defenses, saves,
  * movement, creature type, attacks, skill bonuses, and special abilities.
  *
+ * All stat block values are GM-entered (PLAYER-OWNED). The lightweight
+ * prepareDerivedData() only computes SR Level Bonus from level and exposes
+ * convenience HP accessors for Foundry token bar compatibility.
+ *
  * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.7
  */
+
+import { computeSaveRollBonus } from '../../engine/save-roll-bonus.js';
 
 const { SchemaField, NumberField, StringField, HTMLField, BooleanField, ArrayField } = foundry.data.fields;
 
 export class NpcDataModel extends foundry.abstract.TypeDataModel {
+  // -- Derived properties (computed, not persisted) --------------------------
+
+  /** Save Roll Bonus computed from NPC level. */
+  saveRollBonus!: number;
+
+  /** HP max — mirrors persisted hp for token bar compatibility. */
+  hpMax!: number;
+
+  /** HP value — mirrors persisted hp for token bar compatibility. */
+  hpValue!: number;
+
+  // -- Schema fields (type annotations for access) ---------------------------
+
+  level!: number;
+  hp!: number;
+  defense!: number;
+  tsr!: number;
+  wsr!: number;
+  armorType!: string;
+  moveRates!: string;
+  creatureType!: string;
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
       // Schema version for migration tracking
@@ -91,6 +118,23 @@ export class NpcDataModel extends foundry.abstract.TypeDataModel {
         { max: 20 },
       ),
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Derived data computation — lightweight for NPCs
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Compute derived data for NPCs.
+   *
+   * NPC stat blocks are GM-entered directly. This only computes:
+   * - SR Level Bonus from level (for display/reference)
+   * - hpMax / hpValue mirrors of the flat hp field (for Foundry token bars)
+   */
+  override prepareDerivedData(): void {
+    this.saveRollBonus = computeSaveRollBonus(this.level ?? 0);
+    this.hpMax = this.hp ?? 0;
+    this.hpValue = this.hp ?? 0;
   }
 
   // ---------------------------------------------------------------------------
