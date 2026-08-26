@@ -27,7 +27,6 @@ import { VocationDataModel } from './module/models/item/vocation.js';
 import { KinTraitDataModel } from './module/models/item/kin-trait.js';
 import { ItemOfPowerDataModel } from './module/models/item/item-of-power.js';
 import { BackgroundDataModel } from './module/models/item/background.js';
-import { createDefaultSkills } from './module/data/skills.js';
 
 // Sheets
 import { Open00CharacterSheet } from './module/sheets/character-sheet.js';
@@ -86,19 +85,4 @@ Hooks.once('init', () => {
   foundry.documents.collections.Items.registerSheet('open00', Open00ItemSheet, {
     makeDefault: true,
   });
-});
-
-/** Populate characters created before the default skill catalogue was added. */
-Hooks.once('ready', async () => {
-  if (!game.user.isGM) return;
-
-  const emptyCharacters = game.actors.filter((actor) => {
-    if (actor.type !== 'character') return false;
-    const skills = actor.system['skills'];
-    return !Array.isArray(skills) || skills.length === 0;
-  });
-
-  await Promise.all(
-    emptyCharacters.map((actor) => actor.update({ 'system.skills': createDefaultSkills() })),
-  );
 });

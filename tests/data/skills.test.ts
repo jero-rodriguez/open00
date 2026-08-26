@@ -1,55 +1,51 @@
 import { describe, expect, it } from 'vitest';
 import {
+  SKILL_IDS,
+  SKILL_ID_LIST,
   DEFAULT_SKILL_DEFINITIONS,
-  createDefaultSkills,
-  ensureCharacterSkills,
 } from '../../src/module/data/skills.js';
 
-describe('default character skills', () => {
-  it('contains the 22 fixed core skills in the expected categories', () => {
-    const skills = createDefaultSkills();
-
-    expect(skills).toHaveLength(22);
-    expect(skills.map((skill) => skill.name)).toEqual([
-      'Armor',
-      'Blades', 'Blunt', 'Ranged', 'Polearms', 'Brawl',
-      'Athletics', 'Ride', 'Hunting', 'Nature', 'Wandering',
-      'Acrobatics', 'Stealth', 'Locks & Traps', 'Perception', 'Deceive',
-      'Arcana', 'Charisma', 'Cultures', 'Healer', 'Songs & Tales',
-      'Body',
-    ]);
+describe('SKILL_IDS', () => {
+  it('contains 22 canonical skill ids', () => {
+    expect(Object.keys(SKILL_IDS)).toHaveLength(22);
   });
 
-  it('initializes every skill with the schema-backed item modifier field', () => {
-    expect(createDefaultSkills().every(
-      (skill) => skill.rank === 0 && skill.item === 0,
-    )).toBe(true);
-
-    expect(createDefaultSkills().every(
-      (skill) => !Object.hasOwn(skill, 'itemModifiers'),
-    )).toBe(true);
+  it('keys and values are identical (self-referencing frozen record)', () => {
+    for (const [key, value] of Object.entries(SKILL_IDS)) {
+      expect(key).toBe(value);
+    }
   });
 
-  it('returns fresh records so one actor cannot mutate another actor defaults', () => {
-    const first = createDefaultSkills();
-    const second = createDefaultSkills();
-
-    first[0]!.rank = 3;
-
-    expect(second[0]!.rank).toBe(0);
-    // DEFAULT_SKILL_DEFINITIONS is now a frozen keyed record — verify immutability
-    expect(DEFAULT_SKILL_DEFINITIONS.armor).not.toHaveProperty('rank');
+  it('is frozen', () => {
+    expect(Object.isFrozen(SKILL_IDS)).toBe(true);
   });
 });
 
-describe('ensureCharacterSkills', () => {
-  it('restores the fixed skill list when persisted skills are empty', () => {
-    expect(ensureCharacterSkills([])).toEqual(createDefaultSkills());
+describe('SKILL_ID_LIST', () => {
+  it('contains the same 22 ids as SKILL_IDS keys in printed-sheet order', () => {
+    expect(SKILL_ID_LIST).toHaveLength(22);
+    expect(SKILL_ID_LIST).toEqual(Object.keys(SKILL_IDS));
+  });
+});
+
+describe('DEFAULT_SKILL_DEFINITIONS', () => {
+  it('has an entry for every canonical id', () => {
+    for (const id of SKILL_ID_LIST) {
+      expect(DEFAULT_SKILL_DEFINITIONS[id]).toBeDefined();
+      expect(DEFAULT_SKILL_DEFINITIONS[id].id).toBe(id);
+    }
   });
 
-  it('preserves an existing populated skill list', () => {
-    const skills = createDefaultSkills();
-    skills[0]!.rank = 3;
-    expect(ensureCharacterSkills(skills)).toBe(skills);
+  it('every skill has name, category, and statKey', () => {
+    for (const id of SKILL_ID_LIST) {
+      const def = DEFAULT_SKILL_DEFINITIONS[id];
+      expect(def.name).toBeTruthy();
+      expect(def.category).toBeTruthy();
+      expect(typeof def.statKey).toBe('string');
+    }
+  });
+
+  it('is frozen (immutable reference data)', () => {
+    expect(Object.isFrozen(DEFAULT_SKILL_DEFINITIONS)).toBe(true);
   });
 });
