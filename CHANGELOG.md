@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.22.0](https://github.com/jero-rodriguez/open00/compare/v1.21.0...v1.22.0) (2026-08-26)
+
+
+### Features
+
+* **engine:** rewrite travel + encumbrance to VsD v1.5 rules ([99c7741](https://github.com/jero-rodriguez/open00/commit/99c7741af99e676524867835a0b186d5efe00c00))
+
 ## [1.21.0](https://github.com/jero-rodriguez/open00/compare/v1.20.0...v1.21.0) (2026-08-26)
 
 
