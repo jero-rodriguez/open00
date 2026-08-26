@@ -11,9 +11,7 @@ import { computeRankBonus } from '../engine/rank-bonus.js';
 import { resolveAction } from '../engine/action-resolution.js';
 import { determineEncumbranceLevel, computeTotalEncumbrance } from '../engine/encumbrance.js';
 import { getActiveBonuses } from '../engine/affinity.js';
-import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
-import { getCharacterSheetUpdateParts } from './partial-render.js';
-// TODO(v2-slice-3): Remove these stubs — identity effects now handled by prepareDerivedData + seeding.
+// TODO(v2-slice-4): Remove these stubs — identity effects now handled by prepareDerivedData + seeding.
 const deriveKinCultureVocationEffects = (
   _system: Record<string, unknown>,
   _identities: Record<string, unknown>,
@@ -22,7 +20,8 @@ const clearAllIdentityEffects = (_system: Record<string, unknown>): Record<strin
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
-const ACTOR_TEMPLATE_ROOT = `systems/${game.system?.id ?? 'open00'}/templates/actors`;
+
+const ACTOR_TEMPLATE_ROOT = 'systems/open00/templates/actors';
 
 interface SkillData {
   name: string;
@@ -93,7 +92,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     tag: 'form',
     position: { width: 1080, height: 800 },
     window: { resizable: true },
-    form: { submitOnChange: false },
+    form: { handler: Open00CharacterSheet.#processFormData, submitOnChange: true },
     actions: {
       rollSkill: Open00CharacterSheet.#rollSkill,
       rollStat: Open00CharacterSheet.#rollStat,
@@ -150,9 +149,6 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
   override tabGroups: Record<string, string> = { primary: 'overview' };
 
-  #autoSaveHandler: ReturnType<typeof createAutoSaveHandler> | null = null;
-  #detachAutoSave: (() => void) | null = null;
-
   override render(
     options: boolean | foundry.applications.api.ApplicationRenderOptions = {},
     legacyOptions: foundry.applications.api.ApplicationRenderOptions = {},
@@ -169,10 +165,10 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
   ): foundry.applications.api.ApplicationRenderOptions {
     if (options.parts) return options;
 
-    // For actor updates, use field-level partial render
+    // For actor updates, re-render header + the active tab (native part-scoped render)
     if (options.renderContext === 'updateActor') {
-      const parts = getCharacterSheetUpdateParts(options.renderData);
-      return parts ? { ...options, parts } : options;
+      const activeTab = this.tabGroups['primary'] ?? 'overview';
+      return { ...options, parts: ['header', activeTab] };
     }
 
     // For item changes (create/delete/update), re-render only the active tab + header
@@ -211,24 +207,35 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     options: foundry.applications.api.ApplicationRenderOptions,
   ): Promise<void> {
     await super._onRender(context, options);
-
-    this.#autoSaveHandler ??= createAutoSaveHandler(this.actor, {
-      debounceMs: 500,
-      onError: (error: Error) => console.error('Open00CharacterSheet autosave failed:', error),
-    });
-
-    this.#detachAutoSave?.();
-    this.#detachAutoSave = this.form
-      ? attachAutoSaveToForm(this.form, this.#autoSaveHandler)
-      : null;
+    // Form submission now handled by native submitOnChange + _processFormData
   }
 
   async close(options?: Record<string, unknown>): Promise<void> {
-    this.#detachAutoSave?.();
-    this.#detachAutoSave = null;
-    this.#autoSaveHandler?.cleanup();
-    this.#autoSaveHandler = null;
     return super.close(options);
+  }
+
+  /**
+   * Native form handler for ApplicationV2.
+   * Processes form data submitted via submitOnChange and converts field names
+   * to actor.update() paths, handling keyed skill record paths like "skills.armor.rank".
+   */
+  static async #processFormData(
+    event: SubmitEvent,
+    form: HTMLFormElement,
+    formData: FormDataExtended,
+  ): Promise<void> {
+    const sheet = (this as unknown as Open00CharacterSheet);
+    const updates: Record<string, unknown> = {};
+
+    // FormDataExtended converts form fields to an object
+    // We need to handle dot-path field names (e.g., "system.skills.armor.rank")
+    for (const [key, value] of Object.entries(formData.object)) {
+      updates[key] = value;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await sheet.actor.update(updates);
+    }
   }
 
   override async _onDropItem(

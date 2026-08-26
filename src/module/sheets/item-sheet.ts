@@ -4,17 +4,16 @@
  * Multi-tab layout dispatching type-specific content per tab.
  * Common header (name, img) is shared; tabs show Details, Qualities,
  * Commerce, and Description based on item type.
- * Auto-save on field commit follows the same debounced pattern as actor sheets.
+ * Native form handler persists via submitOnChange + _processFormData.
  *
  * Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9
  */
 
-import { createAutoSaveHandler, attachAutoSaveToForm } from './auto-save.js';
 import { DEFAULT_SKILL_DEFINITIONS, SKILL_ID_LIST } from '../data/skills.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
-const ITEM_TEMPLATE_ROOT = `systems/${game.system?.id ?? 'open00'}/templates/items`;
+const ITEM_TEMPLATE_ROOT = 'systems/open00/templates/items';
 
 interface SheetTabDefinition {
   tab: string;
@@ -59,7 +58,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     tag: 'form',
     position: { width: 560, height: 520 },
     window: { resizable: true },
-    form: { submitOnChange: false },
+    form: { handler: Open00ItemSheet.#processFormData, submitOnChange: true },
   };
 
   /** Wider sheets for types with large tables */
@@ -115,9 +114,6 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   };
 
   override tabGroups: Record<string, string> = { primary: 'details' };
-
-  #autoSaveHandler: ReturnType<typeof createAutoSaveHandler> | null = null;
-  #detachAutoSave: (() => void) | null = null;
 
   /** Determine which PARTS to render based on item type */
   #getVisibleParts(): string[] {
@@ -254,16 +250,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     options: foundry.applications.api.ApplicationRenderOptions,
   ): Promise<void> {
     await super._onRender(context, options);
-
-    this.#autoSaveHandler ??= createAutoSaveHandler(this.item as unknown as Actor, {
-      debounceMs: 500,
-      onError: (error: Error) => console.error('Open00ItemSheet autosave failed:', error),
-    });
-
-    this.#detachAutoSave?.();
-    this.#detachAutoSave = this.form
-      ? attachAutoSaveToForm(this.form, this.#autoSaveHandler)
-      : null;
+    // Form submission now handled by native submitOnChange + #processFormData
 
     // Enable drag-and-drop on spellLore sheets for receiving spell items
     if (this.item.type === 'spellLore') {
@@ -334,11 +321,28 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     });
   }
 
+  /**
+   * Native form handler for ApplicationV2.
+   * Processes form data submitted via submitOnChange and persists via item.update().
+   */
+  static async #processFormData(
+    _event: SubmitEvent,
+    _form: HTMLFormElement,
+    formData: FormDataExtended,
+  ): Promise<void> {
+    const sheet = (this as unknown as Open00ItemSheet);
+    const updates: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(formData.object)) {
+      updates[key] = value;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await sheet.item.update(updates);
+    }
+  }
+
   async close(options?: Record<string, unknown>): Promise<void> {
-    this.#detachAutoSave?.();
-    this.#detachAutoSave = null;
-    this.#autoSaveHandler?.cleanup();
-    this.#autoSaveHandler = null;
     return super.close(options);
   }
 }
