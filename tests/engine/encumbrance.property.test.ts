@@ -1,137 +1,200 @@
-// Feature: open00-system, Property 7: Encumbrance Level Determination
-// Feature: open00-system, Property 8: Encumbrance Total Calculation
+// Feature: open00-system — Encumbrance Five Qualitative Levels (VsD v1.5)
+// Source: vsd-travel-healing.md §Encumbrance table and §Special Rules
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import {
-  determineEncumbranceLevel,
-  computeTotalEncumbrance,
   type EncumbranceLevel,
+  getEffectiveEncumbranceLevel,
+  getEncumbrancePenalties,
+  hasEncumbrancePenalties,
+  ENCUMBRANCE_LEVELS,
 } from '../../src/module/engine/encumbrance';
 
 /**
- * Validates: Requirements 16.2, 16.3, 16.6
- *
- * Property 7: Encumbrance Level Determination
- * For any non-negative integer totalPoints and positive integer brawn,
- * determineEncumbranceLevel(totalPoints, brawn) SHALL return the correct
- * encumbrance level based on threshold comparisons, and the function SHALL
- * be monotone: higher totalPoints for the same brawn never produces a lower
- * encumbrance level.
+ * VsD v1.5 Encumbrance Rules:
+ * - 5 qualitative levels: Unencumbered, Lightly Encumbered, Encumbered, Heavily Encumbered, Over Encumbered
+ * - Lightly Encumbered = NO penalties (move rate unaffected, no action penalties)
+ * - BRN >= 30 AND FOR >= 30, OR Large size → effective level reduced by one
+ * - Armor is NEVER factored into encumbrance level (armor has its own separate penalties)
  */
-describe('determineEncumbranceLevel – Property 7: Encumbrance Level Determination', () => {
-  const totalPoints = fc.nat();
-  const brawn = fc.integer({ min: 1, max: 10000 });
 
-  const LEVEL_ORDER: EncumbranceLevel[] = [
-    'Unencumbered',
-    'LightlyEncumbered',
-    'Encumbered',
-    'HeavilyEncumbered',
-    'OverEncumbered',
-  ];
+describe('Encumbrance – VsD v1.5 Five Qualitative Levels', () => {
+  describe('hasEncumbrancePenalties', () => {
+    it('Unencumbered has no penalties', () => {
+      expect(hasEncumbrancePenalties('Unencumbered')).toBe(false);
+    });
 
-  function levelIndex(level: EncumbranceLevel): number {
-    return LEVEL_ORDER.indexOf(level);
-  }
+    it('Lightly Encumbered has NO penalties', () => {
+      expect(hasEncumbrancePenalties('LightlyEncumbered')).toBe(false);
+    });
 
-  it('returns the correct encumbrance level based on threshold comparisons', () => {
-    fc.assert(
-      fc.property(totalPoints, brawn, (tp, b) => {
-        const result = determineEncumbranceLevel(tp, b);
+    it('Encumbered has penalties', () => {
+      expect(hasEncumbrancePenalties('Encumbered')).toBe(true);
+    });
 
-        if (tp <= b) {
-          expect(result).toBe('Unencumbered');
-        } else if (tp <= b * 1.5) {
-          expect(result).toBe('LightlyEncumbered');
-        } else if (tp <= b * 2) {
-          expect(result).toBe('Encumbered');
-        } else if (tp <= b * 3) {
-          expect(result).toBe('HeavilyEncumbered');
-        } else {
-          expect(result).toBe('OverEncumbered');
-        }
-      }),
-      { numRuns: 100 },
-    );
+    it('Heavily Encumbered has penalties', () => {
+      expect(hasEncumbrancePenalties('HeavilyEncumbered')).toBe(true);
+    });
+
+    it('Over Encumbered has penalties', () => {
+      expect(hasEncumbrancePenalties('OverEncumbered')).toBe(true);
+    });
   });
 
-  it('is monotone: higher totalPoints for the same brawn never produces a lower encumbrance level', () => {
-    fc.assert(
-      fc.property(totalPoints, totalPoints, brawn, (tp1, tp2, b) => {
-        const lower = Math.min(tp1, tp2);
-        const higher = Math.max(tp1, tp2);
+  describe('getEffectiveEncumbranceLevel – BRN/FOR reduction', () => {
+    it('BRN=30, FOR=35, Encumbered → reduced to LightlyEncumbered', () => {
+      const result = getEffectiveEncumbranceLevel('Encumbered', { brn: 30, piernas: 35, size: 'Medium' });
+      expect(result).toBe('LightlyEncumbered');
+    });
 
-        const levelLower = determineEncumbranceLevel(lower, b);
-        const levelHigher = determineEncumbranceLevel(higher, b);
+    it('BRN=30, FOR=30, HeavilyEncumbered → reduced to Encumbered', () => {
+      const result = getEffectiveEncumbranceLevel('HeavilyEncumbered', { brn: 30, piernas: 30, size: 'Medium' });
+      expect(result).toBe('Encumbered');
+    });
 
-        expect(levelIndex(levelLower)).toBeLessThanOrEqual(levelIndex(levelHigher));
-      }),
-      { numRuns: 100 },
+    it('BRN=30, FOR=30, OverEncumbered → reduced to HeavilyEncumbered', () => {
+      const result = getEffectiveEncumbranceLevel('OverEncumbered', { brn: 30, piernas: 30, size: 'Medium' });
+      expect(result).toBe('HeavilyEncumbered');
+    });
+
+    it('BRN=30, FOR=30, LightlyEncumbered → reduced to Unencumbered', () => {
+      const result = getEffectiveEncumbranceLevel('LightlyEncumbered', { brn: 30, piernas: 30, size: 'Medium' });
+      expect(result).toBe('Unencumbered');
+    });
+
+    it('BRN=30, FOR=30, Unencumbered → stays Unencumbered (cannot go below)', () => {
+      const result = getEffectiveEncumbranceLevel('Unencumbered', { brn: 30, piernas: 30, size: 'Medium' });
+      expect(result).toBe('Unencumbered');
+    });
+
+    it('BRN=29, FOR=30 does NOT qualify (both must be >= 30)', () => {
+      const result = getEffectiveEncumbranceLevel('Encumbered', { brn: 29, piernas: 30, size: 'Medium' });
+      expect(result).toBe('Encumbered');
+    });
+
+    it('BRN=30, FOR=29 does NOT qualify (both must be >= 30)', () => {
+      const result = getEffectiveEncumbranceLevel('Encumbered', { brn: 30, piernas: 29, size: 'Medium' });
+      expect(result).toBe('Encumbered');
+    });
+  });
+
+  describe('getEffectiveEncumbranceLevel – Large size reduction', () => {
+    it('Large size, Encumbered → reduced to LightlyEncumbered', () => {
+      const result = getEffectiveEncumbranceLevel('Encumbered', { brn: 10, piernas: 10, size: 'Large' });
+      expect(result).toBe('LightlyEncumbered');
+    });
+
+    it('Large size, HeavilyEncumbered → reduced to Encumbered', () => {
+      const result = getEffectiveEncumbranceLevel('HeavilyEncumbered', { brn: 10, piernas: 10, size: 'Large' });
+      expect(result).toBe('Encumbered');
+    });
+
+    it('Large size, Unencumbered → stays Unencumbered', () => {
+      const result = getEffectiveEncumbranceLevel('Unencumbered', { brn: 10, piernas: 10, size: 'Large' });
+      expect(result).toBe('Unencumbered');
+    });
+
+    it('Medium size without BRN/FOR threshold does NOT reduce', () => {
+      const result = getEffectiveEncumbranceLevel('HeavilyEncumbered', { brn: 20, piernas: 20, size: 'Medium' });
+      expect(result).toBe('HeavilyEncumbered');
+    });
+
+    it('Small size does NOT reduce', () => {
+      const result = getEffectiveEncumbranceLevel('HeavilyEncumbered', { brn: 20, piernas: 20, size: 'Small' });
+      expect(result).toBe('HeavilyEncumbered');
+    });
+  });
+
+  describe('getEffectiveEncumbranceLevel – combined qualifiers do NOT stack', () => {
+    it('Large + BRN>=30 + FOR>=30 still only reduces by one', () => {
+      const result = getEffectiveEncumbranceLevel('HeavilyEncumbered', { brn: 40, piernas: 40, size: 'Large' });
+      expect(result).toBe('Encumbered');
+    });
+  });
+
+  describe('ENCUMBRANCE_LEVELS ordering', () => {
+    it('exports exactly 5 levels in severity order', () => {
+      expect(ENCUMBRANCE_LEVELS).toEqual([
+        'Unencumbered',
+        'LightlyEncumbered',
+        'Encumbered',
+        'HeavilyEncumbered',
+        'OverEncumbered',
+      ]);
+    });
+  });
+
+  describe('getEffectiveEncumbranceLevel – property: reduction is monotone', () => {
+    const levelArb = fc.constantFrom<EncumbranceLevel>(
+      'Unencumbered',
+      'LightlyEncumbered',
+      'Encumbered',
+      'HeavilyEncumbered',
+      'OverEncumbered',
     );
+
+    it('effective level is always <= raw level (never increases encumbrance)', () => {
+      fc.assert(
+        fc.property(levelArb, fc.integer({ min: 0, max: 100 }), fc.integer({ min: 0, max: 100 }), (level, brn, piernas) => {
+          const effective = getEffectiveEncumbranceLevel(level, { brn, piernas, size: 'Large' });
+          const rawIdx = ENCUMBRANCE_LEVELS.indexOf(level);
+          const effectiveIdx = ENCUMBRANCE_LEVELS.indexOf(effective);
+          expect(effectiveIdx).toBeLessThanOrEqual(rawIdx);
+        }),
+        { numRuns: 100 },
+      );
+    });
   });
 });
 
-/**
- * Validates: Requirements 16.1
- *
- * Property 8: Encumbrance Total Calculation
- * For any collection of items where each item has an encumbrance value (non-negative
- * integer) and a quantity (non-negative integer), the total encumbrance points SHALL
- * equal the sum of (encumbrance × quantity) for all items. Adding an item increases
- * the total by exactly that item's contribution; removing an item decreases it by
- * the same amount.
- */
-describe('computeTotalEncumbrance – Property 8: Encumbrance Total Calculation', () => {
-  const itemArb = fc.record({
-    encumbrance: fc.nat({ max: 100 }),
-    quantity: fc.nat({ max: 50 }),
+describe('getEncumbrancePenalties – VsD v1.5 penalty schedule', () => {
+  it('Unencumbered: no penalties, full move, all capabilities', () => {
+    const p = getEncumbrancePenalties('Unencumbered');
+    expect(p.moveRateFraction).toBe(1);
+    expect(p.actionPenalty).toBe(0);
+    expect(p.canSprint).toBe(true);
+    expect(p.canAttack).toBe(true);
+    expect(p.canTravel).toBe(true);
+    expect(p.swiToDefense).toBe(true);
   });
 
-  const itemsArb = fc.array(itemArb, { maxLength: 20 });
-
-  it('returns the sum of (encumbrance × quantity) for all items', () => {
-    fc.assert(
-      fc.property(itemsArb, (items) => {
-        const result = computeTotalEncumbrance(items);
-        const expected = items.reduce((sum, item) => sum + item.encumbrance * item.quantity, 0);
-
-        expect(result).toBe(expected);
-      }),
-      { numRuns: 100 },
-    );
+  it('Lightly Encumbered: no penalties, full move, all capabilities', () => {
+    const p = getEncumbrancePenalties('LightlyEncumbered');
+    expect(p.moveRateFraction).toBe(1);
+    expect(p.actionPenalty).toBe(0);
+    expect(p.canSprint).toBe(true);
+    expect(p.canAttack).toBe(true);
+    expect(p.canTravel).toBe(true);
+    expect(p.swiToDefense).toBe(true);
   });
 
-  it('adding an item increases the total by exactly that items contribution', () => {
-    fc.assert(
-      fc.property(itemsArb, itemArb, (items, newItem) => {
-        const totalBefore = computeTotalEncumbrance(items);
-        const totalAfter = computeTotalEncumbrance([...items, newItem]);
-        const contribution = newItem.encumbrance * newItem.quantity;
-
-        expect(totalAfter).toBe(totalBefore + contribution);
-      }),
-      { numRuns: 100 },
-    );
+  it('Encumbered: Move Rate reduced by 1/3, no action penalty', () => {
+    const p = getEncumbrancePenalties('Encumbered');
+    expect(p.moveRateFraction).toBeCloseTo(2 / 3);
+    expect(p.actionPenalty).toBe(0);
+    expect(p.canSprint).toBe(true);
+    expect(p.canAttack).toBe(true);
+    expect(p.canTravel).toBe(true);
+    expect(p.swiToDefense).toBe(true);
   });
 
-  it('removing an item decreases the total by exactly that items contribution', () => {
-    fc.assert(
-      fc.property(
-        itemsArb.filter((items) => items.length > 0),
-        fc.nat(),
-        (items, indexSeed) => {
-          const indexToRemove = indexSeed % items.length;
-          const removedItem = items[indexToRemove];
-          const remaining = items.filter((_, i) => i !== indexToRemove);
+  it('Heavily Encumbered: Move Rate halved, -20 to all actions', () => {
+    const p = getEncumbrancePenalties('HeavilyEncumbered');
+    expect(p.moveRateFraction).toBe(0.5);
+    expect(p.actionPenalty).toBe(-20);
+    expect(p.canSprint).toBe(true);
+    expect(p.canAttack).toBe(true);
+    expect(p.canTravel).toBe(true);
+    expect(p.swiToDefense).toBe(true);
+  });
 
-          const totalFull = computeTotalEncumbrance(items);
-          const totalReduced = computeTotalEncumbrance(remaining);
-          const contribution = removedItem.encumbrance * removedItem.quantity;
-
-          expect(totalReduced).toBe(totalFull - contribution);
-        },
-      ),
-      { numRuns: 100 },
-    );
+  it('Over Encumbered: 1/4 move, cannot sprint/attack/travel, no SWI to DEF', () => {
+    const p = getEncumbrancePenalties('OverEncumbered');
+    expect(p.moveRateFraction).toBe(0.25);
+    expect(p.actionPenalty).toBe(0);
+    expect(p.canSprint).toBe(false);
+    expect(p.canAttack).toBe(false);
+    expect(p.canTravel).toBe(false);
+    expect(p.swiToDefense).toBe(false);
   });
 });

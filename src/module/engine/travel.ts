@@ -1,42 +1,61 @@
 /**
- * Travel duration computation engine.
+ * Overland travel distance computation engine (VsD v1.5).
  *
- * Computes travel duration in hours based on distance, pace, terrain, and party movement rate.
- * Pure function with zero FoundryVTT imports.
+ * Pure table lookup — no pace system, no miles, no formula.
+ * Returns km/day based on encumbrance level × terrain type × travel mode.
  *
- * Formula: duration = (distanceMiles * terrainModifier) / (partyMovementRate * paceMultiplier)
- *
- * Pace multipliers:
- * - Careful: 0.5× speed (slowest)
- * - Normal: 1.0× speed
- * - Fast: 1.5× speed
- * - ForcedMarch: 2.0× speed (fastest)
+ * Source: vsd-travel-healing.md §Overland Movement table.
  */
 
-export type TravelPace = 'Careful' | 'Normal' | 'Fast' | 'ForcedMarch';
+/** Encumbrance bands for travel distance lookup. */
+export type TravelEncumbranceLevel = 'UpToLightly' | 'Encumbered' | 'Heavily' | 'Over';
 
-const PACE_MULTIPLIERS: Record<TravelPace, number> = {
-  Careful: 0.5,
-  Normal: 1.0,
-  Fast: 1.5,
-  ForcedMarch: 2.0,
+/** Terrain types affecting overland travel. */
+export type TerrainType = 'Normal' | 'Rough' | 'Arduous';
+
+/** Travel mode: on foot or mounted. */
+export type TravelMode = 'foot' | 'mount';
+
+/**
+ * VsD v1.5 Overland Movement Table (km/day).
+ *
+ * Structure: [encumbrance][terrain][mode] → km/day
+ */
+const OVERLAND_TABLE: Record<TravelEncumbranceLevel, Record<TerrainType, Record<TravelMode, number>>> = {
+  UpToLightly: {
+    Normal: { foot: 50, mount: 95 },
+    Rough: { foot: 30, mount: 40 },
+    Arduous: { foot: 15, mount: 8 },
+  },
+  Encumbered: {
+    Normal: { foot: 30, mount: 65 },
+    Rough: { foot: 15, mount: 25 },
+    Arduous: { foot: 8, mount: 8 },
+  },
+  Heavily: {
+    Normal: { foot: 15, mount: 30 },
+    Rough: { foot: 8, mount: 15 },
+    Arduous: { foot: 3, mount: 0 },
+  },
+  Over: {
+    Normal: { foot: 0, mount: 0 },
+    Rough: { foot: 0, mount: 0 },
+    Arduous: { foot: 0, mount: 0 },
+  },
 };
 
 /**
- * Compute travel duration in hours.
+ * Compute daily overland travel distance in km/day.
  *
- * @param distanceMiles - Distance to travel in miles (positive)
- * @param pace - Travel pace affecting speed
- * @param terrainModifier - Terrain difficulty modifier (positive; higher = slower travel)
- * @param partyMovementRate - Party movement rate (positive; higher = faster travel)
- * @returns Duration in hours (positive for positive inputs)
+ * @param encumbrance - The character's travel encumbrance band
+ * @param terrain - Terrain type traversed
+ * @param mode - Whether traveling on foot or mounted
+ * @returns Distance in km/day (non-negative integer)
  */
-export function computeTravelDuration(
-  distanceMiles: number,
-  pace: TravelPace,
-  terrainModifier: number,
-  partyMovementRate: number
+export function computeDailyTravel(
+  encumbrance: TravelEncumbranceLevel,
+  terrain: TerrainType,
+  mode: TravelMode,
 ): number {
-  const paceMultiplier = PACE_MULTIPLIERS[pace];
-  return (distanceMiles * terrainModifier) / (partyMovementRate * paceMultiplier);
+  return OVERLAND_TABLE[encumbrance][terrain][mode];
 }
