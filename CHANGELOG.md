@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.18.0](https://github.com/jero-rodriguez/open00/compare/v1.17.13...v1.18.0) (2026-08-26)
+
+
+### Features
+
+* **types:** add tsconfig.test.json for test fixture type-checking ([a10103a](https://github.com/jero-rodriguez/open00/commit/a10103af0462de3efbec66436bd17324477aac89))
+* **types:** install fvtt-types v14 beta and restructure type foundation ([ce716c4](https://github.com/jero-rodriguez/open00/commit/ce716c470de5510b7afd139fd63c8b3eb45c2751))
+
+
+### Bug Fixes
+
+* **config:** update stale paths in steering and skill registry ([1be6071](https://github.com/jero-rodriguez/open00/commit/1be60712e4a8ddf58a6bb0cea28affae64ab2b67))
+
 ## [1.17.13](https://github.com/jero-rodriguez/open00/compare/v1.17.12...v1.17.13) (2026-08-26)
 
 
