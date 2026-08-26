@@ -365,6 +365,11 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     this.mpMax = 0;
     this.derivedDefense = 0;
     this.derivedEncumbrance = 'Unencumbered';
+
+    // Expose max on the schema objects so Foundry token bars find them at
+    // actor.system.hp.max / actor.system.mp.max (trackableAttributes: bar)
+    (this.hp as any).max = this.hpMax;
+    (this.mp as any).max = this.mpMax;
   }
 
   /**
