@@ -131,13 +131,13 @@ Rationale: Decision 6 pairs native ApplicationV2 `form: { handler, submitOnChang
 
 Implementable now (unblocked):
 
-- [ ] 9.1 RED: Write `tests/engine/combat/attack-lookup.test.ts` — table-driven tests for attack lookup logic (result → row, column selection, Max Result cap applied LAST)
-- [ ] 9.2 GREEN: Create `src/module/engine/combat/attack-tables.ts` — lookup engine implementing the attack-table interface (takes table data + result + armor → damage string + critical severity)
-- [ ] 9.3 RED: Write `tests/engine/combat/critical-lookup.test.ts` — severity modifier (+0/+10/+20/+30/+50), Heroic/Epic severity reduction (-1/-2, below Superficial = negated)
-- [ ] 9.4 GREEN: Create `src/module/engine/combat/critical-tables.ts` and `src/module/engine/combat/fumble-tables.ts` lookup engines
-- [ ] 9.5 Create `src/module/data/combat-loader.ts` — reads JSON files at init, returns `Map` structures; add JSON schema validation for attack/critical table shapes
-- [ ] 9.6 Update `vite.config.ts` to copy `src/data/` → `dist/data/` at build time
-- [ ] 9.7 Verify: `npm test` passes for lookup logic (with synthetic fixture data in tests only); `npx tsc --noEmit` clean
+- [x] 9.1 RED: Write `tests/engine/combat/attack-lookup.test.ts` — table-driven tests for attack lookup logic (result → row, column selection, Max Result cap applied LAST)
+- [x] 9.2 GREEN: Create `src/module/engine/combat/attack-tables.ts` — lookup engine implementing the attack-table interface (takes table data + result + armor → damage string + critical severity)
+- [x] 9.3 RED: Write `tests/engine/combat/critical-lookup.test.ts` — severity modifier (+0/+10/+20/+30/+50), Heroic/Epic severity reduction (-1/-2, below Superficial = negated)
+- [x] 9.4 GREEN: Create `src/module/engine/combat/critical-tables.ts` and `src/module/engine/combat/fumble-tables.ts` lookup engines
+- [x] 9.5 Create `src/module/data/combat-loader.ts` — reads JSON files at init, returns `Map` structures; add JSON schema validation for attack/critical table shapes
+- [x] 9.6 Update `vite.config.ts` to copy `src/data/` → `dist/data/` at build time
+- [x] 9.7 Verify: `npm test` passes for lookup logic (with synthetic fixture data in tests only); `npx tsc --noEmit` clean
 
 Blocked tasks (awaiting user data):
 
