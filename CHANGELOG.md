@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.20.0](https://github.com/jero-rodriguez/open00/compare/v1.19.0...v1.20.0) (2026-08-26)
+
+
+### Features
+
+* **sheets:** slice 3 — native form handlers, delete auto-save + partial-render ([3ddfba3](https://github.com/jero-rodriguez/open00/commit/3ddfba39ac858595cdbf4c313ca769fea63e3bdd))
+
 ## [1.19.0](https://github.com/jero-rodriguez/open00/compare/v1.18.0...v1.19.0) (2026-08-26)
 
 
