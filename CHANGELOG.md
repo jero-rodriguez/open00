@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.23.0](https://github.com/jero-rodriguez/open00/compare/v1.22.0...v1.23.0) (2026-08-26)
+
+
+### Features
+
+* **engine:** implement full derivation — save roll bonus, TSR/WSR, DEF, HP/MP, kin cap, soul damage ([f20ca7e](https://github.com/jero-rodriguez/open00/commit/f20ca7e5d60fc799b4ddcfd434450f81842bf81c))
+* **engine:** rewrite drive-points and advancement to VsD v1.5 rules ([901e1a0](https://github.com/jero-rodriguez/open00/commit/901e1a06271e911e27402a70b6caf0b36b95ce6e))
+
+
+### Bug Fixes
+
+* **models:** align hp.max test with token bar mirror behavior ([7631dc4](https://github.com/jero-rodriguez/open00/commit/7631dc4b1b555c19e4dd02c7e3f1b6319e65ace8))
+* **models:** expose hp.max/mp.max for token bars, add CMB to NPC skills ([7d4b101](https://github.com/jero-rodriguez/open00/commit/7d4b101c8a54e87647ddd27ba61c2b303910f071))
+* **sheet:** align templates with v2 schema (derived fields readonly) ([251303a](https://github.com/jero-rodriguez/open00/commit/251303a6cb7931d9e52da5ce3e8d398998137c21))
+* **sheet:** read skills from keyed record instead of legacy array ([4904f76](https://github.com/jero-rodriguez/open00/commit/4904f76c20cc07717a02149440135cdeae30c4a2))
+
 ## [1.22.0](https://github.com/jero-rodriguez/open00/compare/v1.21.0...v1.22.0) (2026-08-26)
 
 
