@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.21.0](https://github.com/jero-rodriguez/open00/compare/v1.20.0...v1.21.0) (2026-08-26)
+
+
+### Features
+
+* **models:** slice 4 — schema migration + identity seeding ([39ae4ee](https://github.com/jero-rodriguez/open00/commit/39ae4eeb420698617123f5c64a0c628a818c8e98))
+
 ## [1.20.0](https://github.com/jero-rodriguez/open00/compare/v1.19.0...v1.20.0) (2026-08-26)
 
 
