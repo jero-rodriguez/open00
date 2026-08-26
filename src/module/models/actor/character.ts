@@ -11,6 +11,7 @@
  */
 
 import { computeRankBonus } from '../../engine/rank-bonus.js';
+import { computeSaveRollBonus } from '../../engine/save-roll-bonus.js';
 import {
   SKILL_ID_LIST,
   DEFAULT_SKILL_DEFINITIONS,
@@ -85,6 +86,24 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
 
   /** Derived encumbrance level. */
   derivedEncumbrance!: string;
+
+  /** Save Roll Bonus (+5/lvl L1-10, +2/lvl L11-20, +1/lvl L21+). */
+  saveRollBonus!: number;
+
+  /** Toughness Save Roll = FOR total + SR Level Bonus + Kin TSR bonus. */
+  tsr!: number;
+
+  /** Willpower Save Roll = WSD total + SR Level Bonus + Kin WSR bonus. */
+  wsr!: number;
+
+  /** Base move rate in meters. */
+  moveRate!: number;
+
+  /** Character size from Kin item. */
+  size!: string;
+
+  /** Bruised threshold = floor(hpMax / 2). */
+  bruisedValue!: number;
 
   // -- Schema fields (type annotations for access) ---------------------------
 
@@ -309,27 +328,68 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   }
 
   // ---------------------------------------------------------------------------
-  // Derived data computation (skeleton — full formulas in Slice 8)
+  // Derived data computation — full formulas (Slice 8)
   // ---------------------------------------------------------------------------
 
   /**
    * Compute all derived data for the character.
    *
-   * TODO(v2-slice-8): Implement full formulas for:
-   *   - hp.max (Body Skill Bonus, capped by Kin maxHp, reduced by soulDamage)
-   *   - mp.max
-   *   - defense (SWI total + armor/shield)
-   *   - encumbrance level
-   *   - stat kin bonuses (from owned Kin Item traits)
-   *   - skill vocation/kin/item bonuses
-   *   - SR Level Bonus, TSR/WSR
+   * Reads owned Kin and Vocation items from the parent actor for:
+   * - Kin stat bonuses → skills.N.kin
+   * - Kin direct skill bonuses → skills.N.kin
+   * - Vocation skill bonuses → skills.N.vocation
+   * - Kin maxHp cap, hpModifier, tsrBonus, wsrBonus, mpBonus, size
+   * - Vocation mpGainPerLevel
    */
   override prepareDerivedData(): void {
-    this._computeDerivedSkills();
-    this._computeDerivedVitals();
+    // Resolve owned identity items from parent actor
+    const kinItem = this._findOwnedItem('kin');
+    const vocationItem = this._findOwnedItem('vocation');
+
+    // Extract Kin item data
+    const kinSystem = kinItem?.system as Record<string, unknown> | undefined;
+    const kinStatBonuses = (kinSystem?.statBonuses as Record<string, number>) ?? {};
+    const kinSkillBonuses = (kinSystem?.skillBonuses as Record<string, number>) ?? {};
+    const kinTsrBonus = (kinSystem?.tsrBonus as number) ?? 0;
+    const kinWsrBonus = (kinSystem?.wsrBonus as number) ?? 0;
+    const kinMaxHp = (kinSystem?.maxHp as number) ?? 999;
+    const kinHpModifier = (kinSystem?.hpModifier as number) ?? 0;
+    const kinMpBonus = (kinSystem?.mpBonus as number) ?? 0;
+    const kinSize = (kinSystem?.size as string) ?? 'Medium';
+
+    // Extract Vocation item data
+    const vocSystem = vocationItem?.system as Record<string, unknown> | undefined;
+    const vocSkillBonuses = (vocSystem?.skillBonuses as Record<string, number>) ?? {};
+    const vocMpGainPerLevel = (vocSystem?.mpGainPerLevel as number) ?? 0;
+
+    // Compute Save Roll Bonus
+    this.saveRollBonus = computeSaveRollBonus(this.level ?? 0);
+
+    // Compute derived skills (needs kin/vocation data)
+    this._computeDerivedSkills(kinStatBonuses, kinSkillBonuses, vocSkillBonuses);
+
+    // Compute vitals
+    this._computeDerivedVitals(kinMaxHp, kinHpModifier, kinMpBonus, vocMpGainPerLevel);
+
+    // Compute saves
+    this.tsr = this.getStatTotal('for') + this.saveRollBonus + kinTsrBonus;
+    this.wsr = this.getStatTotal('wsd') + this.saveRollBonus + kinWsrBonus;
+
+    // Compute defense: max(SWI total, 0) + armor/shield (TODO: armor/shield from items)
+    const swiTotal = this.getStatTotal('swi');
+    this.derivedDefense = Math.max(swiTotal, 0);
+
+    // Fixed values
+    this.moveRate = 15;
+    this.size = kinSize;
+    this.derivedEncumbrance = 'Unencumbered';
   }
 
-  private _computeDerivedSkills(): void {
+  private _computeDerivedSkills(
+    kinStatBonuses: Record<string, number>,
+    kinSkillBonuses: Record<string, number>,
+    vocSkillBonuses: Record<string, number>,
+  ): void {
     const derived = {} as Record<SkillId, DerivedSkillData>;
 
     for (const id of SKILL_ID_LIST) {
@@ -344,9 +404,16 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       // Rank bonus from engine
       const rankBonus = computeRankBonus(rank);
 
-      // Derived bonuses (skeleton — populated in Slice 8 from owned Items)
-      const kin = 0;
-      const vocation = 0;
+      // Kin bonus: stat-based (Kin grants stat bonus → flows to all skills governed by that stat)
+      // + direct skill bonus from Kin
+      const kinStatBonus = def.statKey ? (kinStatBonuses[def.statKey] ?? 0) : 0;
+      const kinDirectBonus = kinSkillBonuses[id] ?? 0;
+      const kin = kinStatBonus + kinDirectBonus;
+
+      // Vocation bonus: direct skill bonus from Vocation item
+      const vocation = vocSkillBonuses[id] ?? 0;
+
+      // Item bonuses (TODO: equipment items)
       const item = 0;
 
       const total = statTotal + rankBonus + kin + vocation + spec + item;
@@ -357,14 +424,28 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     this.derivedSkills = derived;
   }
 
-  private _computeDerivedVitals(): void {
-    // Skeleton — full formulas in Slice 8
+  private _computeDerivedVitals(
+    kinMaxHp: number,
+    kinHpModifier: number,
+    kinMpBonus: number,
+    vocMpGainPerLevel: number,
+  ): void {
     // hp.max = full Body Skill Bonus, capped by Kin maxHp, reduced by soulDamage
-    const bodyTotal = this.derivedSkills?.body?.total ?? 0;
-    this.hpMax = Math.max(0, bodyTotal - (this.soulDamage ?? 0));
-    this.mpMax = 0;
-    this.derivedDefense = 0;
-    this.derivedEncumbrance = 'Unencumbered';
+    // Body Skill Bonus = stat(FOR) + rankBonus(body.rank) + kin + vocation + spec + item + kinHpModifier
+    const bodySkill = this.derivedSkills?.body;
+    const bodyTotal = bodySkill
+      ? bodySkill.total + kinHpModifier
+      : kinHpModifier;
+
+    const cappedHp = Math.min(bodyTotal, kinMaxHp);
+    this.hpMax = Math.max(0, cappedHp - (this.soulDamage ?? 0));
+
+    // Bruised value = floor(hpMax / 2)
+    this.bruisedValue = Math.floor(this.hpMax / 2);
+
+    // mp.max = mpGainPerLevel × level + kinMpBonus
+    const level = this.level ?? 0;
+    this.mpMax = vocMpGainPerLevel * level + kinMpBonus;
 
     // Expose max on the schema objects so Foundry token bars find them at
     // actor.system.hp.max / actor.system.mp.max (trackableAttributes: bar)
@@ -373,8 +454,23 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   }
 
   /**
+   * Find an owned item by type on the parent actor.
+   * Returns undefined if no parent or no matching item.
+   */
+  private _findOwnedItem(type: string): { system: Record<string, unknown> } | undefined {
+    const parent = this.parent as any;
+    if (!parent?.items) return undefined;
+
+    // parent.items is a Collection — iterate to find by type
+    for (const item of parent.items) {
+      if ((item as any).type === type) return item as any;
+    }
+    return undefined;
+  }
+
+  /**
    * Get the total value for a stat (base + spec).
-   * Kin bonus will be added in Slice 8 when derived from owned Kin Item.
+   * Kin bonus is applied to SKILLS via the derivation pipeline, not to the stat itself.
    */
   getStatTotal(statKey: StatKey): number {
     const stat = this.stats?.[statKey];
