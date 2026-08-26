@@ -529,11 +529,11 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
         return {
           ...context,
-          defense: system['defense'],
+          defense: (this.actor as unknown as { system: { derivedDefense?: number } }).system.derivedDefense ?? 0,
           hp: system['hp'],
           computedHpMax,
-          encumbrance: system['encumbrance'],
-          encumbranceLabel: `OPEN00.Equipment.${String(system['encumbrance'] ?? 'Unencumbered')}`,
+          encumbrance: (this.actor as unknown as { system: { derivedEncumbrance?: string } }).system.derivedEncumbrance ?? 'Unencumbered',
+          encumbranceLabel: `OPEN00.Equipment.${(this.actor as unknown as { system: { derivedEncumbrance?: string } }).system.derivedEncumbrance ?? 'Unencumbered'}`,
           weapons,
           armor,
           conditions: [],
@@ -607,7 +607,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             };
           });
 
-        return { ...context, mp: system['mp'], level, spellLores };
+        const mpMax = (this.actor as unknown as { system: { mpMax?: number } }).system.mpMax ?? 0;
+        return { ...context, mp: system['mp'], mpMax, level, spellLores };
       }
 
       case 'equipment': {
