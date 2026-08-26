@@ -70,6 +70,30 @@ The project uses `fvtt-types` for comprehensive Foundry type definitions, with `
 - Engine code must remain pure (no Foundry imports) to stay testable
 - Keep game logic in `engine/`, Foundry integration in `models/` and `sheets/`
 
+## Task-Specific Reference Skills
+
+Large FoundryVTT and VsD references live behind repo-scoped Codex skills in
+`.agents/skills/`. Load only the skill that matches the task; do not load every
+rules reference by default.
+
+| Skill | Use for |
+|---|---|
+| `foundry-system-development` | Foundry v14 manifests, data models, documents, sheets, hooks, and distribution |
+| `roll20-sheet-design` | Character-sheet layout, templates, styling, and Roll20 visual parity |
+| `vsd-core-rules` | Dice, rolls, difficulty, saves, skills, and general engine mechanics |
+| `vsd-character` | Character creation, kin, culture, vocation, stats, skills, and advancement |
+| `vsd-combat` | Tactical rounds, attacks, defense, criticals, damage, and conditions |
+| `vsd-magic` | Casting, magic points, spell lores, resonance, warping, and overcasting |
+| `vsd-grimoire` | Individual spells, spell parameters, and spell-lore data |
+| `vsd-equipment` | Wealth, weapons, armor, shields, gear, and item properties |
+| `vsd-bestiary` | Creatures, NPC stat blocks, creature attacks, and special abilities |
+| `vsd-gm-darkmaster` | GM tools, opponents, the Darkmaster, battles, rewards, and campaigns |
+| `vsd-travel-healing` | Travel, encumbrance, hazards, injuries, healing, poison, and disease |
+
+The Kiro documents under `.kiro/steering/` remain the canonical reference text.
+Each Codex skill links to its corresponding source so the rules are not duplicated
+or allowed to drift.
+
 ## What NOT to Do
 
 - Do not run `npm run build` or `vite build` as verification — the Foundry plugin requires runtime context
