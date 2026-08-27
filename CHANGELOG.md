@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.2](https://github.com/jero-rodriguez/open00/compare/v1.23.1...v1.23.2) (2026-08-27)
+
+
+### Bug Fixes
+
+* **character:** repair identity drops and derived modifiers ([65ee817](https://github.com/jero-rodriguez/open00/commit/65ee8170d5762dde24a61989386b1648f2dd4b71))
+
 ## [1.23.1](https://github.com/jero-rodriguez/open00/compare/v1.23.0...v1.23.1) (2026-08-27)
 
 
