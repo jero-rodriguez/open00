@@ -266,6 +266,14 @@
       <input type="number" name="system.mpBonus" value="{{system.mpBonus}}" min="0" />
     </div>
     <div class="field-row">
+      <label class="field-label">Size</label>
+      <select name="system.size">
+        <option value="Small" {{#if (eq system.size "Small")}}selected{{/if}}>Small</option>
+        <option value="Medium" {{#if (eq system.size "Medium")}}selected{{/if}}>Medium</option>
+        <option value="Large" {{#if (eq system.size "Large")}}selected{{/if}}>Large</option>
+      </select>
+    </div>
+    <div class="field-row">
       <label class="field-label">TSR</label>
       <input type="number" name="system.tsr" value="{{system.tsr}}" />
     </div>
@@ -385,6 +393,14 @@
     <div class="field-row">
       <label class="field-label">MP Per Level</label>
       <input type="number" name="system.magicPointsPerLevel" value="{{system.magicPointsPerLevel}}" min="0" />
+    </div>
+    <div class="field-row">
+      <label class="field-label">Magic Stat</label>
+      <select name="system.magicStat">
+        <option value="wit" {{#if (eq system.magicStat "wit")}}selected{{/if}}>WIT</option>
+        <option value="wsd" {{#if (eq system.magicStat "wsd")}}selected{{/if}}>WSD</option>
+        <option value="bea" {{#if (eq system.magicStat "bea")}}selected{{/if}}>BEA</option>
+      </select>
     </div>
 
     {{#if system.vocationalBonuses.length}}

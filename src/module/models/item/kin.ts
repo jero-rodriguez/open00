@@ -36,6 +36,11 @@ export class KinDataModel extends foundry.abstract.TypeDataModel {
       // e.g., Dusk Elf +3, Star Elf +5, Silver Elf +4
       mpBonus: new NumberField({ integer: true, min: 0, initial: 0 }),
 
+      size: new StringField({
+        choices: ['Small', 'Medium', 'Large'],
+        initial: 'Medium',
+      }),
+
       // TSR: Toughness Save Roll bonus (resist fatigue, poison, disease, physical effects)
       // e.g., Dwarf +20, Stone Troll +30, Halfling +10
       tsr: new NumberField({ integer: true, initial: 0 }),

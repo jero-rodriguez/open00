@@ -107,7 +107,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
 
   // -- Schema fields (type annotations for access) ---------------------------
 
-  stats!: Record<StatKey, { base: number; spec: number }>;
+  stats!: Record<StatKey, { base: number; spec: number; kin?: number }>;
   hp!: { value: number };
   mp!: { value: number };
   drivePoints!: { value: number; max: number };
@@ -120,6 +120,8 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   soulDamage!: number;
   schemaVersion!: number;
   seeded!: boolean;
+  cultureSeeded!: boolean;
+  wealthSeeded!: boolean;
 
   static override defineSchema(): Record<string, foundry.data.fields.DataField> {
     return {
@@ -195,9 +197,11 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
       // Character Level
       level: new NumberField({ integer: true, min: 0, initial: 0 }),
 
-      // Whether identity seeding (wealth + cultural skill ranks) has already run.
-      // Once true, subsequent identity item additions do NOT re-seed.
+      // Backward-compatible aggregate flag plus independent one-time seeds.
+      // Split flags allow Kin and Culture to be dropped in either order.
       seeded: new BooleanField({ initial: false }),
+      cultureSeeded: new BooleanField({ initial: false }),
+      wealthSeeded: new BooleanField({ initial: false }),
 
       // Development Points Per Level history
       developmentPointsPerLevel: new ArrayField(
@@ -338,8 +342,8 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
    * - Kin stat bonuses → skills.N.kin
    * - Kin direct skill bonuses → skills.N.kin
    * - Vocation skill bonuses → skills.N.vocation
-   * - Kin maxHp cap, hpModifier, tsrBonus, wsrBonus, mpBonus, size
-   * - Vocation mpGainPerLevel
+   * - Kin maxHp cap, hpBonus, tsr, wsr, mpBonus, size
+   * - Vocation magicPointsPerLevel, magicStat, and vocationalBonuses
    */
   override prepareDerivedData(): void {
     // Resolve owned identity items from parent actor
@@ -348,19 +352,25 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
 
     // Extract Kin item data
     const kinSystem = kinItem?.system as Record<string, unknown> | undefined;
-    const kinStatBonuses = (kinSystem?.statBonuses as Record<string, number>) ?? {};
-    const kinSkillBonuses = (kinSystem?.skillBonuses as Record<string, number>) ?? {};
-    const kinTsrBonus = (kinSystem?.tsrBonus as number) ?? 0;
-    const kinWsrBonus = (kinSystem?.wsrBonus as number) ?? 0;
+    const kinStatBonuses = (kinSystem?.statModifiers as Record<string, number>) ?? {};
+    const kinSkillBonuses = this._collectTraitSkillBonuses();
+    const kinTsrBonus = (kinSystem?.tsr as number) ?? 0;
+    const kinWsrBonus = (kinSystem?.wsr as number) ?? 0;
     const kinMaxHp = (kinSystem?.maxHp as number) ?? 999;
-    const kinHpModifier = (kinSystem?.hpModifier as number) ?? 0;
+    const kinHpModifier = (kinSystem?.hpBonus as number) ?? 0;
     const kinMpBonus = (kinSystem?.mpBonus as number) ?? 0;
     const kinSize = (kinSystem?.size as string) ?? 'Medium';
 
     // Extract Vocation item data
     const vocSystem = vocationItem?.system as Record<string, unknown> | undefined;
-    const vocSkillBonuses = (vocSystem?.skillBonuses as Record<string, number>) ?? {};
-    const vocMpGainPerLevel = (vocSystem?.mpGainPerLevel as number) ?? 0;
+    const vocSkillBonuses = this._toSkillBonusRecord(vocSystem?.vocationalBonuses);
+    const vocMpGainPerLevel = (vocSystem?.magicPointsPerLevel as number) ?? 0;
+    const magicStat = this._asStatKey(vocSystem?.magicStat) ?? 'bea';
+
+    for (const statKey of ['brn', 'swi', 'for', 'wit', 'wsd', 'bea'] as const) {
+      const stat = this.stats?.[statKey];
+      if (stat) stat.kin = kinStatBonuses[statKey] ?? 0;
+    }
 
     // Compute Save Roll Bonus
     this.saveRollBonus = computeSaveRollBonus(this.level ?? 0);
@@ -369,7 +379,13 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     this._computeDerivedSkills(kinStatBonuses, kinSkillBonuses, vocSkillBonuses);
 
     // Compute vitals
-    this._computeDerivedVitals(kinMaxHp, kinHpModifier, kinMpBonus, vocMpGainPerLevel);
+    const statMpGainPerLevel = Math.floor(this.getStatTotal(magicStat) / 10);
+    this._computeDerivedVitals(
+      kinMaxHp,
+      kinHpModifier,
+      kinMpBonus,
+      vocMpGainPerLevel + statMpGainPerLevel,
+    );
 
     // Compute saves
     this.tsr = this.getStatTotal('for') + this.saveRollBonus + kinTsrBonus;
@@ -399,7 +415,8 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
 
       // Stat contribution
       const def = DEFAULT_SKILL_DEFINITIONS[id];
-      const statTotal = def.statKey ? this.getStatTotal(def.statKey as StatKey) : 0;
+      const stat = def.statKey ? this.stats?.[def.statKey as StatKey] : undefined;
+      const statTotal = (stat?.base ?? 0) + (stat?.spec ?? 0);
 
       // Rank bonus from engine
       const rankBonus = computeRankBonus(rank);
@@ -443,14 +460,51 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     // Bruised value = floor(hpMax / 2)
     this.bruisedValue = Math.floor(this.hpMax / 2);
 
-    // mp.max = mpGainPerLevel × level + kinMpBonus
+    // mp.max = (stat gain + vocation gain) × level + kinMpBonus
     const level = this.level ?? 0;
     this.mpMax = vocMpGainPerLevel * level + kinMpBonus;
 
     // Expose max on the schema objects so Foundry token bars find them at
     // actor.system.hp.max / actor.system.mp.max (trackableAttributes: bar)
+    this.hp ??= { value: 0 };
+    this.mp ??= { value: 0 };
     (this.hp as any).max = this.hpMax;
     (this.mp as any).max = this.mpMax;
+  }
+
+  private _collectTraitSkillBonuses(): Record<string, number> {
+    const bonuses: Record<string, number> = {};
+    const parent = this.parent as any;
+    if (!parent?.items) return bonuses;
+
+    for (const item of parent.items) {
+      if ((item as any).type !== 'trait') continue;
+      const itemBonuses = this._toSkillBonusRecord((item as any).system?.skillBonuses);
+      for (const [id, bonus] of Object.entries(itemBonuses)) {
+        bonuses[id] = (bonuses[id] ?? 0) + bonus;
+      }
+    }
+    return bonuses;
+  }
+
+  private _toSkillBonusRecord(value: unknown): Record<string, number> {
+    if (!Array.isArray(value)) return {};
+    const bonuses: Record<string, number> = {};
+    for (const entry of value) {
+      if (!entry || typeof entry !== 'object') continue;
+      const skillName = (entry as Record<string, unknown>).skillName;
+      const bonus = (entry as Record<string, unknown>).bonus;
+      if (typeof skillName !== 'string' || typeof bonus !== 'number') continue;
+      const id = NAME_TO_SKILL_ID.get(skillName.toLowerCase());
+      if (id) bonuses[id] = (bonuses[id] ?? 0) + bonus;
+    }
+    return bonuses;
+  }
+
+  private _asStatKey(value: unknown): StatKey | undefined {
+    return typeof value === 'string' && ['brn', 'swi', 'for', 'wit', 'wsd', 'bea'].includes(value)
+      ? value as StatKey
+      : undefined;
   }
 
   /**
@@ -475,6 +529,6 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   getStatTotal(statKey: StatKey): number {
     const stat = this.stats?.[statKey];
     if (!stat) return 0;
-    return (stat.base ?? 0) + (stat.spec ?? 0);
+    return (stat.base ?? 0) + (stat.kin ?? 0) + (stat.spec ?? 0);
   }
 }

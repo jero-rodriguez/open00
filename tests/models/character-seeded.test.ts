@@ -58,6 +58,54 @@ function createTestActor(overrides: Record<string, unknown> = {}): InstanceType<
 }
 
 describe('Open00Actor — identity seeding', () => {
+  it('seeds correctly when Kin and Culture are dropped sequentially', async () => {
+    const actor = createTestActor();
+    const kinItem = new MockItem({
+      type: 'kin',
+      system: { startingWealth: 1 },
+    });
+    const cultureItem = new MockItem({
+      type: 'culture',
+      system: {
+        startingWealth: 2,
+        skillRankAllocations: [{ skillName: 'Athletics', ranks: 3 }],
+      },
+    });
+
+    await actor.createEmbeddedDocuments('Item', [kinItem as any]);
+    await new Promise((r) => setTimeout(r, 10));
+    await actor.createEmbeddedDocuments('Item', [cultureItem as any]);
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(actor.system.skills.athletics.rank).toBe(3);
+    expect(actor.system.wealth).toBe(3);
+    expect(actor.system.cultureSeeded).toBe(true);
+    expect(actor.system.wealthSeeded).toBe(true);
+  });
+
+  it('does not duplicate cultural ranks when Culture is dropped before Kin', async () => {
+    const actor = createTestActor();
+    const cultureItem = new MockItem({
+      type: 'culture',
+      system: {
+        startingWealth: 2,
+        skillRankAllocations: [{ skillName: 'Athletics', ranks: 3 }],
+      },
+    });
+    const kinItem = new MockItem({
+      type: 'kin',
+      system: { startingWealth: 1 },
+    });
+
+    await actor.createEmbeddedDocuments('Item', [cultureItem as any]);
+    await new Promise((r) => setTimeout(r, 10));
+    await actor.createEmbeddedDocuments('Item', [kinItem as any]);
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(actor.system.skills.athletics.rank).toBe(3);
+    expect(actor.system.wealth).toBe(3);
+  });
+
   it('seeds cultural skill ranks when a Culture item is added', async () => {
     const actor = createTestActor();
 

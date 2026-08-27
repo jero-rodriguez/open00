@@ -10,6 +10,7 @@
  */
 
 import { DEFAULT_SKILL_DEFINITIONS, SKILL_ID_LIST } from '../data/skills.js';
+import { flattenFormData } from './form-data.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
@@ -331,11 +332,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     formData: FormDataExtended,
   ): Promise<void> {
     const sheet = (this as unknown as Open00ItemSheet);
-    const updates: Record<string, unknown> = {};
-
-    for (const [key, value] of Object.entries(formData.object)) {
-      updates[key] = value;
-    }
+    const updates = flattenFormData(formData.object);
 
     if (Object.keys(updates).length > 0) {
       await sheet.item.update(updates);
