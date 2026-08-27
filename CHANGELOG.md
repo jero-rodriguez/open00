@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.23.1](https://github.com/jero-rodriguez/open00/compare/v1.23.0...v1.23.1) (2026-08-27)
+
+
+### Bug Fixes
+
+* **character-sheet:** preserve actor data when updating stats ([d465637](https://github.com/jero-rodriguez/open00/commit/d4656373c36c7155be3e31fcf88a3e85c6f2b2a9))
+
 ## [1.23.0](https://github.com/jero-rodriguez/open00/compare/v1.22.0...v1.23.0) (2026-08-26)
 
 
