@@ -68,6 +68,27 @@ function asNumber(value: unknown, fallback = 0): number {
   return Number.isFinite(numericValue) ? numericValue : fallback;
 }
 
+function flattenFormData(
+  data: Record<string, unknown>,
+  prefix = '',
+  updates: Record<string, unknown> = {},
+): Record<string, unknown> {
+  for (const [key, value] of Object.entries(data)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    const prototype = value !== null && typeof value === 'object'
+      ? Object.getPrototypeOf(value)
+      : undefined;
+
+    if (prototype === Object.prototype || prototype === null) {
+      flattenFormData(value as Record<string, unknown>, path, updates);
+    } else {
+      updates[path] = value;
+    }
+  }
+
+  return updates;
+}
+
 function formatModifier(value: number): string {
   return value > 0 ? `+${value}` : String(value);
 }
@@ -220,13 +241,9 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     formData: FormDataExtended,
   ): Promise<void> {
     const sheet = (this as unknown as Open00CharacterSheet);
-    const updates: Record<string, unknown> = {};
-
-    // FormDataExtended converts form fields to an object
-    // We need to handle dot-path field names (e.g., "system.skills.armor.rank")
-    for (const [key, value] of Object.entries(formData.object)) {
-      updates[key] = value;
-    }
+    // FormDataExtended may return nested objects. Actor.update requires dot-path
+    // keys so a single stat edit does not replace the whole system object.
+    const updates = flattenFormData(formData.object);
 
     if (Object.keys(updates).length > 0) {
       await sheet.actor.update(updates);
