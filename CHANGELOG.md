@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.23.3](https://github.com/jero-rodriguez/open00/compare/v1.23.2...v1.23.3) (2026-08-27)
+
+
+### Bug Fixes
+
+* **character:** avoid re-rendering and follow foundry model ([c0f8517](https://github.com/jero-rodriguez/open00/commit/c0f8517aebeaaaf3122d84954de924551b281b98))
+* **character:** foundry types ([30af13f](https://github.com/jero-rodriguez/open00/commit/30af13f7cedef3b8297b7074e5d3c9f90059ac68))
+
 ## [1.23.2](https://github.com/jero-rodriguez/open00/compare/v1.23.1...v1.23.2) (2026-08-27)
 
 
