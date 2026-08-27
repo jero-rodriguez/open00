@@ -4,10 +4,10 @@
       <h2 class="section-title">{{localize "OPEN00.Combat.HitPoints"}}</h2>
       <div class="orb-and-fields">
         <label class="resource-orb">
-          <input type="number" name="system.hp.value" value="{{hp.value}}" min="0" />
+          <input type="number" name="system.hp.value" value="{{hp.value}}" />
           <span>{{localize "OPEN00.Overview.Current"}}</span>
         </label>
-        <label class="compact-rule-field"><span>{{localize "OPEN00.Combat.TotalHits"}}</span><input type="number" name="system.hp.max" value="{{computedHpMax}}" min="0" readonly /></label>
+        <label class="compact-rule-field"><span>{{localize "OPEN00.Combat.TotalHits"}}</span><input type="number" value="{{hpMax}}" min="0" readonly /></label>
       </div>
     </section>
 

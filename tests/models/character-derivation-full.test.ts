@@ -20,6 +20,7 @@
 import { describe, it, expect } from 'vitest';
 import { CharacterDataModel } from '../../src/module/models/actor/character.js';
 import { createModel, MockActor, MockItem, MockCollection } from '../foundry-shim.js';
+import { DEFAULT_SKILL_DEFINITIONS } from '../../src/module/data/skills.js';
 
 // ---------------------------------------------------------------------------
 // Helper: create a model with a parent actor that has items
@@ -47,23 +48,34 @@ function createCharacterWithItems(
   vocationData?: MockVocationData,
 ) {
   const parent = new MockActor({ type: 'character' });
+  const asBonusArray = (bonuses: Record<string, number> = {}) =>
+    Object.entries(bonuses).map(([id, bonus]) => ({
+      skillName: DEFAULT_SKILL_DEFINITIONS[id as keyof typeof DEFAULT_SKILL_DEFINITIONS]?.name ?? id,
+      bonus,
+    }));
 
   if (kinData) {
     const kinItem = new MockItem({
       type: 'kin',
       name: 'Test Kin',
       system: {
-        statBonuses: kinData.statBonuses ?? {},
-        tsrBonus: kinData.tsrBonus ?? 0,
-        wsrBonus: kinData.wsrBonus ?? 0,
+        statModifiers: kinData.statBonuses ?? {},
+        tsr: kinData.tsrBonus ?? 0,
+        wsr: kinData.wsrBonus ?? 0,
         maxHp: kinData.maxHp ?? 999,
-        hpModifier: kinData.hpModifier ?? 0,
+        hpBonus: kinData.hpModifier ?? 0,
         mpBonus: kinData.mpBonus ?? 0,
         size: kinData.size ?? 'Medium',
-        skillBonuses: kinData.skillBonuses ?? {},
       },
     });
     parent.items.push(kinItem);
+
+    if (kinData.skillBonuses) {
+      parent.items.push(new MockItem({
+        type: 'trait',
+        system: { skillBonuses: asBonusArray(kinData.skillBonuses) },
+      }));
+    }
   }
 
   if (vocationData) {
@@ -71,8 +83,9 @@ function createCharacterWithItems(
       type: 'vocation',
       name: 'Test Vocation',
       system: {
-        skillBonuses: vocationData.skillBonuses ?? {},
-        mpGainPerLevel: vocationData.mpGainPerLevel ?? 0,
+        vocationalBonuses: asBonusArray(vocationData.skillBonuses),
+        magicPointsPerLevel: vocationData.mpGainPerLevel ?? 0,
+        magicStat: 'bea',
       },
     });
     parent.items.push(vocItem);

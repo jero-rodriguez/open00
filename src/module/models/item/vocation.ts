@@ -48,6 +48,11 @@ export class VocationDataModel extends foundry.abstract.TypeDataModel {
       // e.g., Wizard 3, Animist 2, Champion 1, Warrior 0
       magicPointsPerLevel: new NumberField({ integer: true, min: 0, initial: 0 }),
 
+      magicStat: new StringField({
+        choices: ['wit', 'wsd', 'bea'],
+        initial: 'bea',
+      }),
+
       // Vocational Spell Lores — spells from these lores can be cast without restrictions
       // Characters can learn and cast from these up to their Level's Weave.
       // e.g., Wizard: Eldritch Fire, Mind Control, Illusions, etc.

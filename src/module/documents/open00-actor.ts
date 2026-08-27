@@ -7,7 +7,7 @@
  * Implements identity seeding: when a Kin/Culture/Vocation Item is added to
  * a character (via any path: drag-drop, programmatic, compendium import,
  * duplication), seeds wealth and cultural skill ranks — guarded by a `seeded`
- * flag so it only runs once.
+ * flags so each player-owned seed only runs once.
  */
 
 import { SKILL_ID_LIST, DEFAULT_SKILL_DEFINITIONS, type SkillId } from '../data/skills.js';
@@ -33,7 +33,7 @@ export class Open00Actor extends Actor {
    *
    * Seeds wealth and cultural skill ranks when identity items (Kin, Culture,
    * Vocation) are added to a character — but only if the character hasn't
-   * been seeded yet (`system.seeded === false`).
+   * relevant seed has not already been applied.
    */
   override _onCreateDescendantDocuments(
     parent: any,
@@ -48,8 +48,10 @@ export class Open00Actor extends Actor {
     // Only seed characters, not NPCs
     if (this.type !== 'character') return;
 
-    // Already seeded — never re-derive
-    if ((this.system as any).seeded) return;
+    const system = this.system as any;
+    // A legacy actor only has the original all-or-nothing `seeded` flag.
+    if (system.seeded && !system.cultureSeeded && !system.wealthSeeded) return;
+    if (system.cultureSeeded && system.wealthSeeded) return;
 
     // Check if any of the created items are identity items
     const hasIdentityItem = documents.some(
@@ -70,7 +72,8 @@ export class Open00Actor extends Actor {
    * Cultural skill ranks = Culture's skillRankAllocations (21 total ranks
    * distributed into skills.*.rank).
    *
-   * Guarded by the `seeded` flag — once set, this never runs again.
+   * Cultural ranks and combined wealth use separate guards so Kin and Culture
+   * may be added in either order without duplicating ranks.
    */
   private async _seedIdentity(createdItems: Item[]): Promise<void> {
     // Gather all identity items (both newly created and already owned)
@@ -89,14 +92,20 @@ export class Open00Actor extends Actor {
 
     const updateData: Record<string, unknown> = {};
 
-    // --- Seed wealth: Kin WL + Culture WL, clamped [0, 4] ---
+    const cultureSeeded = Boolean((this.system as any).cultureSeeded);
+    const wealthSeeded = Boolean((this.system as any).wealthSeeded);
+
+    // Keep wealth provisional until both Kin and Culture exist, then lock it.
     const kinWealth = kinItem ? ((kinItem.system as any).startingWealth ?? 0) : 0;
     const cultureWealth = cultureItem ? ((cultureItem.system as any).startingWealth ?? 0) : 0;
     const totalWealth = Math.max(0, Math.min(4, kinWealth + cultureWealth));
-    updateData['system.wealth'] = totalWealth;
+    if (!wealthSeeded && (kinItem || cultureItem)) {
+      updateData['system.wealth'] = totalWealth;
+      if (kinItem && cultureItem) updateData['system.wealthSeeded'] = true;
+    }
 
     // --- Seed cultural skill ranks from Culture's skillRankAllocations ---
-    if (cultureItem) {
+    if (cultureItem && !cultureSeeded) {
       const allocations = (cultureItem.system as any).skillRankAllocations;
       if (Array.isArray(allocations)) {
         // Build a name→id map for matching allocation skillNames to canonical ids
@@ -118,11 +127,12 @@ export class Open00Actor extends Actor {
           updateData[`system.skills.${id}.rank`] = currentRank + ranks;
         }
       }
+      updateData['system.cultureSeeded'] = true;
     }
 
-    // Mark as seeded so this never runs again
-    updateData['system.seeded'] = true;
+    const nextCultureSeeded = cultureSeeded || updateData['system.cultureSeeded'] === true;
+    updateData['system.seeded'] = nextCultureSeeded;
 
-    await this.update(updateData);
+    if (Object.keys(updateData).length > 0) await this.update(updateData);
   }
 }

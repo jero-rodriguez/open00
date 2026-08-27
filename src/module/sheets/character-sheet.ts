@@ -17,12 +17,7 @@ import {
   type SkillId,
 } from '../data/skills.js';
 import type { DerivedSkillData } from '../models/actor/character.js';
-// TODO(v2-slice-4): Remove these stubs — identity effects now handled by prepareDerivedData + seeding.
-const deriveKinCultureVocationEffects = (
-  _system: Record<string, unknown>,
-  _identities: Record<string, unknown>,
-): Record<string, unknown> => ({});
-const clearAllIdentityEffects = (_system: Record<string, unknown>): Record<string, unknown> => ({});
+import { flattenFormData } from './form-data.js';
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ActorSheetV2 } = foundry.applications.sheets;
@@ -66,27 +61,6 @@ function asNumber(value: unknown, fallback = 0): number {
 
   const numericValue = Number(value);
   return Number.isFinite(numericValue) ? numericValue : fallback;
-}
-
-function flattenFormData(
-  data: Record<string, unknown>,
-  prefix = '',
-  updates: Record<string, unknown> = {},
-): Record<string, unknown> {
-  for (const [key, value] of Object.entries(data)) {
-    const path = prefix ? `${prefix}.${key}` : key;
-    const prototype = value !== null && typeof value === 'object'
-      ? Object.getPrototypeOf(value)
-      : undefined;
-
-    if (prototype === Object.prototype || prototype === null) {
-      flattenFormData(value as Record<string, unknown>, path, updates);
-    } else {
-      updates[path] = value;
-    }
-  }
-
-  return updates;
 }
 
 function formatModifier(value: number): string {
@@ -259,46 +233,16 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
     const itemType = item.type;
 
-    // Replace the existing identity choice, then apply its game effects
+    // Replace the existing identity choice. Derived effects are read directly
+    // from owned Items during Actor data preparation.
     if (itemType === 'kin' || itemType === 'culture' || itemType === 'vocation') {
       const existing = this.actor.items.find((i: Item) => i.type === itemType);
       if (existing) await existing.delete();
 
-      const result = await super._onDropItem(event, data);
-      if (result !== false) await this.#applyIdentityEffects(result);
-      return result;
+      return super._onDropItem(event, data);
     }
 
     return super._onDropItem(event, data);
-  }
-
-  async #applyIdentityEffects(createdItems: Item[] = []): Promise<void> {
-    // Use toObject() on system data to get plain objects that bracket-access works on reliably
-    const toPlain = (item: Item | undefined): Record<string, unknown> | undefined => {
-      if (!item) return undefined;
-      const sys = item.system as unknown as { toObject?: () => Record<string, unknown> };
-      return typeof sys?.toObject === 'function' ? sys.toObject() : (item.system as Record<string, unknown>);
-    };
-
-    // Prefer freshly-created items (guaranteed to have hydrated data),
-    // fall back to actor.items for identity types not in the created batch.
-    const findIdentity = (type: string): Item | undefined =>
-      createdItems.find((i: Item) => i.type === type) ??
-      this.actor.items.find((item: Item) => item.type === type);
-
-    const kin = findIdentity('kin');
-    const vocation = findIdentity('vocation');
-    const culture = findIdentity('culture');
-
-    const updates = deriveKinCultureVocationEffects(this.actor.system as Record<string, unknown>, {
-      kin: toPlain(kin),
-      vocation: toPlain(vocation),
-      culture: toPlain(culture),
-    });
-
-    if (Object.keys(updates).length > 0) {
-      await this.actor.update(updates);
-    }
   }
 
   override async _prepareContext(
@@ -359,13 +303,14 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           const statBase = asNumber(stats[def.statKey]?.base);
           const statKin = asNumber(stats[def.statKey]?.kin);
           const statSpec = asNumber(stats[def.statKey]?.spec);
-          const statBonus = statBase + statKin + statSpec;
+          const statBonus = statBase + statSpec;
           const rankBonus = computeRankBonus(asNumber(persisted.rank));
           const vocation = asNumber(derived?.vocation);
           const kin = asNumber(derived?.kin);
           const spec = asNumber(persisted.spec);
           const item = asNumber(derived?.item);
-          const totalBonus = statBonus + rankBonus + vocation + kin + spec + item;
+          const totalBonus = derived?.total
+            ?? statBonus + rankBonus + vocation + kin + spec + item;
           return {
             id,
             name: def.name,
@@ -417,6 +362,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
         // Build save rolls with full breakdown (Stat, Kin, Spec, Lvl, Kin Bonus, Total)
         const level = asNumber(system['level']);
+        const saveRollBonus = asNumber(system['saveRollBonus']);
         const kinItem = this.actor.items.find((item: Item) => item.type === 'kin');
         const kinData = kinItem ? (kinItem.system as Record<string, unknown>) : null;
         const kinTsr = asNumber(kinData?.['tsr']);
@@ -429,9 +375,9 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             statBase: asNumber(stats['for']?.base),
             kin: asNumber(stats['for']?.kin),
             spec: asNumber(stats['for']?.spec),
-            level,
+            level: saveRollBonus,
             kinBonus: kinTsr,
-            total: asNumber(stats['for']?.base) + asNumber(stats['for']?.kin) + asNumber(stats['for']?.spec) + level + kinTsr,
+            total: asNumber(system['tsr']),
           },
           {
             name: 'OPEN00.Saves.Willpower',
@@ -439,9 +385,9 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             statBase: asNumber(stats['wsd']?.base),
             kin: asNumber(stats['wsd']?.kin),
             spec: asNumber(stats['wsd']?.spec),
-            level,
+            level: saveRollBonus,
             kinBonus: kinWsr,
-            total: asNumber(stats['wsd']?.base) + asNumber(stats['wsd']?.kin) + asNumber(stats['wsd']?.spec) + level + kinWsr,
+            total: asNumber(system['wsr']),
           },
         ];
 
@@ -537,18 +483,11 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             };
           });
 
-        // Compute HP max from Kin hpBonus + Body Development rank bonus
-        const kinItem = this.actor.items.find((item: Item) => item.type === 'kin');
-        const kinHpBonus = kinItem ? asNumber((kinItem.system as Record<string, unknown>)['hpBonus']) : 0;
-        const bodySkillRecord = (system['skills'] as Record<string, { rank: number }>)?.['body'];
-        const bodyRankBonus = bodySkillRecord ? computeRankBonus(asNumber(bodySkillRecord.rank)) : 0;
-        const computedHpMax = kinHpBonus + bodyRankBonus;
-
         return {
           ...context,
           defense: (this.actor as unknown as { system: { derivedDefense?: number } }).system.derivedDefense ?? 0,
           hp: system['hp'],
-          computedHpMax,
+          hpMax: asNumber(system['hpMax']),
           encumbrance: (this.actor as unknown as { system: { derivedEncumbrance?: string } }).system.derivedEncumbrance ?? 'Unencumbered',
           encumbranceLabel: `OPEN00.Equipment.${(this.actor as unknown as { system: { derivedEncumbrance?: string } }).system.derivedEncumbrance ?? 'Unencumbered'}`,
           weapons,
@@ -585,11 +524,11 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             // Compute casting bonus from the lore's governing stat
             const stat = stats[statKey];
             const statBonus = stat
-              ? asNumber(stat.base) + asNumber(stat.kin) + asNumber(stat.spec)
+              ? asNumber(stat.base) + asNumber(stat.spec)
               : 0;
             const rankBonus = skillPersisted ? computeRankBonus(ranks) : 0;
             const vocation = asNumber(skillDerived?.vocation);
-            const kin = asNumber(skillDerived?.kin);
+            const kin = skillDerived ? asNumber(skillDerived.kin) : asNumber(stat?.kin);
             const spec = asNumber(skillPersisted?.spec);
             const itemMod = asNumber(skillDerived?.item);
             const castingBonus = statBonus + rankBonus + vocation + kin + spec + itemMod;
@@ -845,7 +784,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
     const type = item.type;
 
-    // Identity items require bonus cleanup before deletion
+    // Derived identity effects disappear automatically during Actor data
+    // preparation; seeded player-owned values intentionally remain.
     if (type === 'kin' || type === 'culture' || type === 'vocation') {
       void sheet.#removeIdentityItem(item, type);
       return;
@@ -854,38 +794,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     void item.delete();
   }
 
-  /**
-   * Remove a kin, culture, or vocation item from the actor, zeroing out all
-   * identity-derived bonuses and then re-applying effects from whichever
-   * identity items remain attached.
-   */
-  async #removeIdentityItem(item: Item, type: string): Promise<void> {
+  async #removeIdentityItem(item: Item, _type: string): Promise<void> {
     await item.delete();
-
-    // Zero all identity-derived fields first
-    const system = this.actor.system as Record<string, unknown>;
-    const clearUpdates = clearAllIdentityEffects(system);
-
-    // Use toObject() on system data to get plain objects for reliable bracket access
-    const toPlain = (item: Item | undefined): Record<string, unknown> | undefined => {
-      if (!item) return undefined;
-      const sys = item.system as unknown as { toObject?: () => Record<string, unknown> };
-      return typeof sys?.toObject === 'function' ? sys.toObject() : (item.system as Record<string, unknown>);
-    };
-
-    // Re-derive effects from remaining identity items (excluding the one just deleted)
-    const remaining = {
-      kin: type !== 'kin' ? toPlain(this.actor.items.find((i: Item) => i.type === 'kin')) : undefined,
-      culture: type !== 'culture' ? toPlain(this.actor.items.find((i: Item) => i.type === 'culture')) : undefined,
-      vocation: type !== 'vocation' ? toPlain(this.actor.items.find((i: Item) => i.type === 'vocation')) : undefined,
-    };
-    const reapplyUpdates = deriveKinCultureVocationEffects(system, remaining);
-
-    // Merge: clear first, then overlay remaining effects
-    const finalUpdates = { ...clearUpdates, ...reapplyUpdates };
-    if (Object.keys(finalUpdates).length > 0) {
-      await this.actor.update(finalUpdates);
-    }
   }
 
   static #setDrivePoints(event: Event, target: HTMLElement): void {
