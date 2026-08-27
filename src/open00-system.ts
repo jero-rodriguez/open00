@@ -68,7 +68,7 @@ Hooks.once('init', () => {
       bar: [],
       value: ['hp', 'level'],
     },
-  };
+  } as unknown as typeof CONFIG.Actor.trackableAttributes;
 
   // Register Actor sheets
   foundry.documents.collections.Actors.registerSheet('open00', Open00CharacterSheet, {

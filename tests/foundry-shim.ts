@@ -277,6 +277,9 @@ class MockItem {
   type: string;
   system: Record<string, unknown>;
 
+  /** Most recent update payload for sheet submission assertions. */
+  _lastUpdate: Record<string, unknown> | null = null;
+
   constructor(data: Partial<MockItem> = {}) {
     this.id = data.id ?? crypto.randomUUID();
     this.uuid = data.uuid ?? `Item.${this.id}`;
@@ -287,6 +290,7 @@ class MockItem {
   }
 
   async update(data: Record<string, unknown>): Promise<this> {
+    this._lastUpdate = data;
     for (const [key, value] of Object.entries(data)) {
       const path = key.split('.');
       let target: any = this;

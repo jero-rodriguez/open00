@@ -17,10 +17,13 @@ import {
   type SkillId,
 } from '../data/skills.js';
 import type { DerivedSkillData } from '../models/actor/character.js';
-import { flattenFormData } from './form-data.js';
+import { getFormUpdates } from './form-data.js';
+import type { DeepPartial } from 'fvtt-types/utils';
 
-const { HandlebarsApplicationMixin } = foundry.applications.api;
-const { ActorSheetV2 } = foundry.applications.sheets;
+type CharacterRenderContext = foundry.applications.sheets.ActorSheetV2.RenderContext
+  & Record<string, unknown>;
+type CharacterRenderOptions = DeepPartial<foundry.applications.sheets.ActorSheetV2.RenderOptions>;
+type PartRenderOptions = DeepPartial<foundry.applications.api.HandlebarsApplicationMixin.RenderOptions>;
 
 const ACTOR_TEMPLATE_ROOT = 'systems/open00/templates/actors';
 
@@ -67,6 +70,13 @@ function formatModifier(value: number): string {
   return value > 0 ? `+${value}` : String(value);
 }
 
+/** Safe i18n accessor — throws a clear error if called before Foundry init. */
+function localize(key: string): string {
+  const i18n = game.i18n;
+  if (!i18n) throw new Error(`game.i18n not available (key: ${key})`);
+  return i18n.localize(key);
+}
+
 function escapeHTML(value: unknown): string {
   return String(value ?? '')
     .replaceAll('&', '&amp;')
@@ -76,8 +86,10 @@ function escapeHTML(value: unknown): string {
     .replaceAll("'", '&#039;');
 }
 
-export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
-  static override DEFAULT_OPTIONS: foundry.applications.api.ApplicationConfiguration = {
+export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.sheets.ActorSheetV2<CharacterRenderContext>,
+) {
+  static override DEFAULT_OPTIONS = {
     classes: ['open00', 'sheet', 'actor', 'character'],
     tag: 'form',
     position: { width: 1080, height: 800 },
@@ -94,7 +106,10 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     },
   };
 
-  static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
+  static override PARTS: Record<
+    string,
+    foundry.applications.api.HandlebarsApplicationMixin.HandlebarsTemplatePart
+  > = {
     header: {
       template: `${ACTOR_TEMPLATE_ROOT}/character-header.hbs`,
     },
@@ -103,33 +118,33 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       template: `${ACTOR_TEMPLATE_ROOT}/character-tabs.hbs`,
     },
     overview: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ACTOR_TEMPLATE_ROOT}/character-overview.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
     combat: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ACTOR_TEMPLATE_ROOT}/character-combat.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
     magic: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ACTOR_TEMPLATE_ROOT}/character-magic.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
     equipment: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ACTOR_TEMPLATE_ROOT}/character-equipment.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
     biography: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ACTOR_TEMPLATE_ROOT}/character-biography.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
   };
 
-  static TABS: SheetTabDefinition[] = [
+  static SHEET_TABS: SheetTabDefinition[] = [
     { tab: 'overview', label: 'OPEN00.Tabs.Skills' },
     { tab: 'combat', label: 'OPEN00.Tabs.Combat' },
     { tab: 'magic', label: 'OPEN00.Tabs.Magic' },
@@ -140,9 +155,9 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
   override tabGroups: Record<string, string> = { primary: 'overview' };
 
   override render(
-    options: boolean | foundry.applications.api.ApplicationRenderOptions = {},
-    legacyOptions: foundry.applications.api.ApplicationRenderOptions = {},
-  ): Promise<unknown> {
+    options: boolean | CharacterRenderOptions = {},
+    legacyOptions: CharacterRenderOptions = {},
+  ): Promise<this> {
     if (typeof options === 'boolean') {
       return super.render(options, this.#withPartialActorRender(legacyOptions));
     }
@@ -151,8 +166,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
   }
 
   #withPartialActorRender(
-    options: foundry.applications.api.ApplicationRenderOptions,
-  ): foundry.applications.api.ApplicationRenderOptions {
+    options: CharacterRenderOptions,
+  ): CharacterRenderOptions {
     if (options.parts) return options;
 
     // For actor updates, re-render header + the active tab (native part-scoped render)
@@ -176,7 +191,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
   protected _getTabs(): Record<string, SheetTab> {
     const active = this.tabGroups['primary'];
-    return (this.constructor as typeof Open00CharacterSheet).TABS.reduce<Record<string, SheetTab>>(
+    return (this.constructor as typeof Open00CharacterSheet).SHEET_TABS.reduce<Record<string, SheetTab>>(
       (tabs, { tab, label }) => {
         const isActive = active === tab;
         tabs[tab] = {
@@ -192,32 +207,18 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     );
   }
 
-  override async _onRender(
-    context: Record<string, unknown>,
-    options: foundry.applications.api.ApplicationRenderOptions,
-  ): Promise<void> {
-    await super._onRender(context, options);
-    // Form submission now handled by native submitOnChange + _processFormData
-  }
-
-  async close(options?: Record<string, unknown>): Promise<void> {
-    return super.close(options);
-  }
-
   /**
    * Native form handler for ApplicationV2.
    * Processes form data submitted via submitOnChange and converts field names
    * to actor.update() paths, handling keyed skill record paths like "skills.armor.rank".
    */
   static async #processFormData(
-    event: SubmitEvent,
+    event: SubmitEvent | Event,
     form: HTMLFormElement,
-    formData: FormDataExtended,
+    formData: foundry.applications.ux.FormDataExtended,
   ): Promise<void> {
     const sheet = (this as unknown as Open00CharacterSheet);
-    // FormDataExtended may return nested objects. Actor.update requires dot-path
-    // keys so a single stat edit does not replace the whole system object.
-    const updates = flattenFormData(formData.object);
+    const updates = getFormUpdates(event, formData.object);
 
     if (Object.keys(updates).length > 0) {
       await sheet.actor.update(updates);
@@ -226,11 +227,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
   override async _onDropItem(
     event: DragEvent,
-    data: Record<string, unknown>,
-  ): Promise<Item[] | false> {
-    const item = await (Item as unknown as { fromDropData(data: Record<string, unknown>): Promise<Item> }).fromDropData(data);
-    if (!item) return super._onDropItem(event, data);
-
+    item: Item,
+  ): Promise<Item | null> {
     const itemType = item.type;
 
     // Replace the existing identity choice. Derived effects are read directly
@@ -239,15 +237,15 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       const existing = this.actor.items.find((i: Item) => i.type === itemType);
       if (existing) await existing.delete();
 
-      return super._onDropItem(event, data);
+      return super._onDropItem(event, item);
     }
 
-    return super._onDropItem(event, data);
+    return super._onDropItem(event, item);
   }
 
   override async _prepareContext(
-    options: foundry.applications.api.ApplicationRenderOptions,
-  ): Promise<Record<string, unknown>> {
+    options: CharacterRenderOptions & { isFirstRender: boolean },
+  ): Promise<CharacterRenderContext> {
     const baseContext = await super._prepareContext(options);
     const system = this.actor.system as Record<string, unknown>;
     const identityItem = (type: string) => this.actor.items.find((item: Item) => item.type === type);
@@ -283,8 +281,9 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
   override async _preparePartContext(
     partId: string,
-    context: Record<string, unknown>,
-  ): Promise<Record<string, unknown>> {
+    context: CharacterRenderContext,
+    _options: PartRenderOptions = {},
+  ): Promise<CharacterRenderContext> {
     const system = this.actor.system as Record<string, unknown>;
     const tabs = (context['tabs'] as Record<string, SheetTab>) ?? {};
     const tab = tabs[partId];
@@ -303,7 +302,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           const statBase = asNumber(stats[def.statKey]?.base);
           const statKin = asNumber(stats[def.statKey]?.kin);
           const statSpec = asNumber(stats[def.statKey]?.spec);
-          const statBonus = statBase + statSpec;
+          const statBonus = statBase + statKin + statSpec;
           const rankBonus = computeRankBonus(asNumber(persisted.rank));
           const vocation = asNumber(derived?.vocation);
           const kin = asNumber(derived?.kin);
@@ -438,9 +437,9 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
               ['qualityQuickLoad', 'OPEN00.Qualities.QuickLoad'],
               ['qualityReach', 'OPEN00.Qualities.Reach'],
               ['qualityUnreliable', 'OPEN00.Qualities.Unreliable'],
-            ].filter(([key]) => Boolean(data[key])).map(([, label]) => game.i18n.localize(label));
+            ].filter(([key]) => Boolean(data[key])).map(([, label]) => localize(label));
             const loadRounds = asNumber(data['qualityLoadRounds']);
-            if (loadRounds > 0) qualities.push(`${game.i18n.localize('OPEN00.Qualities.Load')} ${loadRounds}`);
+            if (loadRounds > 0) qualities.push(`${localize('OPEN00.Qualities.Load')} ${loadRounds}`);
 
             return {
               id: item.id,
@@ -464,8 +463,8 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
           .map((item: Item) => {
             const data = item.system as Record<string, unknown>;
             const qualities = [
-              data['qualityMetal'] ? game.i18n.localize('OPEN00.Qualities.Metal') : '',
-              data['qualityRigid'] ? game.i18n.localize('OPEN00.Qualities.Rigid') : '',
+              data['qualityMetal'] ? localize('OPEN00.Qualities.Metal') : '',
+              data['qualityRigid'] ? localize('OPEN00.Qualities.Rigid') : '',
             ].filter(Boolean);
             return {
               id: item.id,
@@ -524,7 +523,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
             // Compute casting bonus from the lore's governing stat
             const stat = stats[statKey];
             const statBonus = stat
-              ? asNumber(stat.base) + asNumber(stat.spec)
+              ? asNumber(stat.base) + asNumber(stat.kin) + asNumber(stat.spec)
               : 0;
             const rankBonus = skillPersisted ? computeRankBonus(ranks) : 0;
             const vocation = asNumber(skillDerived?.vocation);
@@ -579,7 +578,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
               id: item.id,
               img: item.img,
               name: item.name,
-              type: game.i18n.localize(`TYPES.Item.${item.type}`),
+              type: localize(`TYPES.Item.${item.type}`),
               quantity,
               fare: data['fare'] ?? '—',
               availability: data['availability'] ?? '—',
@@ -633,15 +632,15 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
 
       case 'biography': {
         const itemView = (item: Item) => ({ id: item.id, img: item.img, name: item.name });
-        const enrichOptions = { async: true, relativeTo: this.actor };
+        const enrichOptions = { relativeTo: this.actor };
         return {
           ...context,
           biography: system['biography'] ?? '',
           appearance: system['appearance'] ?? '',
           backgroundNotes: system['backgroundNotes'] ?? '',
-          enrichedBiography: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['biography'] ?? ''), enrichOptions),
-          enrichedAppearance: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['appearance'] ?? ''), enrichOptions),
-          enrichedBackgroundNotes: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['backgroundNotes'] ?? ''), enrichOptions),
+          enrichedBiography: await foundry.applications.ux.TextEditor.enrichHTML(String(system['biography'] ?? ''), enrichOptions),
+          enrichedAppearance: await foundry.applications.ux.TextEditor.enrichHTML(String(system['appearance'] ?? ''), enrichOptions),
+          enrichedBackgroundNotes: await foundry.applications.ux.TextEditor.enrichHTML(String(system['backgroundNotes'] ?? ''), enrichOptions),
           traits: this.actor.items.filter((item: Item) => item.type === 'trait').map(itemView),
           backgrounds: this.actor.items.filter((item: Item) => item.type === 'background').map(itemView),
         };
@@ -665,9 +664,9 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     const totalWithBonus = rollResult.total + skillBonus;
     const outcome = resolveAction(totalWithBonus);
     const statLabel = STAT_NAMES[statKey]
-      ? game.i18n.localize(STAT_NAMES[statKey])
+      ? localize(STAT_NAMES[statKey])
       : statKey.toUpperCase();
-    const categoryLabel = game.i18n.localize(`OPEN00.Skills.Categories.${category}`);
+    const categoryLabel = localize(`OPEN00.Skills.Categories.${category}`);
 
     const chatContent = `
       <div class="open00-roll-result">
@@ -681,7 +680,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
         </div>
         <div class="roll-result">
           <strong>${totalWithBonus}</strong>
-          <span>${escapeHTML(game.i18n.localize(`OPEN00.ActionResolution.${outcome}`))}</span>
+          <span>${escapeHTML(localize(`OPEN00.ActionResolution.${outcome}`))}</span>
         </div>
       </div>`;
 
@@ -699,7 +698,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     if (!statKey || Number.isNaN(statBonus)) return;
 
     const statLabel = STAT_NAMES[statKey]
-      ? game.i18n.localize(STAT_NAMES[statKey])
+      ? localize(STAT_NAMES[statKey])
       : statKey.toUpperCase();
 
     const rollResult = computeOpenEndedRoll(() => Math.floor(Math.random() * 100) + 1);
@@ -710,7 +709,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       <div class="open00-roll-result">
         <header class="roll-header">
           <strong>${escapeHTML(statLabel)}</strong>
-          <span class="roll-category">${escapeHTML(game.i18n.localize('OPEN00.Overview.Stats'))}</span>
+          <span class="roll-category">${escapeHTML(localize('OPEN00.Overview.Stats'))}</span>
         </header>
         <div class="roll-formula">
           <span>${escapeHTML(formatRollDisplay(rollResult))}</span>
@@ -718,7 +717,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
         </div>
         <div class="roll-result">
           <strong>${totalWithBonus}</strong>
-          <span>${escapeHTML(game.i18n.localize(`OPEN00.ActionResolution.${outcome}`))}</span>
+          <span>${escapeHTML(localize(`OPEN00.ActionResolution.${outcome}`))}</span>
         </div>
       </div>`;
 
@@ -736,7 +735,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
     const saveBonus = Number(row.dataset.saveBonus);
     if (!saveName || Number.isNaN(saveBonus)) return;
 
-    const saveLabel = game.i18n.localize(saveName);
+    const saveLabel = localize(saveName);
 
     const rollResult = computeOpenEndedRoll(() => Math.floor(Math.random() * 100) + 1);
     const totalWithBonus = rollResult.total + saveBonus;
@@ -746,7 +745,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
       <div class="open00-roll-result">
         <header class="roll-header">
           <strong>${escapeHTML(saveLabel)}</strong>
-          <span class="roll-category">${escapeHTML(game.i18n.localize('OPEN00.Overview.SaveRolls'))}</span>
+          <span class="roll-category">${escapeHTML(localize('OPEN00.Overview.SaveRolls'))}</span>
         </header>
         <div class="roll-formula">
           <span>${escapeHTML(formatRollDisplay(rollResult))}</span>
@@ -754,7 +753,7 @@ export class Open00CharacterSheet extends HandlebarsApplicationMixin(ActorSheetV
         </div>
         <div class="roll-result">
           <strong>${totalWithBonus}</strong>
-          <span>${escapeHTML(game.i18n.localize(`OPEN00.ActionResolution.${outcome}`))}</span>
+          <span>${escapeHTML(localize(`OPEN00.ActionResolution.${outcome}`))}</span>
         </div>
       </div>`;
 

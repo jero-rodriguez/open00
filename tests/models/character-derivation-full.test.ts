@@ -488,12 +488,13 @@ describe('CharacterDataModel — Move Rate, Size, Bruised Value', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Kin Bonus on Skills (DERIVED from Kin Item stat bonuses)
+// Kin bonus on Skills (direct Trait bonuses only)
 // ---------------------------------------------------------------------------
 
 describe('CharacterDataModel — Kin Bonus on Skills', () => {
-  it('applies Kin stat bonuses to skills governed by that stat', () => {
-    // Kin gives BRN +5 → all BRN-governed skills get kin = 5
+  it('applies Kin stat bonuses through the governing Stat, not the Skill Kin component', () => {
+    // Kin gives BRN +5. The stat is now 15, while Skill Kin remains reserved
+    // for direct Trait bonuses.
     const model = createCharacterWithItems(
       {
         stats: {
@@ -508,12 +509,13 @@ describe('CharacterDataModel — Kin Bonus on Skills', () => {
       },
       { statBonuses: { brn: 5 } },
     );
-    // blades is BRN-governed: kin = 5
-    expect(model.derivedSkills.blades.kin).toBe(5);
+    expect(model.getStatTotal('brn')).toBe(15);
+    expect(model.derivedSkills.blades.kin).toBe(0);
+    expect(model.derivedSkills.blades.total).toBe(15);
   });
 
   it('applies Kin direct skill bonuses', () => {
-    // Kin gives perception +10 directly
+    // An owned Trait gives Perception +10 directly.
     const model = createCharacterWithItems(
       {
         stats: {
@@ -546,7 +548,7 @@ describe('CharacterDataModel — Kin Bonus on Skills', () => {
     expect(model.derivedSkills.blades.kin).toBe(0);
   });
 
-  it('includes kin bonus in skill total', () => {
+  it('includes the Kin stat modifier once through the governing Stat', () => {
     const model = createCharacterWithItems(
       {
         stats: {
@@ -561,7 +563,7 @@ describe('CharacterDataModel — Kin Bonus on Skills', () => {
       },
       { statBonuses: { brn: 5 } },
     );
-    // blades: stat(brn)=10, rankBonus(5)=25, kin=5, voc=0, spec=0, item=0 → 40
+    // blades: governing BRN=10+5, rankBonus(5)=25, direct Trait Kin=0 → 40
     expect(model.derivedSkills.blades.total).toBe(40);
   });
 });

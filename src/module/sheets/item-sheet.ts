@@ -10,10 +10,13 @@
  */
 
 import { DEFAULT_SKILL_DEFINITIONS, SKILL_ID_LIST } from '../data/skills.js';
-import { flattenFormData } from './form-data.js';
+import { getFormUpdates } from './form-data.js';
+import type { DeepPartial } from 'fvtt-types/utils';
 
-const { HandlebarsApplicationMixin } = foundry.applications.api;
-const { ItemSheetV2 } = foundry.applications.sheets;
+type ItemRenderContext = foundry.applications.sheets.ItemSheetV2.RenderContext
+  & Record<string, unknown>;
+type ItemRenderOptions = DeepPartial<foundry.applications.sheets.ItemSheetV2.RenderOptions>;
+type PartRenderOptions = DeepPartial<foundry.applications.api.HandlebarsApplicationMixin.RenderOptions>;
 const ITEM_TEMPLATE_ROOT = 'systems/open00/templates/items';
 
 interface SheetTabDefinition {
@@ -53,33 +56,40 @@ const ALL_TABS: SheetTabDefinition[] = [
   { tab: 'description', label: 'OPEN00.ItemTabs.Description' },
 ];
 
-export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
-  static override DEFAULT_OPTIONS: foundry.applications.api.ApplicationConfiguration = {
+export class Open00ItemSheet extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.sheets.ItemSheetV2<ItemRenderContext>,
+) {
+  static override DEFAULT_OPTIONS = {
     classes: ['open00', 'sheet', 'item'],
     tag: 'form',
     position: { width: 560, height: 520 },
     window: { resizable: true },
     form: { handler: Open00ItemSheet.#processFormData, submitOnChange: true },
+    actions: {
+      removeSpell: Open00ItemSheet.#removeSpell,
+    },
   };
 
   /** Wider sheets for types with large tables */
   static WIDE_TYPES: Set<string> = new Set(['spellLore']);
 
   override render(
-    options: boolean | foundry.applications.api.ApplicationRenderOptions = {},
-    legacyOptions: foundry.applications.api.ApplicationRenderOptions = {},
-  ): Promise<unknown> {
+    options: boolean | ItemRenderOptions = {},
+    legacyOptions: ItemRenderOptions = {},
+  ): Promise<this> {
     if ((this.constructor as typeof Open00ItemSheet).WIDE_TYPES.has(this.item.type)) {
       this.position.width = 732;
     }
-    const parts = this.#getVisibleParts();
     if (typeof options === 'boolean') {
-      return super.render(options, { ...legacyOptions, parts });
+      return super.render(options, this.#withItemRenderParts(legacyOptions));
     }
-    return super.render({ ...options, parts });
+    return super.render(this.#withItemRenderParts(options));
   }
 
-  static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
+  static override PARTS: Record<
+    string,
+    foundry.applications.api.HandlebarsApplicationMixin.HandlebarsTemplatePart
+  > = {
     header: {
       template: `${ITEM_TEMPLATE_ROOT}/item-header.hbs`,
     },
@@ -88,27 +98,27 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       template: `${ITEM_TEMPLATE_ROOT}/item-tabs.hbs`,
     },
     details: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ITEM_TEMPLATE_ROOT}/item-details.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
     qualities: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ITEM_TEMPLATE_ROOT}/item-qualities.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
     commerce: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ITEM_TEMPLATE_ROOT}/item-commerce.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
     description: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ITEM_TEMPLATE_ROOT}/item-description.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
     spells: {
-      container: { classes: ['tab-body'], id: 'tabs' },
+      classes: ['tab-body'],
       template: `${ITEM_TEMPLATE_ROOT}/item-spells.hbs`,
       scrollable: ['.open00-tab-scroll'],
     },
@@ -116,11 +126,29 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
   override tabGroups: Record<string, string> = { primary: 'details' };
 
+  #spellLoreListeners?: AbortController;
+
   /** Determine which PARTS to render based on item type */
   #getVisibleParts(): string[] {
     const itemType = this.item.type;
     const tabParts = TYPE_TABS[itemType] ?? ['details', 'description'];
     return ['header', 'tabs', ...tabParts];
+  }
+
+  #withItemRenderParts(
+    options: ItemRenderOptions,
+  ): ItemRenderOptions {
+    if (options.parts) return options;
+
+    // For data changes, re-render only header + active tab (partial render)
+    const ctx = options.renderContext;
+    if (ctx === 'updateItem' || ctx === 'updateActor'
+      || ctx === 'createItem' || ctx === 'deleteItem') {
+      const activeTab = this.tabGroups['primary'] ?? 'details';
+      return { ...options, parts: ['header', activeTab] };
+    }
+
+    return { ...options, parts: this.#getVisibleParts() };
   }
 
   /** Build tab objects filtered by visible tabs for this item type */
@@ -143,8 +171,8 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   }
 
   override async _prepareContext(
-    options: foundry.applications.api.ApplicationRenderOptions,
-  ): Promise<Record<string, unknown>> {
+    options: ItemRenderOptions & { isFirstRender: boolean },
+  ): Promise<ItemRenderContext> {
     const baseContext = await super._prepareContext(options);
     const system = this.item.system as Record<string, unknown>;
     const itemType = this.item.type;
@@ -176,29 +204,30 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
   override async _preparePartContext(
     partId: string,
-    context: Record<string, unknown>,
-  ): Promise<Record<string, unknown>> {
+    context: ItemRenderContext,
+    _options: PartRenderOptions = {},
+  ): Promise<ItemRenderContext> {
     const tabs = (context['tabs'] as Record<string, SheetTab>) ?? {};
     const tab = tabs[partId];
     context = tab ? { ...context, tab } : { ...context };
 
     const system = (context['system'] as Record<string, unknown>) ?? {};
-    const enrichOptions = { async: true, relativeTo: this.item };
+    const enrichOptions = { relativeTo: this.item };
 
     // Enrich editor content for each part that uses {{editor}}
     if (partId === 'description') {
-      context['enrichedItemDescription'] = await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['description'] ?? ''), enrichOptions);
-      context['enrichedNotes'] = await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['notes'] ?? ''), enrichOptions);
-      context['enrichedPassionsGuidance'] = await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(system['passionsGuidance'] ?? ''), enrichOptions);
+      context['enrichedItemDescription'] = await foundry.applications.ux.TextEditor.enrichHTML(String(system['description'] ?? ''), enrichOptions);
+      context['enrichedNotes'] = await foundry.applications.ux.TextEditor.enrichHTML(String(system['notes'] ?? ''), enrichOptions);
+      context['enrichedPassionsGuidance'] = await foundry.applications.ux.TextEditor.enrichHTML(String(system['passionsGuidance'] ?? ''), enrichOptions);
     }
 
     if (partId === 'details' && context['isBackground']) {
       const minor = (system['minor'] as Record<string, unknown>) ?? {};
       const major = (system['major'] as Record<string, unknown>) ?? {};
-      context['enrichedMinorRequirement'] = await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(minor['requirement'] ?? ''), enrichOptions);
-      context['enrichedMinorEffects'] = await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(minor['effects'] ?? ''), enrichOptions);
-      context['enrichedMajorRequirement'] = await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(major['requirement'] ?? ''), enrichOptions);
-      context['enrichedMajorEffects'] = await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(major['effects'] ?? ''), enrichOptions);
+      context['enrichedMinorRequirement'] = await foundry.applications.ux.TextEditor.enrichHTML(String(minor['requirement'] ?? ''), enrichOptions);
+      context['enrichedMinorEffects'] = await foundry.applications.ux.TextEditor.enrichHTML(String(minor['effects'] ?? ''), enrichOptions);
+      context['enrichedMajorRequirement'] = await foundry.applications.ux.TextEditor.enrichHTML(String(major['requirement'] ?? ''), enrichOptions);
+      context['enrichedMajorEffects'] = await foundry.applications.ux.TextEditor.enrichHTML(String(major['effects'] ?? ''), enrichOptions);
     }
 
     if (partId === 'spells') {
@@ -206,7 +235,7 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       const enrichedSpells = await Promise.all(
         spells.map(async (spell) => ({
           ...spell,
-          enrichedSpellDescription: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(spell['description'] ?? ''), enrichOptions),
+          enrichedSpellDescription: await foundry.applications.ux.TextEditor.enrichHTML(String(spell['description'] ?? ''), enrichOptions),
         })),
       );
       context['system'] = { ...system, spells: enrichedSpells };
@@ -247,11 +276,12 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   }
 
   override async _onRender(
-    context: Record<string, unknown>,
-    options: foundry.applications.api.ApplicationRenderOptions,
+    context: DeepPartial<ItemRenderContext>,
+    options: ItemRenderOptions,
   ): Promise<void> {
     await super._onRender(context, options);
-    // Form submission now handled by native submitOnChange + #processFormData
+    this.#spellLoreListeners?.abort();
+    this.#spellLoreListeners = undefined;
 
     // Enable drag-and-drop on spellLore sheets for receiving spell items
     if (this.item.type === 'spellLore') {
@@ -263,11 +293,13 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   #setupSpellLoreDropZone(): void {
     const el = this.element;
     if (!el) return;
+    const listeners = new AbortController();
+    this.#spellLoreListeners = listeners;
 
     el.addEventListener('dragover', (event: DragEvent) => {
       event.preventDefault();
       if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
-    });
+    }, { signal: listeners.signal });
 
     el.addEventListener('drop', async (event: DragEvent) => {
       event.preventDefault();
@@ -306,20 +338,17 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       };
 
       await this.item.update({ 'system.spells': [...currentSpells, newSpell] });
-    });
+    }, { signal: listeners.signal });
+  }
 
-    // Wire up remove-spell buttons
-    el.querySelectorAll<HTMLElement>('[data-action="removeSpell"]').forEach((button: HTMLElement) => {
-      button.addEventListener('click', async (event: Event) => {
-        const target = (event.currentTarget as HTMLElement);
-        const index = Number(target.dataset['spellIndex']);
-        if (Number.isNaN(index)) return;
+  static async #removeSpell(_event: Event, target: HTMLElement): Promise<void> {
+    const sheet = this as unknown as Open00ItemSheet;
+    const index = Number(target.dataset['spellIndex']);
+    if (Number.isNaN(index)) return;
 
-        const currentSpells = [...(((this.item.system as Record<string, unknown>)['spells'] as unknown[]) ?? [])];
-        currentSpells.splice(index, 1);
-        await this.item.update({ 'system.spells': currentSpells });
-      });
-    });
+    const currentSpells = [...(((sheet.item.system as Record<string, unknown>)['spells'] as unknown[]) ?? [])];
+    currentSpells.splice(index, 1);
+    await sheet.item.update({ 'system.spells': currentSpells });
   }
 
   /**
@@ -327,19 +356,23 @@ export class Open00ItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
    * Processes form data submitted via submitOnChange and persists via item.update().
    */
   static async #processFormData(
-    _event: SubmitEvent,
+    event: SubmitEvent | Event,
     _form: HTMLFormElement,
-    formData: FormDataExtended,
+    formData: foundry.applications.ux.FormDataExtended,
   ): Promise<void> {
     const sheet = (this as unknown as Open00ItemSheet);
-    const updates = flattenFormData(formData.object);
+    const updates = getFormUpdates(event, formData.object);
 
     if (Object.keys(updates).length > 0) {
       await sheet.item.update(updates);
     }
   }
 
-  async close(options?: Record<string, unknown>): Promise<void> {
+  override async close(
+    options?: foundry.applications.api.ApplicationV2.ClosingOptions,
+  ): Promise<this | void> {
+    this.#spellLoreListeners?.abort();
+    this.#spellLoreListeners = undefined;
     return super.close(options);
   }
 }
