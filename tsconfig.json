@@ -12,7 +12,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "rootDir": "src",
-    "types": [],
+    "types": ["fvtt-types"],
     "paths": {
       "@engine/*": ["./src/module/engine/*"],
       "@models/*": ["./src/module/models/*"],

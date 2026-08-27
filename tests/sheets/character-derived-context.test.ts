@@ -17,7 +17,7 @@ function createSheet(): any {
       },
       skills: { blades: { rank: 0, spec: 0 } },
       derivedSkills: {
-        blades: { rank: 0, spec: 0, kin: 5, vocation: 0, item: 0, total: 15 },
+        blades: { rank: 0, spec: 0, kin: 0, vocation: 0, item: 0, total: 15 },
       },
       saveRollBonus: 35,
       tsr: 65,
@@ -38,6 +38,8 @@ describe('Open00CharacterSheet derived context', () => {
     const blades = skills.find((skill: any) => skill.id === 'blades');
 
     expect(blades.totalBonus).toBe(15);
+    expect(blades.statBonusDisplay).toBe('+15');
+    expect(blades.kin).toBe(0);
     expect(context.saveRolls[0].level).toBe(35);
     expect(context.saveRolls[0].total).toBe(65);
   });

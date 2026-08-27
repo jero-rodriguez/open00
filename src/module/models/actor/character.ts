@@ -339,7 +339,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
    * Compute all derived data for the character.
    *
    * Reads owned Kin and Vocation items from the parent actor for:
-   * - Kin stat bonuses → skills.N.kin
+   * - Kin stat bonuses → governing Stat Value
    * - Kin direct skill bonuses → skills.N.kin
    * - Vocation skill bonuses → skills.N.vocation
    * - Kin maxHp cap, hpBonus, tsr, wsr, mpBonus, size
@@ -376,7 +376,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
     this.saveRollBonus = computeSaveRollBonus(this.level ?? 0);
 
     // Compute derived skills (needs kin/vocation data)
-    this._computeDerivedSkills(kinStatBonuses, kinSkillBonuses, vocSkillBonuses);
+    this._computeDerivedSkills(kinSkillBonuses, vocSkillBonuses);
 
     // Compute vitals
     const statMpGainPerLevel = Math.floor(this.getStatTotal(magicStat) / 10);
@@ -402,7 +402,6 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   }
 
   private _computeDerivedSkills(
-    kinStatBonuses: Record<string, number>,
     kinSkillBonuses: Record<string, number>,
     vocSkillBonuses: Record<string, number>,
   ): void {
@@ -415,17 +414,14 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
 
       // Stat contribution
       const def = DEFAULT_SKILL_DEFINITIONS[id];
-      const stat = def.statKey ? this.stats?.[def.statKey as StatKey] : undefined;
-      const statTotal = (stat?.base ?? 0) + (stat?.spec ?? 0);
+      const statTotal = def.statKey ? this.getStatTotal(def.statKey as StatKey) : 0;
 
       // Rank bonus from engine
       const rankBonus = computeRankBonus(rank);
 
-      // Kin bonus: stat-based (Kin grants stat bonus → flows to all skills governed by that stat)
-      // + direct skill bonus from Kin
-      const kinStatBonus = def.statKey ? (kinStatBonuses[def.statKey] ?? 0) : 0;
-      const kinDirectBonus = kinSkillBonuses[id] ?? 0;
-      const kin = kinStatBonus + kinDirectBonus;
+      // Kin stat modifiers are already included in statTotal. This component
+      // intentionally contains only direct bonuses from owned Trait items.
+      const kin = kinSkillBonuses[id] ?? 0;
 
       // Vocation bonus: direct skill bonus from Vocation item
       const vocation = vocSkillBonuses[id] ?? 0;
@@ -523,8 +519,7 @@ export class CharacterDataModel extends foundry.abstract.TypeDataModel {
   }
 
   /**
-   * Get the total value for a stat (base + spec).
-   * Kin bonus is applied to SKILLS via the derivation pipeline, not to the stat itself.
+   * Get the total value for a stat (base + Kin + spec).
    */
   getStatTotal(statKey: StatKey): number {
     const stat = this.stats?.[statKey];

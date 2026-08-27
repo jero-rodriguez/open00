@@ -15,9 +15,12 @@ import {
   type ArmorCategory,
   type AttackTableData,
 } from '../engine/attack-tables.js';
+import { getFormUpdates } from './form-data.js';
+import type { DeepPartial } from 'fvtt-types/utils';
 
-const { HandlebarsApplicationMixin } = foundry.applications.api;
-const { ActorSheetV2 } = foundry.applications.sheets;
+type NpcRenderContext = foundry.applications.sheets.ActorSheetV2.RenderContext
+  & Record<string, unknown>;
+type NpcRenderOptions = DeepPartial<foundry.applications.sheets.ActorSheetV2.RenderOptions>;
 const NPC_TEMPLATE_ROOT = 'systems/open00/templates/actors';
 
 /** Valid armor categories for attack table resolution */
@@ -86,8 +89,10 @@ interface SkillCategoryDisplay {
   }>;
 }
 
-export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
-  static override DEFAULT_OPTIONS: foundry.applications.api.ApplicationConfiguration = {
+export class Open00NpcSheet extends foundry.applications.api.HandlebarsApplicationMixin(
+  foundry.applications.sheets.ActorSheetV2<NpcRenderContext>,
+) {
+  static override DEFAULT_OPTIONS = {
     classes: ['open00', 'sheet', 'actor', 'npc'],
     tag: 'form',
     position: { width: 700, height: 720 },
@@ -98,15 +103,42 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     },
   };
 
-  static override PARTS: Record<string, foundry.applications.api.ApplicationPartDefinition> = {
+  static override PARTS: Record<
+    string,
+    foundry.applications.api.HandlebarsApplicationMixin.HandlebarsTemplatePart
+  > = {
     body: {
       template: `${NPC_TEMPLATE_ROOT}/npc-sheet.hbs`,
     },
   };
 
+  override render(
+    options: boolean | NpcRenderOptions = {},
+    legacyOptions: NpcRenderOptions = {},
+  ): Promise<this> {
+    if (typeof options === 'boolean') {
+      return super.render(options, this.#withPartialNpcRender(legacyOptions));
+    }
+    return super.render(this.#withPartialNpcRender(options));
+  }
+
+  #withPartialNpcRender(
+    options: NpcRenderOptions,
+  ): NpcRenderOptions {
+    if (options.parts) return options;
+
+    const ctx = options.renderContext;
+    if (ctx === 'updateActor' || ctx === 'createItem' || ctx === 'deleteItem'
+      || ctx === 'updateItem') {
+      return { ...options, parts: ['body'] };
+    }
+
+    return options;
+  }
+
   override async _prepareContext(
-    options: foundry.applications.api.ApplicationRenderOptions,
-  ): Promise<Record<string, unknown>> {
+    options: NpcRenderOptions & { isFirstRender: boolean },
+  ): Promise<NpcRenderContext> {
     const baseContext = await super._prepareContext(options);
     const system = this.actor.system as Record<string, unknown>;
 
@@ -181,7 +213,7 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
           index,
           name: ability.name,
           description: ability.description,
-          enrichedAbilityDescription: await foundry.applications.ux.TextEditor.implementation.enrichHTML(String(ability.description ?? ''), { async: true, relativeTo: this.actor }),
+          enrichedAbilityDescription: await foundry.applications.ux.TextEditor.enrichHTML(String(ability.description ?? ''), { relativeTo: this.actor }),
         })),
     );
 
@@ -216,33 +248,17 @@ export class Open00NpcSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
     };
   }
 
-  override async _onRender(
-    context: Record<string, unknown>,
-    options: foundry.applications.api.ApplicationRenderOptions,
-  ): Promise<void> {
-    await super._onRender(context, options);
-    // Form submission now handled by native submitOnChange + #processFormData
-  }
-
-  async close(options?: Record<string, unknown>): Promise<void> {
-    return super.close(options);
-  }
-
   /**
    * Native form handler for ApplicationV2.
    * Processes form data submitted via submitOnChange and persists via actor.update().
    */
   static async #processFormData(
-    _event: SubmitEvent,
+    event: SubmitEvent | Event,
     _form: HTMLFormElement,
-    formData: FormDataExtended,
+    formData: foundry.applications.ux.FormDataExtended,
   ): Promise<void> {
     const sheet = (this as unknown as Open00NpcSheet);
-    const updates: Record<string, unknown> = {};
-
-    for (const [key, value] of Object.entries(formData.object)) {
-      updates[key] = value;
-    }
+    const updates = getFormUpdates(event, formData.object);
 
     if (Object.keys(updates).length > 0) {
       await sheet.actor.update(updates);
