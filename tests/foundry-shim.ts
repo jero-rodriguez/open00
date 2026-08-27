@@ -113,6 +113,49 @@ class TypeDataModel {
   prepareDerivedData?(): void;
 }
 
+// =============================================================================
+// ApplicationV2 — minimal sheet runtime required by sheet form-handler tests
+// =============================================================================
+
+class MockApplicationV2 {
+  tabGroups: Record<string, string> = {};
+  position: Record<string, unknown> = {};
+
+  async render(): Promise<unknown> {
+    return undefined;
+  }
+
+  async close(): Promise<void> {
+    return undefined;
+  }
+
+  async _onRender(): Promise<void> {
+    return undefined;
+  }
+
+  async _prepareContext(): Promise<Record<string, unknown>> {
+    return {};
+  }
+
+  async _preparePartContext(): Promise<Record<string, unknown>> {
+    return {};
+  }
+}
+
+class MockActorSheetV2 extends MockApplicationV2 {
+  get actor(): MockActor {
+    return (this as unknown as { document: MockActor }).document;
+  }
+
+  async _onDropItem(): Promise<false> {
+    return false;
+  }
+}
+
+function HandlebarsApplicationMixin<T extends abstract new (...args: any[]) => MockApplicationV2>(base: T): T {
+  return base;
+}
+
 /**
  * Factory helper that creates a TypeDataModel instance and runs the full
  * Foundry data preparation lifecycle.
@@ -373,6 +416,16 @@ const mockHooks = {
 (globalThis as any).foundry = {
   abstract: {
     TypeDataModel,
+  },
+  applications: {
+    api: {
+      ApplicationV2: MockApplicationV2,
+      HandlebarsApplicationMixin,
+    },
+    sheets: {
+      ActorSheetV2: MockActorSheetV2,
+      ItemSheetV2: MockApplicationV2,
+    },
   },
   data: {
     fields: {
