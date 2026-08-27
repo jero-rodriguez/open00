@@ -70,6 +70,13 @@ function formatModifier(value: number): string {
   return value > 0 ? `+${value}` : String(value);
 }
 
+/** Safe i18n accessor — throws a clear error if called before Foundry init. */
+function localize(key: string): string {
+  const i18n = game.i18n;
+  if (!i18n) throw new Error(`game.i18n not available (key: ${key})`);
+  return i18n.localize(key);
+}
+
 function escapeHTML(value: unknown): string {
   return String(value ?? '')
     .replaceAll('&', '&amp;')
@@ -430,9 +437,9 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
               ['qualityQuickLoad', 'OPEN00.Qualities.QuickLoad'],
               ['qualityReach', 'OPEN00.Qualities.Reach'],
               ['qualityUnreliable', 'OPEN00.Qualities.Unreliable'],
-            ].filter(([key]) => Boolean(data[key])).map(([, label]) => game.i18n.localize(label));
+            ].filter(([key]) => Boolean(data[key])).map(([, label]) => localize(label));
             const loadRounds = asNumber(data['qualityLoadRounds']);
-            if (loadRounds > 0) qualities.push(`${game.i18n.localize('OPEN00.Qualities.Load')} ${loadRounds}`);
+            if (loadRounds > 0) qualities.push(`${localize('OPEN00.Qualities.Load')} ${loadRounds}`);
 
             return {
               id: item.id,
@@ -456,8 +463,8 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
           .map((item: Item) => {
             const data = item.system as Record<string, unknown>;
             const qualities = [
-              data['qualityMetal'] ? game.i18n.localize('OPEN00.Qualities.Metal') : '',
-              data['qualityRigid'] ? game.i18n.localize('OPEN00.Qualities.Rigid') : '',
+              data['qualityMetal'] ? localize('OPEN00.Qualities.Metal') : '',
+              data['qualityRigid'] ? localize('OPEN00.Qualities.Rigid') : '',
             ].filter(Boolean);
             return {
               id: item.id,
@@ -571,7 +578,7 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
               id: item.id,
               img: item.img,
               name: item.name,
-              type: game.i18n.localize(`TYPES.Item.${item.type}`),
+              type: localize(`TYPES.Item.${item.type}`),
               quantity,
               fare: data['fare'] ?? '—',
               availability: data['availability'] ?? '—',
@@ -657,9 +664,9 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
     const totalWithBonus = rollResult.total + skillBonus;
     const outcome = resolveAction(totalWithBonus);
     const statLabel = STAT_NAMES[statKey]
-      ? game.i18n.localize(STAT_NAMES[statKey])
+      ? localize(STAT_NAMES[statKey])
       : statKey.toUpperCase();
-    const categoryLabel = game.i18n.localize(`OPEN00.Skills.Categories.${category}`);
+    const categoryLabel = localize(`OPEN00.Skills.Categories.${category}`);
 
     const chatContent = `
       <div class="open00-roll-result">
@@ -673,7 +680,7 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
         </div>
         <div class="roll-result">
           <strong>${totalWithBonus}</strong>
-          <span>${escapeHTML(game.i18n.localize(`OPEN00.ActionResolution.${outcome}`))}</span>
+          <span>${escapeHTML(localize(`OPEN00.ActionResolution.${outcome}`))}</span>
         </div>
       </div>`;
 
@@ -691,7 +698,7 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
     if (!statKey || Number.isNaN(statBonus)) return;
 
     const statLabel = STAT_NAMES[statKey]
-      ? game.i18n.localize(STAT_NAMES[statKey])
+      ? localize(STAT_NAMES[statKey])
       : statKey.toUpperCase();
 
     const rollResult = computeOpenEndedRoll(() => Math.floor(Math.random() * 100) + 1);
@@ -702,7 +709,7 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
       <div class="open00-roll-result">
         <header class="roll-header">
           <strong>${escapeHTML(statLabel)}</strong>
-          <span class="roll-category">${escapeHTML(game.i18n.localize('OPEN00.Overview.Stats'))}</span>
+          <span class="roll-category">${escapeHTML(localize('OPEN00.Overview.Stats'))}</span>
         </header>
         <div class="roll-formula">
           <span>${escapeHTML(formatRollDisplay(rollResult))}</span>
@@ -710,7 +717,7 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
         </div>
         <div class="roll-result">
           <strong>${totalWithBonus}</strong>
-          <span>${escapeHTML(game.i18n.localize(`OPEN00.ActionResolution.${outcome}`))}</span>
+          <span>${escapeHTML(localize(`OPEN00.ActionResolution.${outcome}`))}</span>
         </div>
       </div>`;
 
@@ -728,7 +735,7 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
     const saveBonus = Number(row.dataset.saveBonus);
     if (!saveName || Number.isNaN(saveBonus)) return;
 
-    const saveLabel = game.i18n.localize(saveName);
+    const saveLabel = localize(saveName);
 
     const rollResult = computeOpenEndedRoll(() => Math.floor(Math.random() * 100) + 1);
     const totalWithBonus = rollResult.total + saveBonus;
@@ -738,7 +745,7 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
       <div class="open00-roll-result">
         <header class="roll-header">
           <strong>${escapeHTML(saveLabel)}</strong>
-          <span class="roll-category">${escapeHTML(game.i18n.localize('OPEN00.Overview.SaveRolls'))}</span>
+          <span class="roll-category">${escapeHTML(localize('OPEN00.Overview.SaveRolls'))}</span>
         </header>
         <div class="roll-formula">
           <span>${escapeHTML(formatRollDisplay(rollResult))}</span>
@@ -746,7 +753,7 @@ export class Open00CharacterSheet extends foundry.applications.api.HandlebarsApp
         </div>
         <div class="roll-result">
           <strong>${totalWithBonus}</strong>
-          <span>${escapeHTML(game.i18n.localize(`OPEN00.ActionResolution.${outcome}`))}</span>
+          <span>${escapeHTML(localize(`OPEN00.ActionResolution.${outcome}`))}</span>
         </div>
       </div>`;
 
