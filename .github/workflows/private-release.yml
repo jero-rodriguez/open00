@@ -1,0 +1,24 @@
+name: Private release
+on:
+  push:
+    tags: ['v*']
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: npm ci && npm test && npm run build
+      - name: Fail closed before upload
+        run: npm run check:release
+        env:
+          REPOSITORY_VISIBILITY: ${{ github.event.repository.private && 'private' || 'public' }}
+          RELEASE_VISIBILITY: private
+          PRIVATE_RELEASE_AUTHORIZED: ${{ secrets.PRIVATE_RELEASE_AUTHORIZED }}
+          PACKAGE_CONTENTS_PRIVATE: ${{ secrets.PACKAGE_CONTENTS_PRIVATE }}
+          EXPECTED_RELEASE_SHA: ${{ github.sha }}
+      - name: Upload private artifact only after gate
+        if: ${{ success() }}
+        uses: actions/upload-artifact@v4
+        with: { name: private-system-package, path: dist }

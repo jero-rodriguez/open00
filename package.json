@@ -1,0 +1,12 @@
+{
+  "name": "open00-foundry-v14",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build": "node tools/build.mjs",
+    "smoke:foundry": "node tools/runtime-smoke.mjs",
+    "check:release": "node tools/release-guard.mjs"
+  }
+}
