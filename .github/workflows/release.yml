@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: node
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-publish:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Stamp the tagged distribution manifest
+        run: >-
+          npm run stamp:release --
+          --dist dist
+          --repository "${{ github.repository }}"
+          --tag "${{ needs.release-please.outputs.tag_name }}"
+          --version "${{ needs.release-please.outputs.version }}"
+      - name: Create the release archive
+        run: (cd dist && zip -r ../open00.zip .)
+      - name: Resolve the checked-out release commit
+        id: release-commit
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Fail closed before upload
+        run: npm run check:release
+        env:
+          REPOSITORY_VISIBILITY: ${{ github.event.repository.private && 'private' || 'public' }}
+          RELEASE_VISIBILITY: private
+          PRIVATE_RELEASE_AUTHORIZED: ${{ secrets.PRIVATE_RELEASE_AUTHORIZED }}
+          PACKAGE_CONTENTS_PRIVATE: ${{ secrets.PACKAGE_CONTENTS_PRIVATE }}
+          GITHUB_REF_NAME: ${{ needs.release-please.outputs.tag_name }}
+          GITHUB_SHA: ${{ steps.release-commit.outputs.sha }}
+          EXPECTED_RELEASE_SHA: ${{ steps.release-commit.outputs.sha }}
+      - name: Upload private release assets
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: |
+            open00.zip
+            dist/system.json
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

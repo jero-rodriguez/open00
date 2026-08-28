@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Deliver mechanics-first vertical slices. Authoritative PDF evidence and approved decisions become verified canonical records; validators admit them to pure Foundry-free mechanics; adapters then generate Foundry v14 documents, packs, UI, and runtime tests. TypeScript, Vitest, an npm lockfile, and Node `.mjs` tools establish the greenfield harness; generated `dist/` is never authored source.
+Deliver mechanics-first vertical slices. Authoritative PDF evidence and approved decisions become verified canonical records; validators admit them to pure Foundry-free mechanics; adapters then generate Foundry v14 documents, packs, UI, and runtime tests. TypeScript, `tsx`, an npm lockfile, and Node TypeScript tools establish the greenfield harness; generated `dist/` is never authored source.
 
 ## Architecture Decisions
 

@@ -26,12 +26,12 @@ P31(T(bestiary-infra);S:Actor;360;RB:C/bestiary) P32+(T(bestiary-batch);S:requir
 - [x] 1.5-Roll-missing/malformed-difficulty/modifiers/no-GM-inference
 - [x] 1.6-Roll-trace/exact-supplied/resolved-inputs
 - [x] 1.7-Roll-outcome/open-ended-order/replay
-- [ ] 2.1-GM-gateway/pending-no-write
-- [ ] 2.2-GM-confirm/authorized-success/bind-inputs
-- [ ] 2.3-GM-confirm-malformed-unauthorized-reject/cancel/stale
-- [ ] 2.4-Options-complete-PDF-registry
-- [ ] 2.5-Options-each-world-boolean/default-false
-- [ ] 2.6-Options-independent/no-cross-enable/intended-boundary
+- [x] 2.1-GM-gateway/pending-no-write
+- [x] 2.2-GM-confirm/authorized-success/bind-inputs
+- [x] 2.3-GM-confirm-malformed-unauthorized-reject/cancel/stale
+- [x] 2.4-Options-complete-PDF-registry
+- [x] 2.5-Options-each-world-boolean/default-false
+- [x] 2.6-Options-independent/no-cross-enable/intended-boundary
 - [ ] 2.7-Options-Node-contracts/14.367-registration-receipt
 - [ ] 3.1-Source-schema/record
 - [ ] 3.2-Source-PDF-provenance/per-record

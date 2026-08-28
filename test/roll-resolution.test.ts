@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { resolveRoll } from '../src/domain/roll-resolution.mjs';
+import { resolveRoll, type SuccessfulRollResolution } from '../src/domain/roll-resolution.js';
+
+const assertSuccessful = (result: ReturnType<typeof resolveRoll>): SuccessfulRollResolution => {
+  if (!result.ok) throw new Error(result.error);
+  return result;
+};
 
 test('rejects missing or malformed GM-owned inputs without an outcome', () => {
   for (const input of [
@@ -17,7 +22,7 @@ test('rejects missing or malformed GM-owned inputs without an outcome', () => {
 
 test('preserves exact GM inputs and resolves a standard result deterministically', () => {
   const supplied = { rolls: [60], difficulty: 65, modifiers: [3, 2] };
-  const result = resolveRoll(supplied);
+  const result = assertSuccessful(resolveRoll(supplied));
   assert.deepEqual(result, {
     ok: true,
     outcome: 'success',
@@ -26,16 +31,16 @@ test('preserves exact GM inputs and resolves a standard result deterministically
       resolved: { rollTotal: 60, modifierTotal: 5, total: 65, difficulty: 65, consumedRolls: [60] },
     },
   });
-  assert.deepEqual(resolveRoll(supplied), result);
+  assert.deepEqual(assertSuccessful(resolveRoll(supplied)), result);
 });
 
 test('consumes high and low open-ended continuations in supplied order and replays them', () => {
-  const high = resolveRoll({ rolls: [96, 4], difficulty: 100, modifiers: [] });
+  const high = assertSuccessful(resolveRoll({ rolls: [96, 4], difficulty: 100, modifiers: [] }));
   assert.equal(high.outcome, 'success');
   assert.deepEqual(high.trace.resolved, { rollTotal: 100, modifierTotal: 0, total: 100, difficulty: 100, consumedRolls: [96, 4] });
-  const low = resolveRoll({ rolls: [5, 12], difficulty: -7, modifiers: [] });
+  const low = assertSuccessful(resolveRoll({ rolls: [5, 12], difficulty: -7, modifiers: [] }));
   assert.equal(low.outcome, 'success');
   assert.deepEqual(low.trace.resolved.consumedRolls, [5, 12]);
   assert.equal(low.trace.resolved.rollTotal, -7);
-  assert.deepEqual(resolveRoll({ rolls: [96, 4], difficulty: 100, modifiers: [] }), high);
+  assert.deepEqual(assertSuccessful(resolveRoll({ rolls: [96, 4], difficulty: 100, modifiers: [] })), high);
 });
