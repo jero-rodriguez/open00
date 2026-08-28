@@ -2,7 +2,7 @@ import { cpSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export function buildPackage(root = fileURLToPath(new URL('..', import.meta.url))) {
+export function buildPackage(root: string = fileURLToPath(new URL('..', import.meta.url))): void {
   const dist = resolve(root, 'dist');
   mkdirSync(dist, { recursive: true });
   cpSync(resolve(root, 'system.json'), resolve(dist, 'system.json'));
