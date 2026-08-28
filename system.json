@@ -1,7 +1,0 @@
-{
-  "id": "open00",
-  "title": "open00",
-  "description": "Private-use open00 system.",
-  "version": "0.1.0",
-  "compatibility": { "minimum": "14.367", "verified": "14.367" }
-}
